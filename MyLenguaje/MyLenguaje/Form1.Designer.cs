@@ -40,16 +40,21 @@
 			this.btnLexicar = new System.Windows.Forms.Button();
 			this.btnSintactizar = new System.Windows.Forms.Button();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
+			this.btnComprobar = new System.Windows.Forms.Button();
 			this.groupBox3 = new System.Windows.Forms.GroupBox();
-			this.rchConsola1 = new System.Windows.Forms.RichTextBox();
-			this.rchConsola2 = new System.Windows.Forms.RichTextBox();
-			this.rchConsola3 = new System.Windows.Forms.RichTextBox();
-			this.label4 = new System.Windows.Forms.Label();
-			this.label5 = new System.Windows.Forms.Label();
 			this.label6 = new System.Windows.Forms.Label();
+			this.label5 = new System.Windows.Forms.Label();
+			this.label4 = new System.Windows.Forms.Label();
+			this.rchConsola3 = new System.Windows.Forms.RichTextBox();
+			this.rchConsola2 = new System.Windows.Forms.RichTextBox();
+			this.rchConsola1 = new System.Windows.Forms.RichTextBox();
+			this.groupBox4 = new System.Windows.Forms.GroupBox();
+			this.label7 = new System.Windows.Forms.Label();
+			this.rhcAnalisisLexico = new System.Windows.Forms.RichTextBox();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox3.SuspendLayout();
+			this.groupBox4.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// btnSalir
@@ -64,14 +69,17 @@
 			// 
 			// rchTexto
 			// 
+			this.rchTexto.BackColor = System.Drawing.SystemColors.InactiveCaption;
 			this.rchTexto.Location = new System.Drawing.Point(6, 37);
 			this.rchTexto.Name = "rchTexto";
 			this.rchTexto.Size = new System.Drawing.Size(306, 211);
 			this.rchTexto.TabIndex = 1;
 			this.rchTexto.Text = "";
+			this.rchTexto.TextChanged += new System.EventHandler(this.rchTexto_TextChanged);
 			// 
 			// rchLexico
 			// 
+			this.rchLexico.BackColor = System.Drawing.SystemColors.MenuHighlight;
 			this.rchLexico.Location = new System.Drawing.Point(327, 37);
 			this.rchLexico.Name = "rchLexico";
 			this.rchLexico.ReadOnly = true;
@@ -81,6 +89,7 @@
 			// 
 			// rchSintactico
 			// 
+			this.rchSintactico.BackColor = System.Drawing.SystemColors.MenuHighlight;
 			this.rchSintactico.Location = new System.Drawing.Point(588, 37);
 			this.rchSintactico.Name = "rchSintactico";
 			this.rchSintactico.ReadOnly = true;
@@ -149,6 +158,7 @@
 			this.btnLexicar.TabIndex = 9;
 			this.btnLexicar.Text = "Lexicar";
 			this.btnLexicar.UseVisualStyleBackColor = true;
+			this.btnLexicar.Click += new System.EventHandler(this.btnLexicar_Click);
 			// 
 			// btnSintactizar
 			// 
@@ -158,9 +168,11 @@
 			this.btnSintactizar.TabIndex = 10;
 			this.btnSintactizar.Text = "Sintactizar";
 			this.btnSintactizar.UseVisualStyleBackColor = true;
+			this.btnSintactizar.Click += new System.EventHandler(this.btnSintactizar_Click);
 			// 
 			// groupBox2
 			// 
+			this.groupBox2.Controls.Add(this.btnComprobar);
 			this.groupBox2.Controls.Add(this.btnAnalizar);
 			this.groupBox2.Controls.Add(this.btnSintactizar);
 			this.groupBox2.Controls.Add(this.btnSalir);
@@ -171,6 +183,16 @@
 			this.groupBox2.TabIndex = 11;
 			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Botones";
+			// 
+			// btnComprobar
+			// 
+			this.btnComprobar.Location = new System.Drawing.Point(375, 47);
+			this.btnComprobar.Name = "btnComprobar";
+			this.btnComprobar.Size = new System.Drawing.Size(75, 23);
+			this.btnComprobar.TabIndex = 11;
+			this.btnComprobar.Text = "Comprobar";
+			this.btnComprobar.UseVisualStyleBackColor = true;
+			this.btnComprobar.Click += new System.EventHandler(this.btnComprobar_Click);
 			// 
 			// groupBox3
 			// 
@@ -187,41 +209,14 @@
 			this.groupBox3.TabStop = false;
 			this.groupBox3.Text = "Tab Consola";
 			// 
-			// rchConsola1
+			// label6
 			// 
-			this.rchConsola1.BackColor = System.Drawing.SystemColors.HotTrack;
-			this.rchConsola1.Location = new System.Drawing.Point(6, 51);
-			this.rchConsola1.Name = "rchConsola1";
-			this.rchConsola1.Size = new System.Drawing.Size(268, 169);
-			this.rchConsola1.TabIndex = 0;
-			this.rchConsola1.Text = "";
-			// 
-			// rchConsola2
-			// 
-			this.rchConsola2.BackColor = System.Drawing.SystemColors.HotTrack;
-			this.rchConsola2.Location = new System.Drawing.Point(281, 51);
-			this.rchConsola2.Name = "rchConsola2";
-			this.rchConsola2.Size = new System.Drawing.Size(268, 169);
-			this.rchConsola2.TabIndex = 1;
-			this.rchConsola2.Text = "";
-			// 
-			// rchConsola3
-			// 
-			this.rchConsola3.BackColor = System.Drawing.SystemColors.HotTrack;
-			this.rchConsola3.Location = new System.Drawing.Point(555, 51);
-			this.rchConsola3.Name = "rchConsola3";
-			this.rchConsola3.Size = new System.Drawing.Size(268, 169);
-			this.rchConsola3.TabIndex = 2;
-			this.rchConsola3.Text = "";
-			// 
-			// label4
-			// 
-			this.label4.AutoSize = true;
-			this.label4.Location = new System.Drawing.Point(100, 32);
-			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(51, 13);
-			this.label4.TabIndex = 3;
-			this.label4.Text = "Analisis 1";
+			this.label6.AutoSize = true;
+			this.label6.Location = new System.Drawing.Point(652, 31);
+			this.label6.Name = "label6";
+			this.label6.Size = new System.Drawing.Size(51, 13);
+			this.label6.TabIndex = 5;
+			this.label6.Text = "Analisis 3";
 			// 
 			// label5
 			// 
@@ -232,21 +227,84 @@
 			this.label5.TabIndex = 4;
 			this.label5.Text = "Analisis 2";
 			// 
-			// label6
+			// label4
 			// 
-			this.label6.AutoSize = true;
-			this.label6.Location = new System.Drawing.Point(652, 31);
-			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(51, 13);
-			this.label6.TabIndex = 5;
-			this.label6.Text = "Analisis 3";
+			this.label4.AutoSize = true;
+			this.label4.Location = new System.Drawing.Point(100, 32);
+			this.label4.Name = "label4";
+			this.label4.Size = new System.Drawing.Size(51, 13);
+			this.label4.TabIndex = 3;
+			this.label4.Text = "Analisis 1";
+			// 
+			// rchConsola3
+			// 
+			this.rchConsola3.BackColor = System.Drawing.SystemColors.HotTrack;
+			this.rchConsola3.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+			this.rchConsola3.Location = new System.Drawing.Point(555, 51);
+			this.rchConsola3.Name = "rchConsola3";
+			this.rchConsola3.ReadOnly = true;
+			this.rchConsola3.Size = new System.Drawing.Size(268, 169);
+			this.rchConsola3.TabIndex = 2;
+			this.rchConsola3.Text = "";
+			// 
+			// rchConsola2
+			// 
+			this.rchConsola2.BackColor = System.Drawing.SystemColors.HotTrack;
+			this.rchConsola2.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+			this.rchConsola2.Location = new System.Drawing.Point(281, 51);
+			this.rchConsola2.Name = "rchConsola2";
+			this.rchConsola2.ReadOnly = true;
+			this.rchConsola2.Size = new System.Drawing.Size(268, 169);
+			this.rchConsola2.TabIndex = 1;
+			this.rchConsola2.Text = "";
+			// 
+			// rchConsola1
+			// 
+			this.rchConsola1.BackColor = System.Drawing.SystemColors.HotTrack;
+			this.rchConsola1.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+			this.rchConsola1.Location = new System.Drawing.Point(6, 51);
+			this.rchConsola1.Name = "rchConsola1";
+			this.rchConsola1.ReadOnly = true;
+			this.rchConsola1.Size = new System.Drawing.Size(268, 169);
+			this.rchConsola1.TabIndex = 0;
+			this.rchConsola1.Text = "";
+			// 
+			// groupBox4
+			// 
+			this.groupBox4.Controls.Add(this.rhcAnalisisLexico);
+			this.groupBox4.Controls.Add(this.label7);
+			this.groupBox4.Location = new System.Drawing.Point(895, 13);
+			this.groupBox4.Name = "groupBox4";
+			this.groupBox4.Size = new System.Drawing.Size(200, 269);
+			this.groupBox4.TabIndex = 13;
+			this.groupBox4.TabStop = false;
+			this.groupBox4.Text = "Caja de analisis";
+			// 
+			// label7
+			// 
+			this.label7.AutoSize = true;
+			this.label7.Location = new System.Drawing.Point(7, 20);
+			this.label7.Name = "label7";
+			this.label7.Size = new System.Drawing.Size(38, 13);
+			this.label7.TabIndex = 0;
+			this.label7.Text = "Lexico";
+			// 
+			// rhcAnalisisLexico
+			// 
+			this.rhcAnalisisLexico.BackColor = System.Drawing.Color.Orange;
+			this.rhcAnalisisLexico.Location = new System.Drawing.Point(10, 49);
+			this.rhcAnalisisLexico.Name = "rhcAnalisisLexico";
+			this.rhcAnalisisLexico.Size = new System.Drawing.Size(184, 128);
+			this.rhcAnalisisLexico.TabIndex = 1;
+			this.rhcAnalisisLexico.Text = "";
 			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.AutoScroll = true;
-			this.ClientSize = new System.Drawing.Size(1307, 641);
+			this.ClientSize = new System.Drawing.Size(1307, 608);
+			this.Controls.Add(this.groupBox4);
 			this.Controls.Add(this.groupBox3);
 			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.groupBox1);
@@ -257,6 +315,8 @@
 			this.groupBox2.ResumeLayout(false);
 			this.groupBox3.ResumeLayout(false);
 			this.groupBox3.PerformLayout();
+			this.groupBox4.ResumeLayout(false);
+			this.groupBox4.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -282,6 +342,10 @@
 		private System.Windows.Forms.RichTextBox rchConsola3;
 		private System.Windows.Forms.RichTextBox rchConsola2;
 		private System.Windows.Forms.RichTextBox rchConsola1;
+		private System.Windows.Forms.Button btnComprobar;
+		private System.Windows.Forms.GroupBox groupBox4;
+		private System.Windows.Forms.RichTextBox rhcAnalisisLexico;
+		private System.Windows.Forms.Label label7;
 	}
 }
 
