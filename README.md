@@ -2,3 +2,4 @@
 a
 1.0.1 Base
 1.1.1 Lexico basico
+1.1.2 Arreglo del lexico

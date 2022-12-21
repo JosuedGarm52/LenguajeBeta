@@ -56,23 +56,7 @@ namespace MyLenguaje
 					rchConsola1.Text = "Exito";
 					string codigo2 = "";
 					int y = 0;
-					/*foreach (char car in rchTexto.Text)
-					{
-						char b = car;
-						if (b == ' ')
-						{
-							b = careEspacio;
-						}
-						if (b == '\n')
-						{
-							codigo[y] = careEspacio;
-							b = careEnter;
-							y++;
-						}
-						codigo[y] = b;
-						y++;
-
-					}*/
+					
 					foreach (char car in rchTexto.Text)
 					{
 						if(car == ' ')
@@ -88,11 +72,8 @@ namespace MyLenguaje
 						}
 					}
 					char[] codigo;
-					//codigo = codigo2.ToCharArray(0,codigo.Length);
-					//codigo[codigo.Length - 1] = careFin;
 					codigo2 += careFin;
 					codigo = codigo2.ToCharArray();
-					//MensajeArray(codigo);
 					y = 0;
 					byte[] ascii = Encoding.ASCII.GetBytes(codigo);//convierte a ascii el caracter
 					//Mensaje("Ascii: " + ascii[0] + " Caracter: "+ (char)ascii[0]);
@@ -101,92 +82,79 @@ namespace MyLenguaje
 					string posicion = "0";
 					string cat = "";
 					string consola = "";
-					bool inicio = false;
+					bool listo = false;
 					int haltura = 1;
 					int wancho = 1;
 					string textoError = "Errores Lexicos: \n";
 					char letraAnt = ' ';
+					
 					do
 					{
-						if (codigo[y] == careEnter)
+						string query = "SELECT * FROM compilador WHERE ESTSIM = " + posicion;
+						EstadoConexion(true);
+						cmd = new MySqlCommand(query, conexion);
+						reader = cmd.ExecuteReader();
+						while (reader.Read())
 						{
-							cat += "\n";
-							haltura++;
-							wancho = 1;
-						}
-						else
-						{
-							if (!inicio)
+							//indice = reader["ESTSIM"].ToString();
+							
+							if (codigo[y] == careEspacio || codigo[y] == careFin || codigo[y] == careEnter)
 							{
-								string query = "SELECT * FROM compilador WHERE ESTSIM = " + 0;
-								EstadoConexion(true);
-								cmd = new MySqlCommand(query, conexion);
-								reader = cmd.ExecuteReader();
-								while (reader.Read())
+								posicion = "0";
+								if(listo)
 								{
-									//indice = reader["ESTSIM"].ToString();
-									posicion = reader["_" + ascii[y]].ToString();
-									inicio = true;
-
+									cat += reader["CAT"].ToString();
 								}
+								if (reader["CAT"].ToString() == "FAIL")
+								{
+									LexicoErrores++;
+									textoError += haltura + "," + (wancho - 1) + " Palabra equivocada \n";
+								}
+								if (codigo[y] == careEspacio)
+								{
+									cat += careEspacio;
+									listo = false;
+								}
+								if (codigo[y] == careFin)
+								{
+									cat += careFin;
+									listo = false;
+								}
+								if (codigo[y] == careEnter)
+								{
+									cat += "\n";
+									haltura++;
+									wancho = 1;
+									listo = false;
+								}
+
+								consola += reader["FDC"].ToString();
+								consola += "\n";
+								letraAnt = codigo[y];
+
 							}
 							else
 							{
-								string query = "SELECT * FROM compilador WHERE ESTSIM = " + posicion;
-								EstadoConexion(true);
-								cmd = new MySqlCommand(query, conexion);
-								reader = cmd.ExecuteReader();
-								while (reader.Read())
-								{
-									//indice = reader["ESTSIM"].ToString();
-
-									if (codigo[y] == careEspacio || codigo[y] == careFin)
-									{
-										posicion = "0";
-										cat += reader["CAT"].ToString();
-										if (reader["CAT"].ToString() == "FAIL")
-										{
-											LexicoErrores++;
-											textoError += haltura + "," + (wancho - 1) + " Palabra equivocada \n";
-										}
-										if (codigo[y] == careEspacio)
-										{
-											cat += careEspacio;
-											inicio = false;
-										}
-										else
-										{
-											cat += careFin;
-											inicio = true;
-										}
-
-										consola += reader["FDC"].ToString();
-										consola += "\n";
-										letraAnt = codigo[y];
-
-									}
-									else
-									{
-										posicion = reader["_" + ascii[y]].ToString();
-										letraAnt = codigo[y];
-									}
-
-								}
+								string ced = "_" + ascii[y];
+								posicion = reader[ced].ToString();
+								letraAnt = codigo[y];
+								listo = true;
 							}
 
-							EstadoConexion(false);
 						}
-						wancho++;
+						EstadoConexion(false);
 						y++;
+						wancho++;
 					} while (y < codigo.Length);
-					
-					//foreach(char cod in codigo2)
+
+					//do
 					//{
-					//	if (cod == careEnter)
+					//	if (codigo[y] == careEnter)
 					//	{
 					//		cat += "\n";
 					//		haltura++;
 					//		wancho = 1;
+					//		y++;
 					//	}
 					//	else
 					//	{
@@ -210,21 +178,20 @@ namespace MyLenguaje
 					//			EstadoConexion(true);
 					//			cmd = new MySqlCommand(query, conexion);
 					//			reader = cmd.ExecuteReader();
-					//			reader.Read();
-					//			//while (reader.Read())
-					//			//{
+					//			while (reader.Read())
+					//			{
 					//				//indice = reader["ESTSIM"].ToString();
 
-					//				if (cod == careEspacio || cod == careFin)
+					//				if (codigo[y] == careEspacio || codigo[y] == careFin)
 					//				{
 					//					posicion = "0";
 					//					cat += reader["CAT"].ToString();
 					//					if (reader["CAT"].ToString() == "FAIL")
 					//					{
 					//						LexicoErrores++;
-					//						textoError += haltura + "," + (wancho - 1) + " Palabra equivocada- despues de la letra:"+ letraAnt + "\n";
+					//						textoError += haltura + "," + (wancho - 1) + " Palabra equivocada \n";
 					//					}
-					//					if (cod == careEspacio)
+					//					if (codigo[y] == careEspacio)
 					//					{
 					//						cat += careEspacio;
 					//						inicio = false;
@@ -237,23 +204,26 @@ namespace MyLenguaje
 
 					//					consola += reader["FDC"].ToString();
 					//					consola += "\n";
-					//					letraAnt = cod;
+					//					letraAnt = codigo[y];
+
 					//				}
 					//				else
 					//				{
 					//					posicion = reader["_" + ascii[y]].ToString();
-					//					letraAnt = cod;
+					//					letraAnt = codigo[y];
 					//				}
-									
 
-					//			//}
+					//			}
+
+					//			y++;
 					//		}
 
 					//		EstadoConexion(false);
 					//	}
 					//	wancho++;
-						
-					//}
+					//} while (y < codigo.Length);
+					
+					
 					if (LexicoErrores == 0)
 					{
 						rchConsola2.Text = "Revision Exitosa";
