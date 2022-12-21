@@ -49,8 +49,9 @@
 			this.rchConsola2 = new System.Windows.Forms.RichTextBox();
 			this.rchConsola1 = new System.Windows.Forms.RichTextBox();
 			this.groupBox4 = new System.Windows.Forms.GroupBox();
-			this.label7 = new System.Windows.Forms.Label();
 			this.rhcAnalisisLexico = new System.Windows.Forms.RichTextBox();
+			this.label7 = new System.Windows.Forms.Label();
+			this.btnRellenar = new System.Windows.Forms.Button();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox3.SuspendLayout();
@@ -172,6 +173,7 @@
 			// 
 			// groupBox2
 			// 
+			this.groupBox2.Controls.Add(this.btnRellenar);
 			this.groupBox2.Controls.Add(this.btnComprobar);
 			this.groupBox2.Controls.Add(this.btnAnalizar);
 			this.groupBox2.Controls.Add(this.btnSintactizar);
@@ -280,6 +282,15 @@
 			this.groupBox4.TabStop = false;
 			this.groupBox4.Text = "Caja de analisis";
 			// 
+			// rhcAnalisisLexico
+			// 
+			this.rhcAnalisisLexico.BackColor = System.Drawing.Color.Orange;
+			this.rhcAnalisisLexico.Location = new System.Drawing.Point(10, 49);
+			this.rhcAnalisisLexico.Name = "rhcAnalisisLexico";
+			this.rhcAnalisisLexico.Size = new System.Drawing.Size(184, 128);
+			this.rhcAnalisisLexico.TabIndex = 1;
+			this.rhcAnalisisLexico.Text = "";
+			// 
 			// label7
 			// 
 			this.label7.AutoSize = true;
@@ -289,14 +300,15 @@
 			this.label7.TabIndex = 0;
 			this.label7.Text = "Lexico";
 			// 
-			// rhcAnalisisLexico
+			// btnRellenar
 			// 
-			this.rhcAnalisisLexico.BackColor = System.Drawing.Color.Orange;
-			this.rhcAnalisisLexico.Location = new System.Drawing.Point(10, 49);
-			this.rhcAnalisisLexico.Name = "rhcAnalisisLexico";
-			this.rhcAnalisisLexico.Size = new System.Drawing.Size(184, 128);
-			this.rhcAnalisisLexico.TabIndex = 1;
-			this.rhcAnalisisLexico.Text = "";
+			this.btnRellenar.Location = new System.Drawing.Point(588, 48);
+			this.btnRellenar.Name = "btnRellenar";
+			this.btnRellenar.Size = new System.Drawing.Size(203, 23);
+			this.btnRellenar.TabIndex = 12;
+			this.btnRellenar.Text = "Rellenar w/palabras";
+			this.btnRellenar.UseVisualStyleBackColor = true;
+			this.btnRellenar.Click += new System.EventHandler(this.btnRellenar_Click);
 			// 
 			// Form1
 			// 
@@ -346,6 +358,7 @@
 		private System.Windows.Forms.GroupBox groupBox4;
 		private System.Windows.Forms.RichTextBox rhcAnalisisLexico;
 		private System.Windows.Forms.Label label7;
+		private System.Windows.Forms.Button btnRellenar;
 	}
 }
 
