@@ -40,6 +40,7 @@
 			this.btnLexicar = new System.Windows.Forms.Button();
 			this.btnSintactizar = new System.Windows.Forms.Button();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
+			this.btnRellenar = new System.Windows.Forms.Button();
 			this.btnComprobar = new System.Windows.Forms.Button();
 			this.groupBox3 = new System.Windows.Forms.GroupBox();
 			this.label6 = new System.Windows.Forms.Label();
@@ -51,7 +52,7 @@
 			this.groupBox4 = new System.Windows.Forms.GroupBox();
 			this.rhcAnalisisLexico = new System.Windows.Forms.RichTextBox();
 			this.label7 = new System.Windows.Forms.Label();
-			this.btnRellenar = new System.Windows.Forms.Button();
+			this.btnLimpiar = new System.Windows.Forms.Button();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox3.SuspendLayout();
@@ -84,24 +85,24 @@
 			this.rchLexico.Location = new System.Drawing.Point(327, 37);
 			this.rchLexico.Name = "rchLexico";
 			this.rchLexico.ReadOnly = true;
-			this.rchLexico.Size = new System.Drawing.Size(247, 211);
+			this.rchLexico.Size = new System.Drawing.Size(331, 211);
 			this.rchLexico.TabIndex = 2;
 			this.rchLexico.Text = "";
 			// 
 			// rchSintactico
 			// 
 			this.rchSintactico.BackColor = System.Drawing.SystemColors.MenuHighlight;
-			this.rchSintactico.Location = new System.Drawing.Point(588, 37);
+			this.rchSintactico.Location = new System.Drawing.Point(713, 37);
 			this.rchSintactico.Name = "rchSintactico";
 			this.rchSintactico.ReadOnly = true;
-			this.rchSintactico.Size = new System.Drawing.Size(269, 211);
+			this.rchSintactico.Size = new System.Drawing.Size(331, 211);
 			this.rchSintactico.TabIndex = 3;
 			this.rchSintactico.Text = "";
 			// 
 			// label1
 			// 
 			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(388, 16);
+			this.label1.Location = new System.Drawing.Point(449, 16);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(114, 13);
 			this.label1.TabIndex = 4;
@@ -111,11 +112,12 @@
 			// label2
 			// 
 			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(585, 16);
+			this.label2.Location = new System.Drawing.Point(777, 16);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(130, 13);
 			this.label2.TabIndex = 5;
 			this.label2.Text = "Transformacion Sintactico";
+			this.label2.Click += new System.EventHandler(this.label2_Click);
 			// 
 			// label3
 			// 
@@ -136,7 +138,7 @@
 			this.groupBox1.Controls.Add(this.rchLexico);
 			this.groupBox1.Location = new System.Drawing.Point(18, 12);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(870, 260);
+			this.groupBox1.Size = new System.Drawing.Size(1076, 260);
 			this.groupBox1.TabIndex = 7;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Tab de codificacion y transformacion";
@@ -173,6 +175,7 @@
 			// 
 			// groupBox2
 			// 
+			this.groupBox2.Controls.Add(this.btnLimpiar);
 			this.groupBox2.Controls.Add(this.btnRellenar);
 			this.groupBox2.Controls.Add(this.btnComprobar);
 			this.groupBox2.Controls.Add(this.btnAnalizar);
@@ -181,10 +184,20 @@
 			this.groupBox2.Controls.Add(this.btnLexicar);
 			this.groupBox2.Location = new System.Drawing.Point(18, 511);
 			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Size = new System.Drawing.Size(823, 89);
+			this.groupBox2.Size = new System.Drawing.Size(823, 108);
 			this.groupBox2.TabIndex = 11;
 			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Botones";
+			// 
+			// btnRellenar
+			// 
+			this.btnRellenar.Location = new System.Drawing.Point(588, 48);
+			this.btnRellenar.Name = "btnRellenar";
+			this.btnRellenar.Size = new System.Drawing.Size(203, 23);
+			this.btnRellenar.TabIndex = 12;
+			this.btnRellenar.Text = "Rellenar w/palabras";
+			this.btnRellenar.UseVisualStyleBackColor = true;
+			this.btnRellenar.Click += new System.EventHandler(this.btnRellenar_Click);
 			// 
 			// btnComprobar
 			// 
@@ -275,7 +288,7 @@
 			// 
 			this.groupBox4.Controls.Add(this.rhcAnalisisLexico);
 			this.groupBox4.Controls.Add(this.label7);
-			this.groupBox4.Location = new System.Drawing.Point(895, 13);
+			this.groupBox4.Location = new System.Drawing.Point(894, 293);
 			this.groupBox4.Name = "groupBox4";
 			this.groupBox4.Size = new System.Drawing.Size(200, 269);
 			this.groupBox4.TabIndex = 13;
@@ -300,22 +313,22 @@
 			this.label7.TabIndex = 0;
 			this.label7.Text = "Lexico";
 			// 
-			// btnRellenar
+			// btnLimpiar
 			// 
-			this.btnRellenar.Location = new System.Drawing.Point(588, 48);
-			this.btnRellenar.Name = "btnRellenar";
-			this.btnRellenar.Size = new System.Drawing.Size(203, 23);
-			this.btnRellenar.TabIndex = 12;
-			this.btnRellenar.Text = "Rellenar w/palabras";
-			this.btnRellenar.UseVisualStyleBackColor = true;
-			this.btnRellenar.Click += new System.EventHandler(this.btnRellenar_Click);
+			this.btnLimpiar.Location = new System.Drawing.Point(76, 79);
+			this.btnLimpiar.Name = "btnLimpiar";
+			this.btnLimpiar.Size = new System.Drawing.Size(75, 23);
+			this.btnLimpiar.TabIndex = 13;
+			this.btnLimpiar.Text = "Limpiar todo";
+			this.btnLimpiar.UseVisualStyleBackColor = true;
+			this.btnLimpiar.Click += new System.EventHandler(this.btnLimpiar_Click);
 			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.AutoScroll = true;
-			this.ClientSize = new System.Drawing.Size(1307, 608);
+			this.ClientSize = new System.Drawing.Size(1307, 640);
 			this.Controls.Add(this.groupBox4);
 			this.Controls.Add(this.groupBox3);
 			this.Controls.Add(this.groupBox2);
@@ -359,6 +372,7 @@
 		private System.Windows.Forms.RichTextBox rhcAnalisisLexico;
 		private System.Windows.Forms.Label label7;
 		private System.Windows.Forms.Button btnRellenar;
+		private System.Windows.Forms.Button btnLimpiar;
 	}
 }
 
