@@ -17,14 +17,14 @@ SE ( _x RSQ 2 )
 :0 DUM 0:
 | DUM ( _x RSQ 5 ) 
 | SKR ( _x ) ||
-| _x = _x +1 ||
+| _x = _x + 1 ||
 ||
 
 :0 Far 0:
 | FAR
-| SKR ( _x) ||
-| _x = _x +1 ||
-DUM( _x RSQ 5 )||
+| SKR ( _x ) ||
+| _x = _x + 1 ||
+DUM ( _x RSQ 5 ) ||
 
 :0 ENT 0:
 | ENT _entero1 = 1 ||
@@ -38,16 +38,16 @@ FALSA
 :0 KAZ SXA ROM 0:
 
 SXA ( _entero1 )
-| KAZ 1:
+| KAZ 1 :
 | SKR ( "El valor es 1" ) ||
 | ROM ||
 ||
-| KAZ 2:
+| KAZ 2 :
 | SKR ( "El valor es 2" ) ||
 | ROM ||
 ||
 | ALI
-| SKR( "Esta vacio" ) ||
+| SKR ( "Esta vacio" ) ||
 | ROM ||
 ||
 ||
@@ -58,7 +58,7 @@ KAP ( _Variable1 )
 :0 KLA 0:
 KLA _claseprueba 
 |
-_claseprueba () 
+_claseprueba ( ) 
 |
 | _x = 0 ||
 | _valor = _x + _y ||
@@ -75,21 +75,21 @@ _claseprueba ()
 | LEG ( 1000 ) ||
 
 :0 MAT 0:
-| MAT ent[] _arreglo = NOV ent[2] ||
-| _arreglo[1] = 323 ||
-| SKR( "Res " + _arreglo[1] ) ||
+| MAT ent [ ] _arreglo = NOV ent [ 2 ] ||
+| _arreglo [ 1 ] = 323 ||
+| SKR ( "Res " + _arreglo [ 1 ] ) ||
 
-0: POR 0:
+:0 POR 0:
 | POR ( | ent _i = 0 ||
 | _i RSQ 5 ||
-| _i++ || )
+| _i ++ || )
 | SKR ( "Res" + _i ) ||
 ||
 
 :0 PRX 0:
 PRX ( ent _val _arreglo1 )
 |
-| skr( "tc: " + _var ) ||
+| skr ( "tc: " + _var ) ||
 ||
 
 :0 REA 0:
@@ -97,5 +97,3 @@ PRX ( ent _val _arreglo1 )
 
 :0 SXN 0:
 | SXN _cadena = "Hola" ||
-
-

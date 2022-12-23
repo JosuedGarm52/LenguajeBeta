@@ -5,4 +5,5 @@ a
 1.1.1 Lexico basico
 1.1.2 Arreglo del lexico
 1.1.3 Lexico funcional pero puede ser mejor
-1.2.1 Mejora 1.2 |Una mejora significativa pero falto un poco mas xd
+1.2.1 Mejora 1.2 | Una mejora significativa pero falto un poco mas y unos retoques xd
+1.2.2 Lexico funcionando | aparentemente 
