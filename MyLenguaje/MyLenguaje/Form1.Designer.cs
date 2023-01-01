@@ -53,6 +53,8 @@
 			this.groupBox4 = new System.Windows.Forms.GroupBox();
 			this.rhcAnalisisLexico = new System.Windows.Forms.RichTextBox();
 			this.label7 = new System.Windows.Forms.Label();
+			this.label8 = new System.Windows.Forms.Label();
+			this.rchAnalisisSintactico = new System.Windows.Forms.RichTextBox();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox3.SuspendLayout();
@@ -77,6 +79,7 @@
 			this.rchTexto.Size = new System.Drawing.Size(306, 211);
 			this.rchTexto.TabIndex = 1;
 			this.rchTexto.Text = "";
+			this.rchTexto.WordWrap = false;
 			this.rchTexto.TextChanged += new System.EventHandler(this.rchTexto_TextChanged);
 			// 
 			// rchLexico
@@ -84,6 +87,7 @@
 			this.rchLexico.BackColor = System.Drawing.SystemColors.MenuHighlight;
 			this.rchLexico.Location = new System.Drawing.Point(330, 37);
 			this.rchLexico.Name = "rchLexico";
+			this.rchLexico.ReadOnly = true;
 			this.rchLexico.Size = new System.Drawing.Size(265, 211);
 			this.rchLexico.TabIndex = 2;
 			this.rchLexico.Text = "";
@@ -189,6 +193,7 @@
 			this.groupBox2.TabIndex = 11;
 			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Botones";
+			this.groupBox2.Enter += new System.EventHandler(this.groupBox2_Enter);
 			// 
 			// btnLimpiar
 			// 
@@ -297,11 +302,13 @@
 			// 
 			// groupBox4
 			// 
+			this.groupBox4.Controls.Add(this.rchAnalisisSintactico);
+			this.groupBox4.Controls.Add(this.label8);
 			this.groupBox4.Controls.Add(this.rhcAnalisisLexico);
 			this.groupBox4.Controls.Add(this.label7);
 			this.groupBox4.Location = new System.Drawing.Point(902, 12);
 			this.groupBox4.Name = "groupBox4";
-			this.groupBox4.Size = new System.Drawing.Size(200, 269);
+			this.groupBox4.Size = new System.Drawing.Size(200, 493);
 			this.groupBox4.TabIndex = 13;
 			this.groupBox4.TabStop = false;
 			this.groupBox4.Text = "Caja de analisis";
@@ -311,7 +318,7 @@
 			this.rhcAnalisisLexico.BackColor = System.Drawing.Color.Orange;
 			this.rhcAnalisisLexico.Location = new System.Drawing.Point(10, 49);
 			this.rhcAnalisisLexico.Name = "rhcAnalisisLexico";
-			this.rhcAnalisisLexico.Size = new System.Drawing.Size(184, 128);
+			this.rhcAnalisisLexico.Size = new System.Drawing.Size(184, 199);
 			this.rhcAnalisisLexico.TabIndex = 1;
 			this.rhcAnalisisLexico.Text = "";
 			// 
@@ -324,6 +331,27 @@
 			this.label7.TabIndex = 0;
 			this.label7.Text = "Lexico";
 			// 
+			// label8
+			// 
+			this.label8.AutoSize = true;
+			this.label8.Location = new System.Drawing.Point(6, 257);
+			this.label8.Name = "label8";
+			this.label8.Size = new System.Drawing.Size(54, 13);
+			this.label8.TabIndex = 2;
+			this.label8.Text = "Sintactico";
+			this.label8.Click += new System.EventHandler(this.label8_Click);
+			// 
+			// rchAnalisisSintactico
+			// 
+			this.rchAnalisisSintactico.BackColor = System.Drawing.Color.Orange;
+			this.rchAnalisisSintactico.Location = new System.Drawing.Point(10, 285);
+			this.rchAnalisisSintactico.Name = "rchAnalisisSintactico";
+			this.rchAnalisisSintactico.ReadOnly = true;
+			this.rchAnalisisSintactico.Size = new System.Drawing.Size(184, 202);
+			this.rchAnalisisSintactico.TabIndex = 3;
+			this.rchAnalisisSintactico.Text = "";
+			this.rchAnalisisSintactico.WordWrap = false;
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -335,7 +363,9 @@
 			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.groupBox1);
 			this.Name = "Form1";
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "Analisis de lenguaje";
+			this.Load += new System.EventHandler(this.Form1_Load);
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox1.PerformLayout();
 			this.groupBox2.ResumeLayout(false);
@@ -374,6 +404,8 @@
 		private System.Windows.Forms.Label label7;
 		private System.Windows.Forms.Button btnRellenar;
 		private System.Windows.Forms.Button btnLimpiar;
+		private System.Windows.Forms.RichTextBox rchAnalisisSintactico;
+		private System.Windows.Forms.Label label8;
 	}
 }
 
