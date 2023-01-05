@@ -51,10 +51,11 @@
 			this.rchConsola2 = new System.Windows.Forms.RichTextBox();
 			this.rchConsola1 = new System.Windows.Forms.RichTextBox();
 			this.groupBox4 = new System.Windows.Forms.GroupBox();
+			this.rchAnalisisSintactico = new System.Windows.Forms.RichTextBox();
+			this.label8 = new System.Windows.Forms.Label();
 			this.rhcAnalisisLexico = new System.Windows.Forms.RichTextBox();
 			this.label7 = new System.Windows.Forms.Label();
-			this.label8 = new System.Windows.Forms.Label();
-			this.rchAnalisisSintactico = new System.Windows.Forms.RichTextBox();
+			this.chbMensaje = new System.Windows.Forms.CheckBox();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox3.SuspendLayout();
@@ -180,6 +181,7 @@
 			// 
 			// groupBox2
 			// 
+			this.groupBox2.Controls.Add(this.chbMensaje);
 			this.groupBox2.Controls.Add(this.btnLimpiar);
 			this.groupBox2.Controls.Add(this.btnRellenar);
 			this.groupBox2.Controls.Add(this.btnComprobar);
@@ -313,6 +315,27 @@
 			this.groupBox4.TabStop = false;
 			this.groupBox4.Text = "Caja de analisis";
 			// 
+			// rchAnalisisSintactico
+			// 
+			this.rchAnalisisSintactico.BackColor = System.Drawing.Color.Orange;
+			this.rchAnalisisSintactico.Location = new System.Drawing.Point(10, 285);
+			this.rchAnalisisSintactico.Name = "rchAnalisisSintactico";
+			this.rchAnalisisSintactico.ReadOnly = true;
+			this.rchAnalisisSintactico.Size = new System.Drawing.Size(184, 202);
+			this.rchAnalisisSintactico.TabIndex = 3;
+			this.rchAnalisisSintactico.Text = "";
+			this.rchAnalisisSintactico.WordWrap = false;
+			// 
+			// label8
+			// 
+			this.label8.AutoSize = true;
+			this.label8.Location = new System.Drawing.Point(6, 257);
+			this.label8.Name = "label8";
+			this.label8.Size = new System.Drawing.Size(54, 13);
+			this.label8.TabIndex = 2;
+			this.label8.Text = "Sintactico";
+			this.label8.Click += new System.EventHandler(this.label8_Click);
+			// 
 			// rhcAnalisisLexico
 			// 
 			this.rhcAnalisisLexico.BackColor = System.Drawing.Color.Orange;
@@ -331,26 +354,16 @@
 			this.label7.TabIndex = 0;
 			this.label7.Text = "Lexico";
 			// 
-			// label8
+			// chbMensaje
 			// 
-			this.label8.AutoSize = true;
-			this.label8.Location = new System.Drawing.Point(6, 257);
-			this.label8.Name = "label8";
-			this.label8.Size = new System.Drawing.Size(54, 13);
-			this.label8.TabIndex = 2;
-			this.label8.Text = "Sintactico";
-			this.label8.Click += new System.EventHandler(this.label8_Click);
-			// 
-			// rchAnalisisSintactico
-			// 
-			this.rchAnalisisSintactico.BackColor = System.Drawing.Color.Orange;
-			this.rchAnalisisSintactico.Location = new System.Drawing.Point(10, 285);
-			this.rchAnalisisSintactico.Name = "rchAnalisisSintactico";
-			this.rchAnalisisSintactico.ReadOnly = true;
-			this.rchAnalisisSintactico.Size = new System.Drawing.Size(184, 202);
-			this.rchAnalisisSintactico.TabIndex = 3;
-			this.rchAnalisisSintactico.Text = "";
-			this.rchAnalisisSintactico.WordWrap = false;
+			this.chbMensaje.AutoSize = true;
+			this.chbMensaje.Location = new System.Drawing.Point(354, 76);
+			this.chbMensaje.Name = "chbMensaje";
+			this.chbMensaje.Size = new System.Drawing.Size(110, 17);
+			this.chbMensaje.TabIndex = 14;
+			this.chbMensaje.Text = "Proceso de lexico";
+			this.chbMensaje.UseVisualStyleBackColor = true;
+			this.chbMensaje.CheckedChanged += new System.EventHandler(this.chbMensaje_CheckedChanged);
 			// 
 			// Form1
 			// 
@@ -369,6 +382,7 @@
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox1.PerformLayout();
 			this.groupBox2.ResumeLayout(false);
+			this.groupBox2.PerformLayout();
 			this.groupBox3.ResumeLayout(false);
 			this.groupBox3.PerformLayout();
 			this.groupBox4.ResumeLayout(false);
@@ -406,6 +420,7 @@
 		private System.Windows.Forms.Button btnLimpiar;
 		private System.Windows.Forms.RichTextBox rchAnalisisSintactico;
 		private System.Windows.Forms.Label label8;
+		private System.Windows.Forms.CheckBox chbMensaje;
 	}
 }
 

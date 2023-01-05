@@ -1,1 +1,5 @@
-:0 Se 0: | SE ( _x RSQ 2 ) | | SKR ( "X es mayor que 2" ) || || ALI | | SKR ( "X es menor que 2" ) || || ||
+:0 DUM 0:
+| DUM ( _x RSQ 5 ) 
+    | SKR ( _x ) ||
+    | _x = _x + 1 ||
+||
