@@ -9,3 +9,4 @@ a
 1.2.2 Lexico funcionando | aparentemente 
 1.3.1 Prueba Sint exito | Se logro su funcionamiento con se ali y skr ademas de parchar errores.
 1.3.2 Plantilla lista con detalles
+1.4.1 Correcion y detalles | inclusion de metodo y nuegos bugs

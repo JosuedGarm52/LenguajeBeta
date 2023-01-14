@@ -69,6 +69,8 @@ namespace MyLenguaje
 					rchConsola1.Text = "Exito";
 					rchConsola2.Text = "";
 					rchConsola3.Text = "";
+					rchLexico.Text = "";
+					rchSintactico.Text = "";
 					string codigo2 = "";
 					int y = 0;
 					
@@ -161,6 +163,7 @@ namespace MyLenguaje
 							else
 							{
 								string ced = "_" + ascii[y];
+								
 								posicion = reader[ced].ToString();
 								letraAnt = codigo[y];
 								listo = true;
@@ -346,6 +349,8 @@ namespace MyLenguaje
 			rchSintactico.Text = "";
 			if (!String.IsNullOrWhiteSpace(rchLexico.Text) || !String.IsNullOrEmpty(rchLexico.Text))
 			{
+				string MensajeError = "";
+				string MensajeError2 = "";
 				try
 				{
 					bool final = true;
@@ -424,6 +429,9 @@ namespace MyLenguaje
 						string cat = "";
 						bool Finalizo = false;
 						int compVuelta = 0;
+						bool modoBloque = false;
+						string UltDec = "";
+						bool Bloc = false;
 						bool NSe = false, NDum = false, NEnt = false ,NFar = false,NKap = false,NKar = false, NKla = false, NLeg = false, NLog = false, NMat = false, NPor = false, NPrx = false, NRea = false, NRev = false,NSkr = false, NSxa = false, NSxn = false,NObj = false ;
 						do
 						{
@@ -485,6 +493,7 @@ namespace MyLenguaje
 										}
 									}
 								}
+								MensajeError = "s: " + s + " -CompVuelta: " + compVuelta + " -UltPalabra: " + codigo[s] + " -UltimoMetodo: " ;
 								if (posicion >= 13)
 								{
 									//MAT 2
@@ -493,8 +502,8 @@ namespace MyLenguaje
 										&& codigo[s + 2] == "ARG65"
 										&& codigo[s + 3] == "CEX["
 										&& codigo[s + 4] == "CEX]"
-										&& codigo[s + 5] == "ARG63"
-										&& codigo[s + 6] == "CEX="
+						&& codigo[s + 5].Substring(0,2) == "ID"
+										&& codigo[s + 6] == "ASIG"
 										&& codigo[s + 7] == "PR14"
 										&& codigo[s + 8] == "ARG65"
 										&& codigo[s + 9] == "CEX["
@@ -533,7 +542,7 @@ namespace MyLenguaje
 						&& codigo[s + 2].Substring(0,2) == "ID"
 										&& codigo[s + 3] == "CEX{"
 						&& codigo[s + 4].Substring(0, 2) == "ID"
-										&& codigo[s + 5] == "CEX="
+										&& codigo[s + 5] == "ASIG"
 										&& codigo[s + 6] == "PR14"
 						&& codigo[s + 7].Substring(0, 2) == "ID"
 										&& codigo[s + 8] == "CEX("
@@ -608,7 +617,7 @@ namespace MyLenguaje
 										&& codigo[s + 5] == "P16R3"
 										&& codigo[s + 6] == "CEX)"
 										&& codigo[s + 7] == "INIS"
-										&& codigo[s + 8] == "BLOXX5"
+										&& codigo[s + 8] == "BLOXX7"
 										&& codigo[s + 9] == "FIIN"
 										&& codigo[s + 10] == "FIIN")
 									{
@@ -636,14 +645,15 @@ namespace MyLenguaje
 									if (codigo[s + 0] == "INIS"
 										&& codigo[s + 1] == "PR06"
 										&& codigo[s + 2] == "INIS"
-										&& codigo[s + 3] == "BLOXX3"
+										&& codigo[s + 3] == "BLOXX2"
 										&& codigo[s + 4] == "FIIN"
 										&& codigo[s + 5] == "PR03"
 										&& codigo[s + 6] == "CEX("
-										&& codigo[s + 7] == "ARG36"
+										&& codigo[s + 7] == "ARG36" || codigo[s + 7] == "ARG25"
 										&& codigo[s + 8] == "CEX)"
 										&& codigo[s + 8] == "FIIN")
 									{
+										
 										UltVar = "";
 										sinCambios = 0;
 										codigo[s + 0] = "SPR06";
@@ -669,7 +679,7 @@ namespace MyLenguaje
 										&& codigo[s + 3] == "CEX["
 										&& codigo[s + 4] == "CEX]"
 										&& codigo[s + 5] == "ARG63"
-										&& codigo[s + 6] == "CEX="
+										&& codigo[s + 6] == "ASIG"
 										&& codigo[s + 7] == "ARG67"
 										&& codigo[s + 8] == "FIIN")
 									{
@@ -700,7 +710,7 @@ namespace MyLenguaje
 										&& codigo[s + 4] == "P16R2"
 										&& codigo[s + 5] == "P16R3"
 										&& codigo[s + 6] == "CEX)"
-										&& codigo[s + 7] == "BLOXX5"
+										&& codigo[s + 7] == "BLOXX7"
 										&& codigo[s + 8] == "FIIN")
 									{
 										UltVar = "";
@@ -726,9 +736,9 @@ namespace MyLenguaje
 									//PRX
 									if (codigo[s + 0] == "PR17"
 										&& codigo[s + 1] == "CEX("
-										&& codigo[s + 2] == "TIPO"
-										&& codigo[s + 3] == "ARG90"
-										&& codigo[s + 4] == "ARG90"
+										&& codigo[s + 2] == "ARG91"
+										&& codigo[s + 3].Substring(0,2) == "ID"
+										&& codigo[s + 4].Substring(0,2) == "ID"
 										&& codigo[s + 5] == "CEX)"
 										&& codigo[s + 6] == "INIS"
 										&& codigo[s + 7] == "BLOXX6"
@@ -786,10 +796,10 @@ namespace MyLenguaje
 									//FAR
 									if (codigo[s + 0] == "INIS"
 										&& codigo[s + 1] == "PR04"
-										&& codigo[s + 2] == "BLOXX3"
+										&& codigo[s + 2] == "BLOXX2"
 										&& codigo[s + 3] == "PR03"
 										&& codigo[s + 4] == "CEX("
-										&& codigo[s + 5] == "ARG36"
+										&& codigo[s + 5] == "ARG36" || codigo[s + 5] == "ARG25"
 										&& codigo[s + 6] == "CEX("
 										&& codigo[s + 7] == "FIIN")
 									{
@@ -809,9 +819,10 @@ namespace MyLenguaje
 										}
 										cat += "Far - Exito \n";
 										break;
-									}else
+									}
+									else
 									//Sxa Kaz 2
-									if(codigo[s + 0] == "INIS"
+									if (codigo[s + 0] == "INIS"
 										&& codigo[s + 1] == "PR08"
 										&& codigo[s + 2] == "ARG53"
 										&& codigo[s + 3] == "CEX:"
@@ -830,11 +841,64 @@ namespace MyLenguaje
 										codigo[s + 5] = "";
 										codigo[s + 6] = "";
 										codigo[s + 7] = "";
-										
+
 										cat += "SXA/KAZ - Exito \n";
 										break;
 									}
-									
+									else
+									//FAR 4
+									if (codigo[s + 0] == "INIS"
+										&& codigo[s + 1] == "PR06"
+										&& codigo[s + 2] == "INIS"
+										&& codigo[s + 3] == "BLOXX2"
+										&& codigo[s + 4] == "FIIN"
+										&& codigo[s + 5] == "PR03"
+										&& codigo[s + 6] == "ARG36" || codigo[s + 6] == "ARG25"
+										&& codigo[s + 7] == "FIIN")
+									{
+										UltVar = "";
+										sinCambios = 0;
+										codigo[s + 0] = "SPR06";
+										codigo[s + 1] = "";
+										codigo[s + 2] = "";
+										codigo[s + 3] = "";
+										codigo[s + 4] = "";
+										codigo[s + 5] = "";
+										codigo[s + 6] = "";
+										codigo[s + 7] = "";
+
+										cat += "FAR - Exito \n";
+										break;
+									}
+									else
+									//SXA KAZ 2
+									if (codigo[s + 0] == "INIS"
+										&& codigo[s + 1] == "PR08"
+										&& codigo[s + 2] == "ARG53"
+										&& codigo[s + 3] == "CEX:"
+										&& codigo[s + 4] =="INIS"
+										&& codigo[s + 5] == "BLOXX4"
+										&& codigo[s + 6] == "FIIN"
+										&& codigo[s + 7] == "FIIN")
+									{
+										UltVar = "";
+										sinCambios = 0;
+										codigo[s + 0] = "CASOS";
+										codigo[s + 1] = "";
+										codigo[s + 2] = "";
+										codigo[s + 3] = "";
+										codigo[s + 4] = "";
+										codigo[s + 5] = "";
+										codigo[s + 6] = "";
+										codigo[s + 7] = "";
+										if (NSxa)
+										{
+											NSxa = false;
+										}
+										cat += "Sxa/Kaz - Exito\n";
+										break;
+									}
+
 								}
 
 								if (posicion >= 7)
@@ -917,32 +981,49 @@ namespace MyLenguaje
 										break;
 									}
 									else
-									//SXN 2
+									//DUM 4
 									if (codigo[s + 0] == "INIS"
-										&& codigo[s + 1] == "PR23"
-										&& codigo[s + 2] == "CEX("
-										&& codigo[s + 3] == "CDNA"
-										&& codigo[s + 4] == "AGR20"
-										&& codigo[s + 5] == "CEX)"
+										&& codigo[s + 1] == "PR03"
+										&& codigo[s + 2] == "ARG25"
+										&& codigo[s + 3] == "INIS"
+										&& codigo[s + 4] == "BLOXX2"
+										&& codigo[s + 5] == "FIIN"
 										&& codigo[s + 6] == "FIIN")
 									{
 										UltVar = "";
 										sinCambios = 0;
-										codigo[s] = "SPR23";
+										codigo[s] = "SPR03";
 										codigo[s + 2] = "";
 										codigo[s + 1] = "";
 										codigo[s + 3] = "";
 										codigo[s + 4] = "";
 										codigo[s + 5] = "";
 										codigo[s + 6] = "";
-										if (NSxn)
-										{
-											NSxn = false;
-										}
-										cat += "Sxn - Exito \n";
+										cat += "Dum - Exito \n";
+										break;
+									}else
+									//SXA SXA
+									if (codigo[s + 0] == "INIS"
+										&& codigo[s + 1] == "PR22"
+										&& codigo[s + 2] == "CEX("
+										&& codigo[s + 3] == "ARG53"
+										&& codigo[s + 4] == "CEX)"
+										&& codigo[s + 5] == "CASOS"
+										&& codigo[s + 6] == "FIIN")
+									{
+										UltVar = "";
+										sinCambios = 0;
+										codigo[s + 0] = "SPR22";
+										codigo[s + 1] = "";
+										codigo[s + 2] = "";
+										codigo[s + 3] = "";
+										codigo[s + 4] = "";
+										codigo[s + 5] = "";
+										codigo[s + 6] = "";
+										cat += "Sxa/Sxa - Exito\n";
 										break;
 									}
-									
+
 								}
 
 								if (posicion >= 6)
@@ -1019,30 +1100,7 @@ namespace MyLenguaje
 										break;
 									}
 									else
-									//LOG 2
-									if (codigo[s + 0] == "INIS"
-										&& codigo[s + 1] == "PR11"
-										&& codigo[s + 2] == "AGR3"
-										&& codigo[s + 3] == "CEX="
-										&& codigo[s + 4] == "BLN"
-										&& codigo[s + 5] == "FIIN")
-									{
-										UltVar = "";
-										sinCambios = 0;
-										codigo[s + 0] = "SPR11";
-										codigo[s + 1] = "";
-										codigo[s + 2] = "";
-										codigo[s + 3] = "";
-										codigo[s + 4] = "";
-										codigo[s + 5] = "";
-										if (NLog)
-										{
-											NLog = false;
-										}
-										cat += "Log - Exito\n";
-										break;
-									}
-									else
+									
 									//REV
 									if (codigo[s + 0] == "INIS"
 										&& codigo[s + 1] == "PR19"
@@ -1095,13 +1153,13 @@ namespace MyLenguaje
 									if (codigo[s + 0] == "INIS"
 										&& codigo[s + 1] == "PR22"
 										&& codigo[s + 2] == "CEX("
-										&& codigo[s + 3] == "ARG55"
+										&& codigo[s + 3] == "ARG53"
 										&& codigo[s + 4] == "CEX)"
 										&& codigo[s + 5] == "FIIN")
 									{
 										UltVar = "";
 										sinCambios = 0;
-										codigo[s + 0] = "SPR19";
+										codigo[s + 0] = "SPR22";
 										codigo[s + 1] = "";
 										codigo[s + 2] = "";
 										codigo[s + 3] = "";
@@ -1125,7 +1183,7 @@ namespace MyLenguaje
 									{
 										UltVar = "";
 										sinCambios = 0;
-										codigo[s + 0] = "SPR08";
+										codigo[s + 0] = "CASOS";
 										codigo[s + 1] = "";
 										codigo[s + 2] = "";
 										codigo[s + 3] = "";
@@ -1139,29 +1197,6 @@ namespace MyLenguaje
 										break;
 									}
 									else
-									//SXN 1
-									if (codigo[s + 0] == "INIS"
-										&& codigo[s + 1] == "PR23"
-										&& codigo[s + 2] == "CEX("
-										&& codigo[s + 3] == "CDNA"
-										&& codigo[s + 4] == "CEX)"
-										&& codigo[s + 5] == "FIIN")
-									{
-										UltVar = "";
-										sinCambios = 0;
-										codigo[s + 0] = "SPR23";
-										codigo[s + 1] = "";
-										codigo[s + 2] = "";
-										codigo[s + 3] = "";
-										codigo[s + 4] = "";
-										codigo[s + 5] = "";
-										if (NSxn)
-										{
-											NSxn = false;
-										}
-										cat += "Sxn - Exito";
-										break;
-									}else
 									//Sxa Ali 2
 									if (codigo[s + 0] == "INIS"
 										&& codigo[s + 1] == "PR01"
@@ -1207,6 +1242,27 @@ namespace MyLenguaje
 											NSkr = false;
 										}
 										cat += "SKR - Exito\n";
+										break;
+									}
+									else
+									//FAR 3
+									if (codigo[s + 0] == "INIS"
+										&& codigo[s + 1] == "PR06"
+										&& codigo[s + 2] == "BLOXX2"
+										&& codigo[s + 3] == "PR03"
+										&& codigo[s + 4] == "ARG36" || codigo[s + 4] == "ARG25"
+										&& codigo[s + 5] == "FIIN")
+									{
+										UltVar = "";
+										sinCambios = 0;
+										codigo[s + 0] = "SPR06";
+										codigo[s + 1] = "";
+										codigo[s + 2] = "";
+										codigo[s + 3] = "";
+										codigo[s + 4] = "";
+										codigo[s + 5] = "";
+										
+										cat += "FAR - Exito\n";
 										break;
 									}
 								}
@@ -1255,15 +1311,53 @@ namespace MyLenguaje
 										}
 										cat += "Kla - Exito\n";
 										break;
+									}else
+									//DUM 3
+									if (codigo[s + 0] == "INIS"
+										&& codigo[s + 1] == "PR03"
+										&& codigo[s + 2] == "ARG25"
+										&& codigo[s + 3] == "BLOXX2"
+										&& codigo[s + 4] == "FIIN")
+									{
+										UltVar = "";
+										sinCambios = 0;
+										codigo[s + 0] = "SPR03";
+										codigo[s + 1] = "";
+										codigo[s + 2] = "";
+										codigo[s + 3] = "";
+										codigo[s + 4] = "";
+										
+										cat += "Dum - Exito\n";
+										break;
 									}
 								}
 
 								if (posicion >= 4)
 								{
-									//ENT 
+									//ENT 1
 									if (codigo[s + 0] == "INIS"
 										&& codigo[s + 1] == "PR04"
 										&& codigo[s + 2] == "DECP1"
+										&& codigo[s + 3] == "FIIN")
+									{
+										UltVar = "";
+										sinCambios = 0;
+										codigo[s + 0] = "SPR04";
+										codigo[s + 1] = "";
+										codigo[s + 2] = "";
+										codigo[s + 3] = "";
+										if (NEnt)
+										{
+											NEnt = false;
+										}
+										cat += "Ent - Exito\n";
+										break;
+									}
+									else
+									//ENT 2
+									if (codigo[s + 0] == "INIS"
+										&& codigo[s + 1] == "PR04"
+										&& codigo[s + 2] == "ARG31"
 										&& codigo[s + 3] == "FIIN")
 									{
 										UltVar = "";
@@ -1320,10 +1414,10 @@ namespace MyLenguaje
 										break;
 									}
 									else
-									//LOG 1
+									//LOG 
 									if (codigo[s + 0] == "INIS"
 										&& codigo[s + 1] == "PR11"
-										&& codigo[s + 2] == "AGR3"
+										&& codigo[s + 2] == "DECP3"
 										&& codigo[s + 3] == "FIIN")
 									{
 										UltVar = "";
@@ -1342,14 +1436,14 @@ namespace MyLenguaje
 									else
 									//REA
 									if (codigo[s + 0] == "INIS"
-										&& codigo[s + 1] == "PR07"
-										&& codigo[s + 2] == "DECP3"
+										&& codigo[s + 1] == "PR18"
+										&& codigo[s + 2] == "DECP4"
 										&& codigo[s + 3] == "FIIN")
 									{
 										UltVar = "";
 										sinCambios = 0;
 
-										codigo[s + 0] = "SPR07";
+										codigo[s + 0] = "SPR18";
 										codigo[s + 1] = "";
 										codigo[s + 2] = "";
 										codigo[s + 3] = "";
@@ -1362,14 +1456,14 @@ namespace MyLenguaje
 									}
 									else
 									//SXA ALI/DEFAULT
-									if (codigo[s + 0] == "INIS"
-										&& codigo[s + 1] == "PR01"
+									if (codigo[s + 0] == "PR01"
+										&& codigo[s + 1] == "INIS"
 										&& codigo[s + 2] == "BLOXX4"
 										&& codigo[s + 3] == "FIIN")
 									{
 										UltVar = "";
 										sinCambios = 0;
-										codigo[s + 0] = "SPR01";
+										codigo[s + 0] = "ALI";
 										codigo[s + 1] = "";
 										codigo[s + 2] = "";
 										codigo[s + 3] = "";
@@ -1378,6 +1472,84 @@ namespace MyLenguaje
 											NSxa = false;
 										}
 										cat += "Sxa/Ali - Exito\n";
+										break;
+									}else
+									//KAP 2
+									if (codigo[s + 0] == "INIS"
+										&& codigo[s + 1] == "PR09"
+										&& codigo[s + 2] == "ARG58"
+										&& codigo[s + 3] == "FIIN")
+									{
+										UltVar = "";
+										sinCambios = 0;
+										codigo[s + 0] = "SPR09";
+										codigo[s + 1] = "";
+										codigo[s + 2] = "";
+										codigo[s + 3] = "";
+										cat += "KAP - Exito\n";
+										break;
+									}
+									else
+									//LEG 2
+									if (codigo[s + 0] == "INIS"
+										&& codigo[s + 1] == "PR12"
+										&& codigo[s + 2] == "ARG63"
+										&& codigo[s + 3] == "FIIN")
+									{
+										UltVar = "";
+										sinCambios = 0;
+										codigo[s + 0] = "SPR12";
+										codigo[s + 1] = "";
+										codigo[s + 2] = "";
+										codigo[s + 3] = "";
+										cat += "LEG - Exito\n";
+										break;
+									}else
+									//SXN
+									if (codigo[s + 0] == "INIS"
+										&& codigo[s + 1] == "PR23"
+										&& codigo[s + 2] == "DECP5"
+										&& codigo[s + 3] == "FIIN")
+									{
+										UltVar = "";
+										sinCambios = 0;
+										codigo[s + 0] = "SPR23";
+										codigo[s + 1] = "";
+										codigo[s + 2] = "";
+										codigo[s + 3] = "";
+										cat += "LEG - Exito\n";
+										break;
+									}
+									else
+									//Metodo 1 SIMT
+									if (codigo[s + 0] == "MARG1"
+										&& codigo[s + 1] == "MDEC"
+										&& codigo[s + 2] == "CEX)"
+										&& codigo[s + 3] == "BRMT")
+									{
+										UltVar = "";
+										sinCambios = 0;
+										codigo[s + 0] = "SIMT";
+										codigo[s + 1] = "";
+										codigo[s + 2] = "";
+										codigo[s + 3] = "";
+										cat += "METODO - Exito\n";
+										break;
+									}
+									else
+									//Metodo 4 SIMV
+									if (codigo[s + 0] == "PR27"
+										&& codigo[s + 1] == "MDEC"
+										&& codigo[s + 2] == "CEX)"
+										&& codigo[s + 3] == "BMET")
+									{
+										UltVar = "";
+										sinCambios = 0;
+										codigo[s + 0] = "SIMV";
+										codigo[s + 1] = "";
+										codigo[s + 2] = "";
+										codigo[s + 3] = "";
+										cat += "METODO - Exito\n";
 										break;
 									}
 								}
@@ -1400,16 +1572,72 @@ namespace MyLenguaje
 										cat += "Sxa/Rom - Exito\n";
 										break;
 									}
+									
+								}
+								if (posicion >= 2)
+								{
+									////METODO 5 SDMT
+									//if (codigo[s + 0] == "MDEC"
+									//&& codigo[s + 1] == "CEX)")
+									//{
+									//	UltVar = "";
+									//	sinCambios = 0;
+									//	codigo[s + 0] = "SDMT";
+									//	codigo[s + 1] = "";
+									//	//cat += "Sxa/Rom - Exito\n";
+									//	break;
+									//}
+								}
+								if (codigo[s] == "")//Para cualquier imprevisto
+								{
+									break;
+								}
+								if(codigo[s] == "FIIN")
+								{
+									modoBloque = true;
+								}
+								//PRX
+								if (codigo[s] == "PR17")
+								{
+									NPrx = true;
+									UltVar = "PR17";
+								}
+								if (UltVar == "PR17")
+								{
+									MensajeError2 = "PRX";
+									//ARG91
+									if (EsIgual(codigo[s], "PR04", "PR07", "PR11", "PR14", "PR18", "PR23"))
+									{
+										sinCambios = 0;
+										codigo[s] = "ARG91";
+										if (s != 0) { s--; }
+									}
+									//BLOXX6
+									if (EsIgual(codigo[s], "SPR01", "SPR02", "SPR21", "SPR24", "SPR03", "SPR06", "SPR08", "SPR09", "SPR22", "SPR20", "SPR16", "DECX6"))
+									{
+										sinCambios = 0;
+										codigo[s] = "BLOXX6";
+										if (s != 0) { s--; }
+									}
+									//DECX6
+									//if (EsIgual(codigo[s], "SPR04","SPR07","SPR11","SPR12","SPR13","SPR14","SPR17","SPR18","SPR23"))
+									//{
+									//	sinCambios = 0;
+									//	codigo[s] = "DECX6";
+									//	if(s != 0){s--;}
+									//}
+
+
 								}
 								//SE
-								if(codigo[s] == "PR21")
+								if (codigo[s] == "PR21")
 								{
 									NSe = true;
 									UltVar = "PR21";
 								}
-								if(UltVar == "PR21")
+								if(UltVar == "PR21" )
 								{
-
+									MensajeError2 = "Se";
 									//ARG10
 									if (s >= vuelta && (codigo[s - 2] == "CEX(" && codigo[s - 1] == "ARG10" && codigo[s] == "CEX)"))
 									{
@@ -1562,100 +1790,93 @@ namespace MyLenguaje
 										break;
 									}
 								}
-								//DUM
-								if (codigo[s] == "PR03")
+								
+								
+								//FAR
+								if (codigo[s] == "PR06")
 								{
-									NDum = true;
-									UltVar = "PR03";
+									NDum = false;
+									UltVar = "PR06";
+									modoBloque = true;
 								}
-								if ( UltVar == "PR03")
+								if (UltVar == "PR06")
 								{
-									//ARG25
-									if (s >= vuelta && codigo[s - 2] == "CEX(" && codigo[s - 1] == "ARG25" && codigo[s] == "CEX)")
+									MensajeError2 = "Far";
+									//ARG36
+									if (s >= vuelta && codigo[s - 2] == "CEX(" && codigo[s - 1] == "ARG36" && codigo[s] == "CEX)")
 									{
 										sinCambios = 0;
-										codigo[s - 2] = "ARG25";
+										codigo[s - 2] = "ARG36";
 										codigo[s - 1] = "";
 										codigo[s] = "";
 										break;
 									}
-									//ARG25
-									if( codigo[s] == "ARG28" || codigo[s] == "ARG26")
+									//ARG36
+									if (EsIgual(codigo[s], "ARG37", "ARG39"))
 									{
 										sinCambios = 0;
-										codigo[s] = "ARG25";
+										codigo[s] = "ARG36";
 										if(s != 0){s--;}
 									}
-									//ARG26
-									if (s >= vuelta && codigo[s - 2] == "CEX(" && codigo[s - 1] == "ARG26" && codigo[s] == "CEX)")
+									//ARG39
+									if (s >= vuelta && codigo[s - 2] == "CEX(" && codigo[s - 1] == "ARG39" && codigo[s] == "CEX)")
 									{
 										sinCambios = 0;
-										codigo[s - 2] = "ARG26";
+										codigo[s - 2] = "ARG39";
 										codigo[s - 1] = "";
 										codigo[s] = "";
 										break;
 									}
-									//ARG26 Relx
-									if (s >= vuelta && codigo[s - 2] == "ARG35" && codigo[s] == "ARG35" 
-										&& SiOpRelacional(codigo[s -1]))
+									//ARG39
+									if (s >= vuelta && (EsIgual(codigo[s-2], "CONE", "CONR", "CDNA", "CRTR", "ARG37", "ARG43") || codigo[s-2].Substring(0, 2) == "ID") && (EsIgual(codigo[s], "CONE", "CONR", "CDNA", "CRTR", "ARG37", "ARG43") || codigo[s].Substring(0, 2) == "ID")
+										&& SiOpRelacional(codigo[s - 1]))
 									{
 										sinCambios = 0;
-										codigo[s - 2] = "ARG26";
+										codigo[s - 2] = "ARG39";
 										codigo[s - 1] = "";
 										codigo[s] = "";
 										break;
 									}
-									//ARG28
-									if (s >= vuelta && codigo[s - 2] == "CEX(" && codigo[s - 1] == "ARG28" && codigo[s] == "CEX)")
+									//ARG37
+									if (s >= vuelta && codigo[s - 2] == "CEX(" && codigo[s - 1] == "ARG37" && codigo[s] == "CEX)")
 									{
 										sinCambios = 0;
-										codigo[s - 2] = "ARG28";
+										codigo[s - 2] = "ARG37";
 										codigo[s - 1] = "";
 										codigo[s] = "";
 										break;
 									}
-									//ARG28 Logx
-									if (s >= vuelta && codigo[s - 2] == "ARG35" && codigo[s] == "ARG35"
+									//ARG37
+									if (s >= vuelta 
+										&& (EsIgual(codigo[s-2], "CONE", "CONR", "CDNA", "CRTR", "ARG37", "ARG43") || codigo[s-2].Substring(0, 2) == "ID") 
+										&& (EsIgual(codigo[s], "CONE", "CONR", "CDNA", "CRTR", "ARG37", "ARG43") || codigo[s].Substring(0, 2) == "ID")
 										&& SiOpLogico(codigo[s - 1]))
 									{
 										sinCambios = 0;
-										codigo[s - 2] = "ARG28";
+										codigo[s - 2] = "ARG37";
 										codigo[s - 1] = "";
 										codigo[s] = "";
 										break;
 									}
-									//ARG35 
-									if(EsIgual(codigo[s],"CONE","CONR","CDNA","CRTR","ARG28","ARG30") || codigo[s].Substring(0, 2) == "ID")
+									
+									//ARG43
+									if (s >= vuelta && codigo[s - 2] == "CEX(" && codigo[s - 1] == "ARG43" && codigo[s] == "CEX)")
 									{
 										sinCambios = 0;
-										codigo[s] = "ARG35";
-										if(s != 0){s--;}
-									}
-									//ARG30
-									if (s >= vuelta && codigo[s - 2] == "CEX(" && codigo[s - 1] == "ARG30" && codigo[s] == "CEX)")
-									{
-										sinCambios = 0;
-										codigo[s - 2] = "ARG30";
+										codigo[s - 2] = "ARG43";
 										codigo[s - 1] = "";
 										codigo[s] = "";
 										break;
 									}
-									//ARG30 Aritx
-									if (s >= vuelta && codigo[s - 2] == "ARG32" && codigo[s] == "ARG32"
+									//ARG43
+									if (s >= vuelta && (codigo[s - 2] == "CONE" || codigo[s - 2] == "CONR" || codigo[s - 2] == "ARG43" || codigo[s-2].Substring(0, 2) == "ID") && (codigo[s] == "CONE" || codigo[s] == "CONR" || codigo[s] == "ARG43" || codigo[s].Substring(0, 2) == "ID")
 										&& SiOpAritmetico(codigo[s - 1]))
 									{
 										sinCambios = 0;
-										codigo[s - 2] = "ARG30";
+										codigo[s - 2] = "ARG43";
 										codigo[s - 1] = "";
 										codigo[s] = "";
 										break;
-									}
-									//ARG32
-									if (EsIgual(codigo[s], "CONE", "CONR", "ARG30") || codigo[s].Substring(0, 2) == "ID")
-									{
-										sinCambios = 0;
-										codigo[s] = "ARG35";
-										if(s != 0){s--;}
 									}
 									//BLOXX2
 									if (codigo[s] == "SPR01"
@@ -1691,148 +1912,98 @@ namespace MyLenguaje
 										if(s != 0){s--;}
 									}
 								}
-								//ENT
-								if (codigo[s] == "PR04")
+								//DUM
+
+								if (codigo[s] == "PR03")
 								{
-									NEnt = true;
-									UltVar = "PR04";
+									modoBloque = true;
+									UltVar = "PR03";
 								}
-								if ( UltVar == "PR04")
+								if (UltVar == "PR03" )
 								{
-									//DECP1
-									if (s >= vuelta && codigo[s - 2] == "DECP1" && codigo[s - 1] == "CEX," && codigo[s] == "DECP1")
+									MensajeError2 = "DUM";
+									//ARG25
+									if (s >= vuelta && codigo[s - 2] == "CEX(" && codigo[s - 1] == "ARG25" && codigo[s] == "CEX)")
 									{
 										sinCambios = 0;
-										codigo[s - 2] = "DECP1";
+										codigo[s - 2] = "ARG25";
 										codigo[s - 1] = "";
 										codigo[s] = "";
 										break;
 									}
-									//DECP1
-									if (s >= vuelta && codigo[s - 2].Substring(0, 2) == "ID" && codigo[s - 1] == "CEX=" && (codigo[s] == "ASIGNP1" || codigo[s] == "CONE"))
+									//ARG25
+									if (codigo[s] == "ARG28" || codigo[s] == "ARG26")
 									{
 										sinCambios = 0;
-										codigo[s - 2] = "DECP1";
+										codigo[s] = "ARG25";
+										if (s != 0) { s--; }
+									}
+									//ARG26
+									if (s >= vuelta && codigo[s - 2] == "CEX(" && codigo[s - 1] == "ARG26" && codigo[s] == "CEX)")
+									{
+										sinCambios = 0;
+										codigo[s - 2] = "ARG26";
 										codigo[s - 1] = "";
 										codigo[s] = "";
 										break;
 									}
-									//DECP1
-									if(codigo[s].Substring(0, 2) == "ID")
-									{
-										sinCambios = 0;
-										codigo[s] = "DECP1";
-										if(s != 0){s--;}
-									}
-									//ASIGNP1
-									if (s >= vuelta && codigo[s - 2] == "CEX(" && codigo[s - 1] == "ASIGNP1" && codigo[s] == "CEX)")
-									{
-										sinCambios = 0;
-										codigo[s - 2] = "ASIGNP1";
-										codigo[s - 1] = "";
-										codigo[s] = "";
-										break;
-									}
-									//ASIGNP1
-									if (s >= vuelta && (codigo[s - 2] == "ASIGNP1" || codigo[s - 2] == "CONE") && (codigo[s] == "ASIGNP1" || codigo[s] == "CONE") 
-										&& codigo[s - 1] == "ASIGNP1")
-									{
-										sinCambios = 0;
-										codigo[s - 2] = "ASIGNP1";
-										codigo[s - 1] = "";
-										codigo[s] = "";
-										break;
-									}
-								}
-								//FAR
-								if (codigo[s] == "PR04")
-								{
-									NFar = true;
-									UltVar = "PR04";
-								}
-								if (UltVar == "PR04")
-								{
-									//ARG36
-									if (s >= vuelta && codigo[s - 2] == "CEX(" && codigo[s - 1] == "ARG36" && codigo[s] == "CEX)")
-									{
-										sinCambios = 0;
-										codigo[s - 2] = "ARG36";
-										codigo[s - 1] = "";
-										codigo[s] = "";
-										break;
-									}
-									//ARG36
-									if (EsIgual(codigo[s], "ARG37", "ARG39"))
-									{
-										sinCambios = 0;
-										codigo[s] = "ARG36";
-										if(s != 0){s--;}
-									}
-									//ARG39
-									if (s >= vuelta && codigo[s - 2] == "CEX(" && codigo[s - 1] == "ARG39" && codigo[s] == "CEX)")
-									{
-										sinCambios = 0;
-										codigo[s - 2] = "ARG39";
-										codigo[s - 1] = "";
-										codigo[s] = "";
-										break;
-									}
-									//ARG39
-									if (s >= vuelta && codigo[s - 2] == "ARG40" && codigo[s] == "ARG40"
+									//ARG26 Relx
+									if (s >= vuelta && (EsIgual(codigo[s - 2], "CONE", "CONR", "CDNA", "CRTR", "ARG28", "ARG30") || codigo[s - 2].Substring(0, 2) == "ID") && (EsIgual(codigo[s], "CONE", "CONR", "CDNA", "CRTR", "ARG28", "ARG30") || codigo[s].Substring(0, 2) == "ID")
 										&& SiOpRelacional(codigo[s - 1]))
 									{
 										sinCambios = 0;
-										codigo[s - 2] = "ARG39";
+										codigo[s - 2] = "ARG26";
 										codigo[s - 1] = "";
 										codigo[s] = "";
 										break;
 									}
-									//ARG37
-									if (s >= vuelta && codigo[s - 2] == "CEX(" && codigo[s - 1] == "ARG37" && codigo[s] == "CEX)")
+									//ARG28
+									if (s >= vuelta && codigo[s - 2] == "CEX(" && codigo[s - 1] == "ARG28" && codigo[s] == "CEX)")
 									{
 										sinCambios = 0;
-										codigo[s - 2] = "ARG37";
+										codigo[s - 2] = "ARG28";
 										codigo[s - 1] = "";
 										codigo[s] = "";
 										break;
 									}
-									//ARG37
-									if (s >= vuelta && codigo[s - 2] == "ARG40" && codigo[s] == "ARG40"
+									//ARG28 Logx
+									if (s >= vuelta && (EsIgual(codigo[s - 2], "CONE", "CONR", "CDNA", "CRTR", "ARG28", "ARG30") || codigo[s - 2].Substring(0, 2) == "ID") && (EsIgual(codigo[s], "CONE", "CONR", "CDNA", "CRTR", "ARG28", "ARG30") || codigo[s].Substring(0, 2) == "ID")
 										&& SiOpLogico(codigo[s - 1]))
 									{
 										sinCambios = 0;
-										codigo[s - 2] = "ARG37";
+										codigo[s - 2] = "ARG28";
 										codigo[s - 1] = "";
 										codigo[s] = "";
 										break;
 									}
-									//ARG40
-									if(EsIgual(codigo[s],"CONE","CONR","CDNA","CRTR","ARG37","ARG43") || codigo[s].Substring(0, 2) == "ID")
+
+									//ARG30
+									if (s >= vuelta && codigo[s - 2] == "CEX(" && codigo[s - 1] == "ARG30" && codigo[s] == "CEX)")
 									{
 										sinCambios = 0;
-										codigo[s] = "ARG40";
-										if(s != 0){s--;}
-									}
-									//ARG43
-									if (s >= vuelta && codigo[s - 2] == "CEX(" && codigo[s - 1] == "ARG43" && codigo[s] == "CEX)")
-									{
-										sinCambios = 0;
-										codigo[s - 2] = "ARG43";
+										codigo[s - 2] = "ARG30";
 										codigo[s - 1] = "";
 										codigo[s] = "";
 										break;
 									}
-									//ARG43
-									if (s >= vuelta && (codigo[s - 2] == "CONE" || codigo[s - 2] == "CONR" || codigo[s - 2] == "ARG43" || codigo[s-2].Substring(0, 2) == "ID") && (codigo[s] == "CONE" || codigo[s] == "CONR" || codigo[s] == "ARG43" || codigo[s].Substring(0, 2) == "ID")
+									//ARG30 Aritx
+									if (s >= vuelta && (EsIgual(codigo[s - 2], "CONE", "CONR", "ARG30") || codigo[s - 2].Substring(0, 2) == "ID") && (EsIgual(codigo[s], "CONE", "CONR", "ARG30") || codigo[s].Substring(0, 2) == "ID")
 										&& SiOpAritmetico(codigo[s - 1]))
 									{
 										sinCambios = 0;
-										codigo[s - 2] = "ARG43";
+										codigo[s - 2] = "ARG30";
 										codigo[s - 1] = "";
 										codigo[s] = "";
 										break;
 									}
-									//BLOXX3
+									if (s >= vuelta - 1 && codigo[s - 1] == "BLOXX2" && codigo[s] == "BLOXX2")
+									{
+										sinCambios = 0;
+										codigo[s] = "BLOXX2";
+										codigo[s] = "";
+										if (s != 0) { s--; }
+									}
+									//BLOXX2
 									if (codigo[s] == "SPR01"
 										|| codigo[s] == "SPR21"
 										|| codigo[s] == "SPR02"
@@ -1843,14 +2014,14 @@ namespace MyLenguaje
 										|| codigo[s] == "SPR09"
 										|| codigo[s] == "SPR22"
 										|| codigo[s] == "SPR20"
-										|| codigo[s] == "SPR16"
-										|| codigo[s] == "DECX3")
+										|| codigo[s] == "SPR16" || codigo[s] == "ASG1"
+										|| codigo[s] == "DECX2")
 									{
 										sinCambios = 0;
-										codigo[s] = "BLOXX3";
-										if(s != 0){s--;}
+										codigo[s] = "BLOXX2";
+										break;
 									}
-									//DECX3
+									//DECX2
 									if (codigo[s] == "SPR04"
 										|| codigo[s] == "SPR07"
 										|| codigo[s] == "SPR11"
@@ -1862,10 +2033,29 @@ namespace MyLenguaje
 										|| codigo[s] == "SPR23")
 									{
 										sinCambios = 0;
-										codigo[s] = "DECX3";
-										if(s != 0){s--;}
+										codigo[s] = "DECX2";
+										if (s != 0) { s--; }
+									}
+									//ARG35
+									if (s >= vuelta && codigo[s - 2].Substring(0, 2) == "ID" && codigo[s - 1] == "ASIG" && EsIgual(codigo[s], "ARG30", "CONE"))
+									{
+										sinCambios = 0;
+										codigo[s - 2] = "ARG35";
+										codigo[s - 1] = "";
+										codigo[s] = "";
+										break;
+									}
+									//ASIG1
+									if (s >= vuelta && codigo[s - 2] == "INIS" && codigo[s - 1] == "ARG35" && codigo[s] == "FIIN")
+									{
+										sinCambios = 0;
+										codigo[s - 2] = "ASG1";
+										codigo[s - 1] = "";
+										codigo[s] = "";
+										break;
 									}
 								}
+
 								//KAP
 								if (codigo[s] == "PR09")
 								{
@@ -1874,6 +2064,7 @@ namespace MyLenguaje
 								}
 								if ( UltVar == "PR09")
 								{
+									MensajeError2 = "KAP";
 									//ARG58
 									if (s >= vuelta && codigo[s - 2] == "CEX(" && codigo[s - 1].Substring(0, 2) == "ID" && codigo[s] == "CEX)")
 									{
@@ -1898,8 +2089,9 @@ namespace MyLenguaje
 									NKar = true;
 									UltVar = "PR07";
 								}
-								if (UltVar == "PR07")
+								if (UltVar == "PR07" && !modoBloque)
 								{
+									MensajeError2 = "KAR";
 									//DECP2
 									if (s >= vuelta && codigo[s - 2] == "DECP2" && codigo[s - 1] == "CEX," && codigo[s] == "DECP2")
 									{
@@ -1910,39 +2102,21 @@ namespace MyLenguaje
 										break;
 									}
 									//DECP2
-									if (s >= vuelta && codigo[s - 2].Substring(0, 2) == "ID" && codigo[s - 1] == "CEX=" && (codigo[s] == "ASIGNP2" || codigo[s] == "CRTR"))
+									if (s >= vuelta + 1 && codigo[s - 2].Substring(0, 2) == "ID" && codigo[s - 1] == "ASIG" && (codigo[s] == "CRTR"))
 									{
 										sinCambios = 0;
-										codigo[s - 2] = "DECP1";
+										codigo[s - 2] = "DECP2";
 										codigo[s - 1] = "";
 										codigo[s] = "";
 										break;
 									}
 									//DECP2
-									if (codigo[s].Substring(0, 2) == "ID")
+									if (s >= vuelta + 1 && (codigo[s - 3] == "DECP2" || codigo[s - 3].Substring(0, 2) == "ID") && codigo[s - 2] == "CEX," && (codigo[s - 1] == "DECP2" || codigo[s - 1].Substring(0, 2) == "ID") && codigo[s] != "ASIG")
 									{
 										sinCambios = 0;
-										codigo[s] = "DECP1";
-										if(s != 0){s--;}
-									}
-									//ASIGP2
-									if (s >= vuelta && codigo[s - 2] == "CEX(" && codigo[s - 1] == "ASIGNP2" && codigo[s] == "CEX)")
-									{
-										sinCambios = 0;
-										codigo[s - 2] = "ASIGNP2";
+										codigo[s - 3] = "DECP2";
+										codigo[s - 2] = "";
 										codigo[s - 1] = "";
-										codigo[s] = "";
-										break;
-									}
-									//ASIGNP2
-									if (s >= vuelta && (codigo[s - 2] == "ASIGNP2" || codigo[s - 2] == "CRTR" || codigo[s - 2].Substring(0, 2) == "ID") 
-										&& (codigo[s] == "ASIGNP2" || codigo[s] == "CRTR" || codigo[s].Substring(0, 2) == "ID")
-										&& SiOpAritmetico(codigo[s - 1]))
-									{
-										sinCambios = 0;
-										codigo[s - 2] = "ASIGNP2";
-										codigo[s - 1] = "";
-										codigo[s] = "";
 										break;
 									}
 								}
@@ -1954,6 +2128,7 @@ namespace MyLenguaje
 								}
 								if (UltVar == "PR10")
 								{
+									MensajeError2 = "KLA";
 									//P10R1
 									if (s >= 7
 										&& codigo[s - 6] == "INIS"
@@ -2047,6 +2222,7 @@ namespace MyLenguaje
 								}
 								if (UltVar == "PR12")
 								{
+									MensajeError2 = "LEG";
 									//ARG63
 									if (EsIgual(codigo[s], "CONE", "CONR", "SPR15"))
 									{
@@ -2070,14 +2246,49 @@ namespace MyLenguaje
 									NLog = true;
 									UltVar = "PR11";
 								}
-								if (UltVar == "PR11")
+								if (UltVar == "PR11" && !modoBloque)
 								{
+									MensajeError2 = "LOG";
 									//BLN
-									if (EsIgual(codigo[s], "PR05", "PR25"))
+									//if (EsIgual(codigo[s], "PR05", "PR25"))
+									//{
+									//	sinCambios = 0;
+									//	codigo[s] = "BLN";
+									//	if(s != 0){s--;}
+									//}
+									//DECP3
+									if(s >= vuelta && (codigo[s - 2] == "ARG38" || codigo[s - 2] == "DECP3") && codigo[s - 1] == "CEX," && codigo[s] == "DECP3")
 									{
 										sinCambios = 0;
-										codigo[s] = "BLN";
-										if(s != 0){s--;}
+										codigo[s - 2] = "DECP3";
+										codigo[s - 1] = "";
+										codigo[s] = "";
+										break;
+									}
+									//DECP3
+									if (s >= vuelta+1 && codigo[s - 3] == "DECP3"  && codigo[s - 2] == "CEX," && codigo[s - 1] == "ARG38" && codigo[s] != "ASIG")
+									{
+										sinCambios = 0;
+										codigo[s - 3] = "DECP3";
+										codigo[s - 2] = "";
+										codigo[s - 1] = "";
+										break;
+									}
+									//DECP3
+									if (s >= vuelta && codigo[s - 2] == "ARG38"  && codigo[s - 1] == "ASIG" && EsIgual(codigo[s], "PR05", "PR25"))
+									{
+										sinCambios = 0;
+										codigo[s - 2] = "DECP3";
+										codigo[s - 1] = "";
+										codigo[s] = "";
+										break;
+									}
+									//ARG38
+									if(s >= vuelta- 1 && codigo[s-1].Substring(0,2) == "ID" && codigo[s] != "ASIG")
+									{
+										sinCambios = 0;
+										codigo[s-1] = "ARG38";
+										if (s != 0) { s--; }
 									}
 								}
 								//MAT
@@ -2085,95 +2296,77 @@ namespace MyLenguaje
 								{
 									NMat = true;
 									UltVar = "PR13";
+									modoBloque = true;
 								}
 								if (UltVar == "PR13")
 								{
+									MensajeError2 = "MAT";
 									//ARG65
-									if (EsIgual(codigo[s], "SPR04", "SPR07", "SPR11", "SPR14", "SPR18", "SPR23"))
+									if (EsIgual(codigo[s], "PR04", "PR07", "PR11", "PR18", "PR23"))
 									{
 										sinCambios = 0;
 										codigo[s] = "ARG65";
 										if(s != 0){s--;}
 									}
-									//ARG67
-									if (EsIgual(codigo[s], "CONE", "CONR", "CDNA", "CRTR", "ARG69", "ARG71") || codigo[s].Substring(0, 2) == "ID")
-									{
-										sinCambios = 0;
-										codigo[s] = "ARG67";
-										if(s != 0){s--;}
-									}
-									//ARG69
-									if (s >= vuelta && codigo[s - 2] == "CEX(" && codigo[s - 1] == "ARG69" && codigo[s] == "CEX)")
-									{
-										sinCambios = 0;
-										codigo[s - 2] = "ARG69";
-										codigo[s - 1] = "";
-										codigo[s] = "";
-										break;
-									}
-									//ARG69
-									if (s >= vuelta && codigo[s - 2] == "ARG69" && codigo[s] == "ARG69"
-										&& SiOpLogico(codigo[s - 1]))
-									{
-										sinCambios = 0;
-										codigo[s - 2] = "ARG69";
-										codigo[s - 1] = "";
-										codigo[s] = "";
-										break;
-									}
-									//ARG71
-									if (s >= vuelta && codigo[s - 2] == "CEX(" && codigo[s - 1] == "ARG71" && codigo[s] == "CEX)")
-									{
-										sinCambios = 0;
-										codigo[s - 2] = "ARG71";
-										codigo[s - 1] = "";
-										codigo[s] = "";
-										break;
-									}
+									
+
+									////ARG69
+									//if (s >= vuelta && codigo[s - 2] == "CEX(" && codigo[s - 1] == "ARG69" && codigo[s] == "CEX)")
+									//{
+									//	sinCambios = 0;
+									//	codigo[s - 2] = "ARG69";
+									//	codigo[s - 1] = "";
+									//	codigo[s] = "";
+									//	break;
+									//}
+									////ARG69
+									//if (s >= vuelta && (EsIgual(codigo[s-2], "CONE", "CONR", "CDNA", "CRTR", "ARG69", "ARG71") || codigo[s-2].Substring(0, 2) == "ID") && (EsIgual(codigo[s], "CONE", "CONR", "CDNA", "CRTR", "ARG69", "ARG71") || codigo[s].Substring(0, 2) == "ID")
+									//	&& SiOpLogico(codigo[s - 1]))
+									//{
+									//	sinCambios = 0;
+									//	codigo[s - 2] = "ARG69";
+									//	codigo[s - 1] = "";
+									//	codigo[s] = "";
+									//	break;
+									//}
+									////ARG71
+									//if (s >= vuelta && codigo[s - 2] == "CEX(" && codigo[s - 1] == "ARG71" && codigo[s] == "CEX)")
+									//{
+									//	sinCambios = 0;
+									//	codigo[s - 2] = "ARG71";
+									//	codigo[s - 1] = "";
+									//	codigo[s] = "";
+									//	break;
+									//}
 								
-									//ARG71
-									if (s >= vuelta && codigo[s - 2] == "ARG73"  && codigo[s] == "ARG73" 
-										&& SiOpAritmetico(codigo[s - 1]))
-									{
-										sinCambios = 0;
-										codigo[s - 2] = "ARG71";
-										codigo[s - 1] = "";
-										codigo[s] = "";
-										break;
-									}
-									//ARG73
-									if (EsIgual(codigo[s], "CONE","CONR","ARG71") || codigo[s].Substring(0, 2) == "ID")
-									{
-										sinCambios = 0;
-										codigo[s] = "ARG73";
-										if(s != 0){s--;}
-									}
+									////ARG71
+									//if (s >= vuelta && (EsIgual(codigo[s-2], "CONE", "CONR", "ARG71") || codigo[s-2].Substring(0, 2) == "ID") && (EsIgual(codigo[s], "CONE", "CONR", "ARG71") || codigo[s].Substring(0, 2) == "ID")
+									//	&& SiOpAritmetico(codigo[s - 1]))
+									//{
+									//	sinCambios = 0;
+									//	codigo[s - 2] = "ARG71";
+									//	codigo[s - 1] = "";
+									//	codigo[s] = "";
+									//	break;
+									//}
 								}
 								//POR
 								if (codigo[s] == "PR16")
 								{
 									NPor = true;
 									UltVar = "PR16";
+									modoBloque = true;
 								}
 								if ( UltVar == "PR16")
 								{
+			
+									MensajeError2 = "POR";
 									//P16R1
-									if (s >= 6
-										&& codigo[s - 5] == "INIS"
-										&& EsIgual(codigo[s - 4], "PR04", "PR07", "PR11", "PR14", "PR18", "PR23")
-							&& codigo[s - 3].Substring(0, 2) == "ID"
-										&& codigo[s - 2] == "CEX="
-										&& codigo[s - 1] == "CONE"
-										&& codigo[s] == "FIIN")
+									if (codigo[s] == "ARG89")
 									{
 										sinCambios = 0;
-										codigo[s - 5] = "P16R1";
-										codigo[s - 4] = "";
-										codigo[s - 3] = "";
-										codigo[s - 2] = "";
-										codigo[s - 1] = "";
-										codigo[s] = "";
-										break;
+										codigo[s] = "P16R1";
+										if (s != 0) { s--; }
 									}
 									//P16R2
 									if (s >= 3
@@ -2188,8 +2381,7 @@ namespace MyLenguaje
 										break;
 									}
 									//P16R3
-									if (s >= 4
-										&& codigo[s - 3] == "INIS"
+									if (s >= 3
 										&& codigo[s - 2] == "INIS"
 										&& codigo[s - 1] == "ARG85"
 										&& codigo[s] == "FIIN")
@@ -2282,120 +2474,116 @@ namespace MyLenguaje
 										if(s != 0){s--;}
 									}
 									//DECX7
-									if (codigo[s] == "SPR04"
-										|| codigo[s] == "SPR07"
-										|| codigo[s] == "SPR11"
-										|| codigo[s] == "SPR12"
-										|| codigo[s] == "SPR13"
-										|| codigo[s] == "SPR14"
-										|| codigo[s] == "SPR17"
-										|| codigo[s] == "SPR18"
-										|| codigo[s] == "SPR23")
+									//if (codigo[s] == "SPR04"
+									//	|| codigo[s] == "SPR07"
+									//	|| codigo[s] == "SPR11"
+									//	|| codigo[s] == "SPR12"
+									//	|| codigo[s] == "SPR13"
+									//	|| codigo[s] == "SPR14"
+									//	|| codigo[s] == "SPR17"
+									//	|| codigo[s] == "SPR18"
+									//	|| codigo[s] == "SPR23")
+									//{
+									//	sinCambios = 0;
+									//	codigo[s] = "DECX7";
+									//	if(s != 0){s--;}
+									//}
+									//ARG85
+									if(s >= 3 ) //por alguna razon 0 es mayor que 3??XD
 									{
-										sinCambios = 0;
-										codigo[s] = "DECX7";
-										if(s != 0){s--;}
+										if(codigo[s - 2].Substring(0, 2) == "ID" && ((codigo[s - 1] == "OPSM" && codigo[s] == "CONE") || (codigo[s - 1] == "OPRS" && codigo[s] == "CONE")))
+										{
+											sinCambios = 0;
+											codigo[s - 2] = "ARG85";
+											codigo[s - 1] = "";
+											codigo[s] = "";
+											break;
+										}
+										
 									}
 									//ARG85
-									if(s >= 3 && codigo[s - 2].Substring(0, 2) == "ID"
-								&&    ((codigo[s - 1] == "OPSM"&& codigo[s] == "CONE")
-									|| codigo[s - 1] == "OPRS" && codigo[s] == "CONE"
-									|| codigo[s - 1] == "OPSM" && codigo[s] == "OPSM"
-									|| codigo[s - 1] == "OPRS" && codigo[s] == "OPRS"))
+									if (s >= 2 && codigo[s - 1].Substring(0, 2) == "ID" && (codigo[s] == "OPSM" || codigo[s] == "OPRS") )
 									{
 										sinCambios = 0;
-										codigo[s - 2] = "ARG85";
-										codigo[s - 1] = "";
+										codigo[s - 1] = "ARG85";
 										codigo[s] = "";
 										break;
+									}
+									//ARG89
+									if (EsIgual(codigo[s],"SPR04","SPR07","SPR11","SPR14","SPR18","SPR23"))
+									{
+										sinCambios = 0;
+										codigo[s] = "ARG89";
+										if (s != 0) { s--; }
 									}
 
 								}
-								//PRX
-								if (codigo[s] == "PR17")
-								{
-									NPrx = true;
-									UltVar = "PR17";
-								}
-								if (UltVar == "PR17")
-								{
-									//BLOXX6
-									if (EsIgual(codigo[s],"SPR01","SPR02","SPR21", "SPR24", "SPR03", "SPR06", "SPR08", "SPR09", "SPR22", "SPR20", "SPR16", "DECX6"))
-									{
-										sinCambios = 0;
-										codigo[s] = "BLOXX6";
-										if(s != 0){s--;}
-									}
-									//DECX6
-									if (EsIgual(codigo[s], "SPR04","SPR07","SPR11","SPR12","SPR13","SPR14","SPR17","SPR18","SPR23"))
-									{
-										sinCambios = 0;
-										codigo[s] = "DECX6";
-										if(s != 0){s--;}
-									}
-									//ARG91
-									if (EsIgual(codigo[s], "PR04", "PR07", "PR11","PR14","PR18", "PR23"))
-									{
-										sinCambios = 0;
-										codigo[s] = "ARG91";
-										if(s != 0){s--;}
-									}
-								}
+								
 								//REA
-								if (codigo[s] == "PR07")
+								if (codigo[s] == "PR18")
 								{
 									NRea = true;
-									UltVar = "PR07";
+									UltVar = "PR18";
 								}
-								if (UltVar == "PR07")
+								if (UltVar == "PR18" && !modoBloque)
 								{
-									//DECP3
-									if (s >= vuelta && codigo[s - 2] == "DECP3" && codigo[s - 1] == "CEX," && codigo[s] == "DECP3")
+									MensajeError2 = "REA";
+									//ARG74
+									if (s >= vuelta - 1 && codigo[s - 1].Substring(0, 2) == "ID" && codigo[s] != "ASIG")
 									{
 										sinCambios = 0;
-										codigo[s - 2] = "DECP3";
+										codigo[s - 1] = "ARG74";
+										if (s != 0) { s--; }
+									}
+									//DECP4
+									if (s >= vuelta + 1 && codigo[s - 3] == "DECP4" && codigo[s - 2] == "CEX," && (codigo[s - 1] == "ARG74") && codigo[s] != "ASIG")
+									{
+										sinCambios = 0;
+										codigo[s - 3] = "DECP4";
+										codigo[s - 2] = "";
+										codigo[s - 1] = "";
+										break;
+									}
+									//DECP4
+									if (s >= vuelta && (codigo[s - 2] == "DECP4" || codigo[s - 2] == "ARG74" || codigo[s-2].Substring(0,2) == "ID") && codigo[s - 1] == "ASIG" && (codigo[s] == "ASIGNP4" || codigo[s] == "CONE" || codigo[s] == "CONR") )
+									{
+										sinCambios = 0;
+										codigo[s - 2] = "DECP4";
 										codigo[s - 1] = "";
 										codigo[s] = "";
 										break;
 									}
-									//DECP3
-									if (s >= vuelta 
-										&& (codigo[s - 2].Substring(0, 2) == "ID") 
-										&& (codigo[s - 1] == "cex=") 
-										&& (codigo[s] == "ASIGNP3" || codigo[s] == "CONE" || codigo[s] == "CONR"))
+									//ASIGNP4
+									if (s >= vuelta && codigo[s - 2] == "CEX(" && codigo[s - 1] == "ASIGNP4" && codigo[s] == "CEX)")
 									{
 										sinCambios = 0;
-										codigo[s - 2] = "ASIGNP3";
+										codigo[s - 2] = "ASIGNP4";
 										codigo[s - 1] = "";
 										codigo[s] = "";
 										break;
 									}
-									if(codigo[s].Substring(0, 2) == "ID")
-									{
-										sinCambios = 0;
-										codigo[s] = "DECP3";
-										if(s != 0){s--;}
-									}
-									//ASIGNP3
-									if (s >= vuelta && codigo[s - 2] == "CEX(" && codigo[s - 1] == "ASIGNP3" && codigo[s] == "CEX)")
-									{
-										sinCambios = 0;
-										codigo[s - 2] = "ASIGNP3";
-										codigo[s - 1] = "";
-										codigo[s] = "";
-										break;
-									}
-									//ASIGNP3
-									if (s >= vuelta && (codigo[s - 2] == "ASIGNP3" || codigo[s - 2] == "CONE" || codigo[s - 2] == "CONR" || codigo[s - 2].Substring(0, 2) == "ID")
-										&& (codigo[s] == "ASIGNP3" || codigo[s] == "CONE" || codigo[s] == "CONE" || codigo[s].Substring(0, 2) == "ID")
+									//ASIGNP4
+									if (s >= vuelta && (codigo[s - 2] == "ASIGNP4" || codigo[s - 2] == "CONE" || codigo[s - 2] == "CONR" || codigo[s - 2] == "ARG74")
+										&& (codigo[s] == "ASIGNP4" || codigo[s] == "CONE" || codigo[s] == "CONE" || codigo[s]== "ARG74")
 										&& SiOpAritmetico(codigo[s - 1]))
 									{
 										sinCambios = 0;
-										codigo[s - 2] = "ASIGNP3";
+										codigo[s - 2] = "ASIGNP4";
 										codigo[s - 1] = "";
 										codigo[s] = "";
 										break;
 									}
+									//DECP4
+									if (s >= vuelta && (codigo[s - 2] == "ARG74" || codigo[s - 2] == "DECP4") && codigo[s - 1] == "CEX," && codigo[s] == "DECP4")
+									{
+										sinCambios = 0;
+										codigo[s - 2] = "DECP4";
+										codigo[s - 1] = "";
+										codigo[s] = "";
+										break;
+									}
+									
+	
 								}
 								//REV
 								if (codigo[s] == "PR19")
@@ -2405,6 +2593,7 @@ namespace MyLenguaje
 								}
 								if (UltVar == "PR19")
 								{
+									MensajeError2 = "rev";
 									//ARG100
 									if (EsIgual(codigo[s],"CONE","CONR","CDNA","CRTR","ARG95","ARG96") || codigo[s].Substring(0, 2) == "ID")
 									{
@@ -2422,7 +2611,10 @@ namespace MyLenguaje
 										break;
 									}
 									//ARG95
-									if (s >= vuelta && codigo[s - 2] == "ARG100" && SiOpLogico(codigo[s-1]) && codigo[s] == "ARG100")
+									if (s >= vuelta 
+										&& (EsIgual(codigo[s], "CONE", "CONR", "CDNA", "CRTR", "ARG95", "ARG96") || codigo[s].Substring(0, 2) == "ID")
+										&& SiOpLogico(codigo[s-1]) 
+										&& (EsIgual(codigo[s], "CONE", "CONR", "CDNA", "CRTR", "ARG95", "ARG96") || codigo[s].Substring(0, 2) == "ID"))
 									{
 										sinCambios = 0;
 										codigo[s - 2] = "ARG95";
@@ -2458,24 +2650,39 @@ namespace MyLenguaje
 								}
 								if (UltVar == "PR24")
 								{
+									MensajeError2 = "SKR";
 									//AGR4
-									if (s >= vuelta - 1 && (codigo[s - 1] == "AGR4" || (EsIgual(codigo[s-1], "CDNA", "CRTR", "CONE", "CONR") || codigo[s-1].Substring(0, 2) == "ID")) && codigo[s] == "AGR4")
+									if (s >= vuelta - 1 && (codigo[s - 1] == "AGR4" || (EsIgual(codigo[s-1], "CDNA", "CRTR", "CONE", "CONR","AGR4","SDMT") || codigo[s-1].Substring(0, 2) == "ID")) && codigo[s] == "AGR4")
 									{
 										sinCambios = 0;
 										codigo[s - 1] = "AGR4";
 										codigo[s] = "";
 										break;
 									}
-									//ARG20
-									if (s >= vuelta - 1 && codigo[s - 1] == "OPSM" && (EsIgual(codigo[s], "CDNA","CRTR","CONE","CONR") || codigo[s].Substring(0, 2) == "ID"))
+									//AGR4
+									if (EsIgual(codigo[s], "CDNA", "CRTR", "CONE", "CONR","SDMT") || codigo[s].Substring(0, 2) == "ID")
+									{
+										sinCambios = 0;
+										codigo[s] = "AGR4";
+										break;//Por si acaso
+									}
+									//AGR4
+									if (s >= vuelta - 1 && codigo[s - 1] == "OPSM" && (EsIgual(codigo[s], "CDNA","CRTR","CONE","CONR","AGR4","SDMT") || codigo[s].Substring(0, 2) == "ID"))
 									{
 										sinCambios = 0;
 										codigo[s - 1] = "AGR4";
 										codigo[s] = "";
 										break;
 									}
-									
-									
+									//AGR4
+									if (s >= vuelta - 1 && codigo[s - 1] == "AGR4" && (EsIgual(codigo[s-1], "CDNA", "CRTR", "CONE", "CONR","AGR4","SDMT") || codigo[s-1].Substring(0, 2) == "ID"))
+									{
+										sinCambios = 0;
+										codigo[s - 1] = "AGR4";
+										codigo[s] = "";
+										break;
+									}
+
 								}
 								//SXA KAZ ROM
 								if (codigo[s] == "PR22")
@@ -2485,12 +2692,38 @@ namespace MyLenguaje
 								}
 								if (UltVar == "PR22")
 								{
+									MensajeError2 = "SXA";
 									//ARG53
-									if(EsIgual(codigo[s], "CDNA","CONE","CONR","CRTR")||codigo[s].Substring(0,2) =="ID")
+									if (EsIgual(codigo[s], "CDNA","CONE","CONR","CRTR")||codigo[s].Substring(0,2) =="ID")
 									{
 										sinCambios = 0;
 										codigo[s] = "ARG53";
 										if(s != 0){s--;}
+									}
+									//CASOS
+									if(s >= vuelta-1 && codigo[s-1] == "CASOS" && (codigo[s]=="CASOS"|| codigo[s]=="ALI"))
+									{
+										sinCambios = 0;
+										codigo[s - 1] = "CASOS";
+										codigo[s] = "";
+										break;
+									}
+									//BLOXX4
+									if (s >= vuelta && codigo[s - 2] == "INIS" && codigo[s - 1] == "BLOXX4" && codigo[s] == "FIIN")
+									{
+										sinCambios = 0;
+										codigo[s - 2] = "BLOXX4";
+										codigo[s - 1] = "";
+										codigo[s] = "";
+										break;
+									}
+									//BLOXX4
+									if (s >= vuelta - 1 && codigo[s - 1] == "BLOXX4" && codigo[s] == "BLOXX4" )
+									{
+										sinCambios = 0;
+										codigo[s - 1] = "BLOXX4";
+										codigo[s] = "";
+										break;
 									}
 									//BLOXX4
 									if (codigo[s] == "SPR01"
@@ -2503,7 +2736,7 @@ namespace MyLenguaje
 										|| codigo[s] == "SPR09"
 										|| codigo[s] == "SPR22"
 										|| codigo[s] == "SPR20"
-										|| codigo[s] == "SPR16"
+										|| codigo[s] == "SPR16" || codigo[s] == "SPR20"
 										|| codigo[s] == "DECX4")
 									{
 										sinCambios = 0;
@@ -2532,24 +2765,153 @@ namespace MyLenguaje
 									NSxn = true;
 									UltVar = "PR23";
 								}
-								if (UltVar == "PR23")
+								if (UltVar == "PR23" && !modoBloque)
 								{
-									//AGR20
-									if(s >= vuelta-1 && codigo[s-1] =="AGR20" && codigo[s] =="AGR20")
+									MensajeError2 = "SXN";
+									//DECP5
+									if (s >= vuelta && codigo[s - 2] == "DECP5" && codigo[s - 1] == "CEX," && codigo[s] == "DECP2")
 									{
 										sinCambios = 0;
-										codigo[s - 1] = "ARG20";
+										codigo[s - 2] = "DECP5";
+										codigo[s - 1] = "";
 										codigo[s] = "";
 										break;
 									}
-									//AGR20
-									if (s >= vuelta - 1 && codigo[s - 1] == "OPSM" && (EsIgual(codigo[s],"CDNA","CONE","CONR","CRTR") || codigo[s].Substring(0,2) == "ID"))
+									
+									//DECP5
+									if (s >= vuelta + 1 && (codigo[s - 3] == "DECP5" || codigo[s - 3].Substring(0, 2) == "ID") && codigo[s - 2] == "CEX," && (codigo[s - 1] == "DECP5" || codigo[s - 1].Substring(0, 2) == "ID" || codigo[s-1] == "ARG56") && codigo[s] != "ASIG")
 									{
 										sinCambios = 0;
-										codigo[s - 1] = "ARG20";
+										codigo[s - 3] = "DECP5";
+										codigo[s - 2] = "";
+										codigo[s - 1] = "";
+										break;
+									}
+									//AGR5
+									if (s >= vuelta && codigo[s - 2] == "CEX" && codigo[s - 1] == "AGR5" && codigo[s] == "CEX)")
+									{
+										sinCambios = 0;
+										codigo[s - 2] = "AGR5";
+										codigo[s - 1] = "";
+										codigo[s ] = "";
+										break;
+									}
+									//AGR5
+									if( s >= 2 && (codigo[s-1] == "AGR5" || codigo[s-1] == "ARG56") && codigo[s] == "AGR5")
+									{
+										sinCambios = 0;
+										codigo[s - 1] = "AGR5";
+										codigo[s] = "";
+										break;
+
+									}
+									//DECP5
+									if (s >= vuelta && codigo[s - 2] == "DECP5" && codigo[s - 1] == "OPSM" && (codigo[s] == "ARG56" || codigo[s].Substring(0, 2) == "ID"))
+									{
+										sinCambios = 0;
+										codigo[s - 2] = "DECP5";
+										codigo[s - 1] = "";
 										codigo[s] = "";
 										break;
 									}
+									//AGR5
+									if (s >= vuelta && (codigo[s-2] == "ARG56" || codigo[s-2].Substring(0, 2) == "ID") && codigo[s - 1] == "OPSM"  && (codigo[s] == "ARG56" || codigo[s].Substring(0,2) == "ID"))
+									{
+										sinCambios = 0;
+										codigo[s - 2] = "AGR5";
+										codigo[s - 1] = "";
+										codigo[s] = "";
+										break;
+									}
+									//ARG56
+									if (s >= vuelta && codigo[s - 2]== "CEX(" && codigo[s - 1] == "ARG56" && codigo[s] == "CEX)")
+									{
+										sinCambios = 0;
+										codigo[s - 2] = "ARG56";
+										codigo[s - 1] = "";
+										codigo[s] = "";
+										break;
+									}
+									//DECP5
+									if (s >= vuelta && codigo[s - 2].Substring(0, 2) == "ID" && codigo[s - 1] == "ASIG" && (codigo[s] == "AGR5" || codigo[s] == "ARG56"))
+									{
+										sinCambios = 0;
+										codigo[s - 2] = "DECP5";
+										codigo[s - 1] = "";
+										codigo[s] = "";
+										break;
+									}
+									//ARG56
+									if (EsIgual(codigo[s],"CDNA","CONE","CONR","CRTR","AGR5"))
+									{
+										sinCambios = 0;
+										codigo[s] = "ARG56";
+										if (s != 0) { s--; }
+									}
+								}
+								//ENT
+								if (codigo[s] == "PR04")
+								{
+									NEnt = true;
+									UltVar = "PR04";
+								}
+								if (UltVar == "PR04" && !modoBloque)
+								{
+									MensajeError2 = "ent";
+									//DECP1
+									if (s >= vuelta && codigo[s - 2] == "DECP1" && codigo[s - 1] == "CEX," && codigo[s] == "DECP1")
+									{
+										sinCambios = 0;
+										codigo[s - 2] = "DECP1";
+										codigo[s - 1] = "";
+										codigo[s] = "";
+										break;
+									}
+									if (sinCambios >= 1 && s >= vuelta && (codigo[s - 2] == "DECP1" || codigo[s - 2] == "ARG31") && codigo[s - 1] == "CEX," && (codigo[s] == "DECP1" || codigo[s] == "ARG31"))
+									{
+										sinCambios = 0;
+										codigo[s - 2] = "DECP1";
+										codigo[s - 1] = "";
+										codigo[s] = "";
+										break;
+									}
+									//DECP1
+									if (s >= vuelta && codigo[s - 2] == "ARG31" && codigo[s - 1] == "ASIG" && (codigo[s] == "ASIGNP1" || codigo[s] == "CONE"))
+									{
+										sinCambios = 0;
+										codigo[s - 2] = "DECP1";
+										codigo[s - 1] = "";
+										codigo[s] = "";
+										break;
+									}
+
+									//ASIGNP1
+									if (s >= vuelta && codigo[s - 2] == "CEX(" && codigo[s - 1] == "ASIGNP1" && codigo[s] == "CEX)")
+									{
+										sinCambios = 0;
+										codigo[s - 2] = "ASIGNP1";
+										codigo[s - 1] = "";
+										codigo[s] = "";
+										break;
+									}
+									//ASIGNP1
+									if (s >= vuelta && (codigo[s - 2] == "ASIGNP1" || codigo[s - 2] == "CONE" || codigo[s - 2] == "ARG31") && (codigo[s] == "ASIGNP1" || codigo[s] == "CONE" || codigo[s] == "ARG31")
+										&& codigo[s - 1] == "ASIGNP1")
+									{
+										sinCambios = 0;
+										codigo[s - 2] = "ASIGNP1";
+										codigo[s - 1] = "";
+										codigo[s] = "";
+										break;
+									}
+									//ARG31
+									if (codigo[s].Substring(0, 2) == "ID")
+									{
+										sinCambios = 0;
+										codigo[s] = "ARG31";
+										if (s != 0) { s--; }
+									}
+									
 								}
 								//OBJ
 								if (codigo[s] == "PR15")
@@ -2559,9 +2921,287 @@ namespace MyLenguaje
 								}
 								if (UltVar == "PR15")
 								{
-
+									MensajeError2 = "OBJ";
 								}
+								//Variable pura
+								{
+									//Zona MAT
+									//ARG69
+									if (s >= vuelta && codigo[s - 2] == "CEX(" && codigo[s - 1] == "ARG69" && codigo[s] == "CEX)")
+									{
+										sinCambios = 0;
+										codigo[s - 2] = "ARG69";
+										codigo[s - 1] = "";
+										codigo[s] = "";
+										break;
+									}
+									//ARG69
+									if (s >= vuelta && (EsIgual(codigo[s - 2], "CONE", "CONR", "CDNA", "CRTR", "ARG69", "ARG71") || codigo[s - 2].Substring(0, 2) == "ID") && (EsIgual(codigo[s], "CONE", "CONR", "CDNA", "CRTR", "ARG69", "ARG71") || codigo[s].Substring(0, 2) == "ID")
+										&& SiOpLogico(codigo[s - 1]))
+									{
+										sinCambios = 0;
+										codigo[s - 2] = "ARG69";
+										codigo[s - 1] = "";
+										codigo[s] = "";
+										break;
+									}
+									//ARG71
+									if (s >= vuelta && codigo[s - 2] == "CEX(" && codigo[s - 1] == "ARG71" && codigo[s] == "CEX)")
+									{
+										sinCambios = 0;
+										codigo[s - 2] = "ARG71";
+										codigo[s - 1] = "";
+										codigo[s] = "";
+										break;
+									}
 
+									//ARG71
+									if (s >= vuelta && (EsIgual(codigo[s - 2], "CONE", "CONR", "ARG71") || codigo[s - 2].Substring(0, 2) == "ID") && (EsIgual(codigo[s], "CONE", "CONR", "ARG71") || codigo[s].Substring(0, 2) == "ID")
+										&& SiOpAritmetico(codigo[s - 1]))
+									{
+										sinCambios = 0;
+										codigo[s - 2] = "ARG71";
+										codigo[s - 1] = "";
+										codigo[s] = "";
+										break;
+									}
+									//SPR13
+									if (codigo.Length >= 3 && codigo[s] == "INIS" && codigo[s + 1] == "AASG" && codigo[s + 2] == "FIIN")
+									{
+										sinCambios = 0;
+										codigo[s] = "SPR13";
+										codigo[s + 1] = "";
+										codigo[s + 2] = "";
+										cat += "Mat - Exito";
+										break;
+									}
+									//AASG
+									if (s >= vuelta && codigo[s - 2] == "AASG" && codigo[s - 1] == "CEX," && codigo[s] == "AASG")
+									{
+										sinCambios = 0;
+										codigo[s - 2] = "AASG";
+										codigo[s - 1] = "";
+										codigo[s] = "";
+										break;
+									}
+									//AASG
+									if (s >= vuelta && codigo[s - 2] == "ARRAY" && codigo[s - 1] == "ASIG" && (EsIgual(codigo[s], "CONE", "CONR", "CDNA", "CRTR", "ARG69", "ARG71") || codigo[s].Substring(0, 2) == "ID"))
+									{
+										sinCambios = 0;
+										codigo[s - 2] = "AASG";
+										codigo[s - 1] = "";
+										codigo[s] = "";
+										break;
+									}
+									//AASG
+									if(s >= vuelta-1 && codigo[s-1] == "ARRAY" && codigo[s] != "ASIG" )
+									{
+										sinCambios = 0;
+										codigo[s-1] = "AASG";
+										if (s != 0) { s--; }
+									}
+									//ARRAY
+									if (s >= vuelta && codigo[s - 2] == "ARRY" && codigo[s - 1] == "CONE" && codigo[s] == "CEX]")
+									{
+										sinCambios = 0;
+										codigo[s - 2] = "ARRAY";
+										codigo[s - 1] = "";
+										codigo[s] = "";
+										break;
+									}
+									//ARRAY
+									if (s >= 4 && codigo[s - 3].Substring(0,2) == "ID" && codigo[s - 2] == "CEX[" && codigo[s - 1] == "CONE" && codigo[s] == "CEX]")
+									{
+										sinCambios = 0;
+										codigo[s - 3] = "ARRAY";
+										codigo[s - 2] = "";
+										codigo[s - 1] = "";
+										codigo[s] = "";
+										break;
+									}
+									//Zona Metodo
+									
+									if(EsIgual(codigo[s], "PR04", "PR07", "PR11", "PR12", "PR13", "PR14", "PR17", "PR18", "PR23", "PR27"))
+									{
+										Bloc = true;
+									}
+									//METODO 5 SDMT
+									if (s >= 1 && !Bloc
+									&& codigo[s - 1] == "MDEC"
+									&& codigo[s] == "CEX)")
+									{
+										UltVar = "";
+										sinCambios = 0;
+										codigo[s - 1] = "SDMT";
+										codigo[s] = "";
+										Bloc = false;
+										break;
+									}
+									//MDEC CEX) BMET 
+									if (s >= 5 && codigo[s-4] == "MDEC" && codigo[s - 3] == "CEX)" && codigo[s - 2] == "INIS" && codigo[s - 1] == "BMET" && codigo[s] == "FIIN")
+									{
+										sinCambios = 0;
+										codigo[s - 4] = "MDEC";
+										codigo[s - 3] = "CEX)";
+										codigo[s - 2] = "BMET";
+										codigo[s - 1] = "";
+										codigo[s] = "";
+										break;
+									}
+									//MDEC CEX) BMET 
+									if (s >= 4 && codigo[s - 3] == "MDEC" && codigo[s - 2] == "CEX)" && codigo[s - 1] == "INIS" && codigo[s] == "FIIN")
+									{
+										sinCambios = 0;
+										codigo[s - 3] = "MDEC";
+										codigo[s - 2] = "CEX)";
+										codigo[s - 1] = "BMET";
+										codigo[s] = "";
+										break;
+									}
+									//MDEC CEX) 
+									if(s >= 1 && codigo[s-1] == "MTDX" && codigo[s] == "CEX)")
+									{
+										sinCambios = 0;
+										codigo[s - 1] = "MDEC";
+										codigo[s] = "CEX)";
+										break;
+									}
+									//MDEC CEX) 
+									if (s >= 3 && codigo[s-2].Substring(0,2) == "ID" && codigo[s - 1] == "CEX(" && codigo[s] == "CEX)")
+									{
+										sinCambios = 0;
+										codigo[s - 2] = "MDEC";
+										codigo[s - 1] = "CEX)";
+										codigo[s] = "";
+										break;
+									}
+									//MDEC CEX) 
+									if (s >= 3 && codigo[s - 2] == "MTDX" 
+										&& EsIgual(codigo[s - 1], "SPR04", "SPR07", "SPR11", "SPR12", "SPR13", "SPR14", "SPR17", "SPR18", "SPR23") 
+										&& codigo[s] == "CEX)")
+									{
+										sinCambios = 0;
+										codigo[s - 2] = "MDEC";
+										codigo[s - 1] = "CEX)";
+										codigo[s] = "";
+										break;
+									}
+									//MDEC CEX) 
+									if (s >= 4 && codigo[s-3].Substring(0,2) == "ID" && 
+										codigo[s - 2] == "CEX(" 
+										&& EsIgual(codigo[s - 1], "SPR04", "SPR07", "SPR11", "SPR12", "SPR13", "SPR14", "SPR17", "SPR18", "SPR23")
+										&& codigo[s] == "CEX)")
+									{
+										sinCambios = 0;
+										codigo[s - 3] = "MDEC";
+										codigo[s - 2] = "CEX)";
+										codigo[s - 1] = "";
+										codigo[s] = "";
+										break;
+									}
+									//BMET 
+									if(s >= 2 
+										&& EsIgual(codigo[s - 1], "SPR01", "SPR21", "SPR02", "SPR24", "SPR03", "SPR06", "SPR08", "SPR09", "SPR22", "SPR20", "SPR16", "SPR04", "SPR07", "SPR11", "SPR12", "SPR13", "SPR14", "SPR17", "SPR18", "SPR23", "BMET")
+										&& EsIgual(codigo[s], "SPR01", "SPR21", "SPR02", "SPR24", "SPR03", "SPR06", "SPR08", "SPR09", "SPR22", "SPR20", "SPR16", "SPR04", "SPR07", "SPR11", "SPR12", "SPR13", "SPR14", "SPR17", "SPR18", "SPR23", "BMET"))
+									{
+										sinCambios = 0;
+										codigo[s - 1] = "BMET";
+										codigo[s] = "";
+										break;
+									}
+									//BRMT --BMET
+									if (s >= 2 
+										&& (codigo[s - 1] == "BRMT" || codigo[s-1] == "BMET")
+										&& (codigo[s] == "BRMT" || codigo[s] == "BMET"))
+									{
+										sinCambios = 0;
+										codigo[s - 1] = "BRMT";
+										codigo[s] = "";
+										break;
+									}
+									//Comprobar valor
+									if(s >= 2 
+										&& EsIgual(codigo[s - 1], "PR04", "PR07", "PR11", "PR12", "PR13", "PR14", "PR17", "PR18", "PR23")
+										&& (EsIgual(codigo[s], "MDEC","MTDX") || codigo[s].Substring(0,2) == "ID"))
+									{
+										UltDec = codigo[s-1];
+									}
+									//BRMT
+									if(s >= 4 
+										&& codigo[s-3] == "INIS"
+										&& codigo[s-2] == "PR19"
+										&& codigo[s] == "FIIN")
+									{
+										if(UltDec == "PR04" && (codigo[s-1] == "CONE" || codigo[s-1] == "SPR04" || codigo[s-1].Substring(0,2) == "ID"))
+										{
+											sinCambios = 0;
+											codigo[s - 3] = "BRMT";
+											codigo[s - 2] = "";
+											codigo[s - 1] = "";
+											codigo[s] = "";
+											break;
+										}else
+										if (UltDec == "PR07" && (codigo[s - 1] == "CRTR" || codigo[s - 1] == "SPR07" || codigo[s - 1].Substring(0, 2) == "ID"))
+										{
+											sinCambios = 0;
+											codigo[s - 3] = "BRMT";
+											codigo[s - 2] = "";
+											codigo[s - 1] = "";
+											codigo[s] = "";
+											break;
+										}
+										else
+										if (UltDec == "PR11" && (codigo[s - 1] == "PR05" || codigo[s - 1] == "PR25" || codigo[s - 1] == "SPR11" || codigo[s - 1].Substring(0, 2) == "ID"))
+										{
+											sinCambios = 0;
+											codigo[s - 3] = "BRMT";
+											codigo[s - 2] = "";
+											codigo[s - 1] = "";
+											codigo[s] = "";
+											break;
+										}
+										else
+										if (UltDec == "PR13" && (codigo[s - 1] == "SPR15" || codigo[s - 1] == "SPR13" || codigo[s - 1].Substring(0, 2) == "ID"))
+										{
+											sinCambios = 0;
+											codigo[s - 3] = "BRMT";
+											codigo[s - 2] = "";
+											codigo[s - 1] = "";
+											codigo[s] = "";
+											break;
+										}
+										else
+										if (UltDec == "PR15" && ( codigo[s - 1] == "SPR15" || codigo[s - 1].Substring(0, 2) == "ID"))
+										{
+											sinCambios = 0;
+											codigo[s - 3] = "BRMT";
+											codigo[s - 2] = "";
+											codigo[s - 1] = "";
+											codigo[s] = "";
+											break;
+										}
+										else
+										if (UltDec == "PR18" && (codigo[s - 1] == "CONE" || codigo[s - 1] == "CONR" || codigo[s - 1] == "SPR18" || codigo[s - 1].Substring(0, 2) == "ID"))
+										{
+											sinCambios = 0;
+											codigo[s - 3] = "BRMT";
+											codigo[s - 2] = "";
+											codigo[s - 1] = "";
+											codigo[s] = "";
+											break;
+										}
+										else
+										if (UltDec == "PR23" && (codigo[s - 1] == "CDNA" || codigo[s - 1] == "SPR23" || codigo[s - 1].Substring(0, 2) == "ID"))
+										{
+											sinCambios = 0;
+											codigo[s - 3] = "BRMT";
+											codigo[s - 2] = "";
+											codigo[s - 1] = "";
+											codigo[s] = "";
+											break;
+										}
+									}
+								}
 								
 								if(s == codigo.Length-1 && sinCambios == 2)
 								{
@@ -2597,7 +3237,7 @@ namespace MyLenguaje
 				}
 				catch (Exception ex)
 				{
-					Mensaje(ex.Message);
+					Mensaje(ex.Message +"\n"+MensajeError+"\n"+MensajeError2+";");
 				}
 				finally
 				{
@@ -2663,8 +3303,9 @@ namespace MyLenguaje
 		int cero = 0;
 		private void btnRellenar_Click(object sender, EventArgs e)
 		{
+			Textosxp tx = new Textosxp();
 			const string ruta = @".\codigos.txt";
-			const string repuesto = ":0 Se 0:\n| SE ( _x RSQ 2 )\n |\n    | SKR ( \"X es mayor que 2\" ) ||\n ||\nALI\n |\n    | SKR ( \"X es menor que 2\" ) ||\n ||\n||\n\n:0 Dar 0:\n| SE ( _x RSQ 2 )\n |\n    | SKR ( \"X es mayor que 2\" ) ||\n    | DAR ||\n ||\n||\n\n:0 SKR 0:\n| SKR ( \"Resultado: \" + 2 + _letra ) ||\n\n:0 DUM 0:\n| DUM ( _x RSQ 5 ) \n    | SKR ( _x ) ||\n    | _x = _x + 1 ||\n||\n\n:0 Far 0:\n| FAR\n    | SKR ( _x ) ||\n    | _x = _x + 1 ||\nDUM ( _x RSQ 5 ) ||\n\n:0 ENT 0:\n| ENT _entero1 = 1 ||\n\n:0 FALSA 0:\nFALSA \n\n:0 KAR 0:\n| KAR _caracter = 'c' || \n\n:0 KAZ SXA ROM 0:\n\nSXA ( _entero1 )\n|\n  | KAZ 1 :\n      | SKR ( \"El valor es 1\" ) ||\n      | ROM ||\n  ||\n  | KAZ 2 :\n      | SKR ( \"El valor es 2\" ) ||\n      | ROM ||\n  ||\n    ALI\n    |\n      | SKR ( \"Esta vacio\" ) ||\n      | ROM ||\n    ||\n||\n\n:0 KAP 0:\nKAP ( _Variable1 )\n\n:0 KLA 0:\nKLA _claseprueba \n|\n  _claseprueba ( ) \n   |\n     | _x = 0 ||\n     | _valor = _x + _y ||\n   ||\n   | ent _x ||\n   | ent _y = 12 ||\n   | REA _valor ||\n||\n\n:0 LOG 0:\n| LOG _boolean = VERA || \n\n:0 LEG 0:\n| LEG ( 1000 ) ||\n\n:0 MAT 0:\n| MAT ent [ ] _arreglo = NOV ent [ 2 ] ||\n| _arreglo [ 1 ] = 323 ||\n| SKR ( \"Res \" + _arreglo [ 1 ] ) ||\n\n:0 POR 0:\n| POR ( | ent _i = 0 ||\n            | _i RSQ 5 ||\n            | _i ++ || )\n    | SKR ( \"Res\" + _i ) ||\n||\n\n:0 PRX 0:\nPRX ( ent _val _arreglo1 )\n|\n   | skr ( \"tc: \" + _var ) ||\n||\n\n:0 REA 0:\n| REA _real = 12.53 ||\n\n:0 SXN 0:\n| SXN _cadena = \"Hola\" ||";
+			string repuesto = tx.repuesto;
 			string r = "";
 			try
 			{
@@ -2690,8 +3331,6 @@ namespace MyLenguaje
 				Mensaje("Exception: " + ex.Message);
 				r = repuesto;
 			}
-			//string r = ":0 Se 0:\n| SE ( _x RSQ 2 )\n| SKR ( \"X es mayor que 2\" ) ||\nALI\n| SKR( \"X es menor que 2\" ) ||\n||\n\n:0 Dar 0:\n SE ( _x RSQ 2 )\n| SKR( \"X es mayor que 2\" ) ||\n| DAR ||\n||\n\n:0 SKR 0:\n| SKR ( \"Resultado: \" + 2 + _letra ) ||\n\n:0 DUM 0:\n| DUM( _x RSQ 5 ) \n| SKR ( _x ) ||\n| _x = _x +1 ||\n||\n\n:0 Far 0:\n| FAR\n| SKR (_x) ||\n| _x = _x +1 ||\nDUM( _x RSQ 5 )||\n\n:0 ENT 0:\n| ENT _entero1 = 1 ||\n\n:0 FALSA 0:\nFALSA \n\n:0 KAR 0:\n| KAR _caracter = 'c' || \n\n:0 KAZ SXA ROM 0:\n\nSXA (<ID>)\n|\n\nSXA ( _entero1 )\n| KAZ 1:\n| SKR ( \"El valor es 1\" ) ||\n| ROM ||\n||\n| KAZ 2:\n| SKR ( \"El valor es 2\" ) ||\n| ROM ||\n||\n| ALI\n| SKR( \"Esta vacio\" ) ||\n| ROM ||\n||\n||\n\n:0 KAP 0:\nKAP ( _Variable1 )\n\n:0 KLA 0:\nKLA _claseprueba \n|\n_claseprueba () \n|\n| _x = 0 ||\n| _valor = _x + _y ||\n||\n| ent _x ||\n| ent _y = 12 ||\n| REA _valor ||\n||\n\n:0 LOG 0:\n| LOG _boolean = VERA || \n\n:0 LEG 0:\n| LEG ( 1000 ) ||\n\n:0 MAT 0:\n| MAT ent[] _arreglo = NOV ent[2] ||\n| _arreglo[1] = 323 ||\n| SKR( \"Res \" + _arreglo[1] ) ||\n\n0: POR 0:\n| POR ( | ent _i = 0 ||\n| _i RSQ 5 ||\n| _i++ || )\n| SKR ( \"Res\" + _i ) ||\n||\n\n:0 PRX 0:\nPRX ( ent _val _arreglo1 )\n|\n| skr( \"tc: \" + _var ) ||\n||\n\n:0 REA 0:\n| REA _real = 12.53 ||\n\n:0 SXN 0:\n| SXN _cadena = \"Hola\" ||";
-			// RESERVA = ":0 Se 0:\n| SE ( _x RSQ 2 )\n |\n    | SKR ( \"X es mayor que 2\" ) ||\n ||\nALI\n |\n    | SKR ( \"X es menor que 2\" ) ||\n ||\n||\n\n:0 Dar 0:\n| SE ( _x RSQ 2 )\n |\n    | SKR ( \"X es mayor que 2\" ) ||\n    | DAR ||\n ||\n||\n\n:0 SKR 0:\n| SKR ( \"Resultado: \" + 2 + _letra ) ||\n\n:0 DUM 0:\n| DUM ( _x RSQ 5 ) \n    | SKR ( _x ) ||\n    | _x = _x + 1 ||\n||\n\n:0 Far 0:\n| FAR\n    | SKR ( _x ) ||\n    | _x = _x + 1 ||\nDUM ( _x RSQ 5 ) ||\n\n:0 ENT 0:\n| ENT _entero1 = 1 ||\n\n:0 FALSA 0:\nFALSA \n\n:0 KAR 0:\n| KAR _caracter = 'c' || \n\n:0 KAZ SXA ROM 0:\n\nSXA ( _entero1 )\n|\n  | KAZ 1 :\n      | SKR ( \"El valor es 1\" ) ||\n      | ROM ||\n  ||\n  | KAZ 2 :\n      | SKR ( \"El valor es 2\" ) ||\n      | ROM ||\n  ||\n    ALI\n    |\n      | SKR ( \"Esta vacio\" ) ||\n      | ROM ||\n    ||\n||\n\n:0 KAP 0:\nKAP ( _Variable1 )\n\n:0 KLA 0:\nKLA _claseprueba \n|\n  _claseprueba ( ) \n   |\n     | _x = 0 ||\n     | _valor = _x + _y ||\n   ||\n   | ent _x ||\n   | ent _y = 12 ||\n   | REA _valor ||\n||\n\n:0 LOG 0:\n| LOG _boolean = VERA || \n\n:0 LEG 0:\n| LEG ( 1000 ) ||\n\n:0 MAT 0:\n| MAT ent [ ] _arreglo = NOV ent [ 2 ] ||\n| _arreglo [ 1 ] = 323 ||\n| SKR ( \"Res \" + _arreglo [ 1 ] ) ||\n\n:0 POR 0:\n| POR ( | ent _i = 0 ||\n            | _i RSQ 5 ||\n            | _i ++ || )\n    | SKR ( \"Res\" + _i ) ||\n||\n\n:0 PRX 0:\nPRX ( ent _val _arreglo1 )\n|\n   | skr ( \"tc: \" + _var ) ||\n||\n\n:0 REA 0:\n| REA _real = 12.53 ||\n\n:0 SXN 0:\n| SXN _cadena = \"Hola\" ||\n\n\n\n\n\n\n\n\n\n"
 			string newLine = r.Replace("\\n", "\n");
 			string bla = "\\";
 			string newLine2 = newLine.Replace(bla.Substring(0,1), "");

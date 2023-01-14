@@ -40,6 +40,7 @@
 			this.btnLexicar = new System.Windows.Forms.Button();
 			this.btnSintactizar = new System.Windows.Forms.Button();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
+			this.chbMensaje = new System.Windows.Forms.CheckBox();
 			this.btnLimpiar = new System.Windows.Forms.Button();
 			this.btnRellenar = new System.Windows.Forms.Button();
 			this.btnComprobar = new System.Windows.Forms.Button();
@@ -55,7 +56,6 @@
 			this.label8 = new System.Windows.Forms.Label();
 			this.rhcAnalisisLexico = new System.Windows.Forms.RichTextBox();
 			this.label7 = new System.Windows.Forms.Label();
-			this.chbMensaje = new System.Windows.Forms.CheckBox();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox3.SuspendLayout();
@@ -197,6 +197,17 @@
 			this.groupBox2.Text = "Botones";
 			this.groupBox2.Enter += new System.EventHandler(this.groupBox2_Enter);
 			// 
+			// chbMensaje
+			// 
+			this.chbMensaje.AutoSize = true;
+			this.chbMensaje.Location = new System.Drawing.Point(359, 48);
+			this.chbMensaje.Name = "chbMensaje";
+			this.chbMensaje.Size = new System.Drawing.Size(110, 17);
+			this.chbMensaje.TabIndex = 14;
+			this.chbMensaje.Text = "Proceso de lexico";
+			this.chbMensaje.UseVisualStyleBackColor = true;
+			this.chbMensaje.CheckedChanged += new System.EventHandler(this.chbMensaje_CheckedChanged);
+			// 
 			// btnLimpiar
 			// 
 			this.btnLimpiar.Location = new System.Drawing.Point(76, 79);
@@ -219,7 +230,7 @@
 			// 
 			// btnComprobar
 			// 
-			this.btnComprobar.Location = new System.Drawing.Point(375, 47);
+			this.btnComprobar.Location = new System.Drawing.Point(375, 71);
 			this.btnComprobar.Name = "btnComprobar";
 			this.btnComprobar.Size = new System.Drawing.Size(75, 23);
 			this.btnComprobar.TabIndex = 11;
@@ -353,17 +364,6 @@
 			this.label7.Size = new System.Drawing.Size(38, 13);
 			this.label7.TabIndex = 0;
 			this.label7.Text = "Lexico";
-			// 
-			// chbMensaje
-			// 
-			this.chbMensaje.AutoSize = true;
-			this.chbMensaje.Location = new System.Drawing.Point(354, 76);
-			this.chbMensaje.Name = "chbMensaje";
-			this.chbMensaje.Size = new System.Drawing.Size(110, 17);
-			this.chbMensaje.TabIndex = 14;
-			this.chbMensaje.Text = "Proceso de lexico";
-			this.chbMensaje.UseVisualStyleBackColor = true;
-			this.chbMensaje.CheckedChanged += new System.EventHandler(this.chbMensaje_CheckedChanged);
 			// 
 			// Form1
 			// 
