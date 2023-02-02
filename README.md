@@ -1,3 +1,6 @@
+# Informacion general
+/Extra/compilador.csv para importar los regsitros
+# Control de version
 (Solo 50 caracteres)
 0.0.1 Primer Commit
 a
@@ -10,3 +13,4 @@ a
 1.3.1 Prueba Sint exito | Se logro su funcionamiento con se ali y skr ademas de parchar errores.
 1.3.2 Plantilla lista con detalles
 1.4.1 Correcion y detalles | inclusion de metodo y nuegos bugs
+1.5.0 Prueba finalizada

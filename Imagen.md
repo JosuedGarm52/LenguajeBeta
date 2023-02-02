@@ -1,3 +1,9 @@
+# Ejemplo de programa
+
+![Programa](./Extra/img/LYA.png)
+
+# Codigo de prueba 
+```
 CXFA KLA _MAIN 
 | 
    | ent _x = 2 ||
@@ -128,3 +134,4 @@ kla _Operaciones
          | rev _num1 + _num2 ||
     ||
 ||
+```

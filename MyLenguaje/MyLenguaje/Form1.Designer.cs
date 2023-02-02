@@ -56,6 +56,7 @@
 			this.label8 = new System.Windows.Forms.Label();
 			this.rhcAnalisisLexico = new System.Windows.Forms.RichTextBox();
 			this.label7 = new System.Windows.Forms.Label();
+			this.btnAjustar = new System.Windows.Forms.Button();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox3.SuspendLayout();
@@ -181,6 +182,7 @@
 			// 
 			// groupBox2
 			// 
+			this.groupBox2.Controls.Add(this.btnAjustar);
 			this.groupBox2.Controls.Add(this.chbMensaje);
 			this.groupBox2.Controls.Add(this.btnLimpiar);
 			this.groupBox2.Controls.Add(this.btnRellenar);
@@ -220,9 +222,9 @@
 			// 
 			// btnRellenar
 			// 
-			this.btnRellenar.Location = new System.Drawing.Point(588, 48);
+			this.btnRellenar.Location = new System.Drawing.Point(620, 48);
 			this.btnRellenar.Name = "btnRellenar";
-			this.btnRellenar.Size = new System.Drawing.Size(203, 23);
+			this.btnRellenar.Size = new System.Drawing.Size(142, 23);
 			this.btnRellenar.TabIndex = 12;
 			this.btnRellenar.Text = "Rellenar w/palabras";
 			this.btnRellenar.UseVisualStyleBackColor = true;
@@ -365,6 +367,16 @@
 			this.label7.TabIndex = 0;
 			this.label7.Text = "Lexico";
 			// 
+			// btnAjustar
+			// 
+			this.btnAjustar.Location = new System.Drawing.Point(620, 77);
+			this.btnAjustar.Name = "btnAjustar";
+			this.btnAjustar.Size = new System.Drawing.Size(142, 23);
+			this.btnAjustar.TabIndex = 15;
+			this.btnAjustar.Text = "Ajustar Tab Control";
+			this.btnAjustar.UseVisualStyleBackColor = true;
+			this.btnAjustar.Click += new System.EventHandler(this.btnAjustar_Click);
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -421,6 +433,7 @@
 		private System.Windows.Forms.RichTextBox rchAnalisisSintactico;
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.CheckBox chbMensaje;
+		private System.Windows.Forms.Button btnAjustar;
 	}
 }
 
