@@ -1,8 +1,8 @@
 # Informacion general
 /Extra/compilador.csv para importar los regsitros
 # Control de version
-(Solo 50 caracteres)
-0.0.1 Primer Commit  
+(Solo 50 caracteres)  
+0.0.1 Primer Commit    
 a  
 1.0.1 Base  
 1.1.1 Lexico basico  
@@ -14,3 +14,4 @@ a
 1.3.2 Plantilla lista con detalles  
 1.4.1 Correcion y detalles | inclusion de metodo y nuegos bugs  
 1.5.0 Prueba finalizada  
+1.6.1 Tabla de simbolos

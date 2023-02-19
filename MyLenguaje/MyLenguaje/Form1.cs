@@ -66,6 +66,7 @@ namespace MyLenguaje
 			try
 			{
 				EstaForma.Cursor = Cursors.AppStarting;
+				dtgSimbolo.Rows.Clear();
 				if (!String.IsNullOrEmpty(rchTexto.Text))
 				{
 					rchConsola1.Text = "Exito";
@@ -106,6 +107,9 @@ namespace MyLenguaje
 					int wancho = 1;
 					string textoError = "Errores Lexicos: \n";
 					char letraAnt = ' ';
+					bool modoLetra = false;
+					string palabras = "x ";
+					string letras = "";
 					do
 					{
 						string query = "SELECT * FROM compilador WHERE ESTSIM = " + posicion;
@@ -125,8 +129,13 @@ namespace MyLenguaje
 							{
 								if(espacio == "92")
 								{
+									if(modoLetra)
+									{
+										palabras += letras + ' ';
+										letras = "";
+										modoLetra = false;
+									}
 									posicion = "0";
-
 									if (listo)
 									{
 										cat += reader["CAT"].ToString();
@@ -154,16 +163,23 @@ namespace MyLenguaje
 										wancho = 1;
 										listo = false;
 									}
-
+									
 									consola += reader["FDC"].ToString();
 									consola += "\n";
-									letraAnt = codigo[y];
 								}
 
 
 							}
 							else
 							{
+								if(codigo[y] == '_')
+								{
+									modoLetra = true;
+								}
+								if(modoLetra)
+								{
+									letras += codigo[y];
+								}
 								string ced = "_" + ascii[y];
 								
 								posicion = reader[ced].ToString();
@@ -203,6 +219,80 @@ namespace MyLenguaje
 					{
 						cadenaLexico = cat;
 					}
+					int cont = 0;
+					string[] lexicos = cadenaLexico.Split(careEspacio, '\n', ' ');
+					string[] cajatexto = rchTexto.Text.Split(' ','\n','\0');
+					string[] ident = palabras.Split(' ');
+					string clavAnt = "";
+					for (int i = 0; i < cajatexto.Length; i++)
+					{
+						//if(cajatexto[i].Substring(0,2) == "\n" || cajatexto[i].Substring(0, 2) == "\0")
+						//{
+						//	cajatexto[i].Remove(0, 2);
+						//}
+ 						string tx = "aaa";
+						string ty = "bbbb";
+						if (cajatexto[i].Length > 0)
+						{
+							tx = cajatexto[i].Substring(0, 1);
+							ty = cajatexto[i];
+						}
+						if (tx == "_" && !(ty.Contains("(") || ty.Contains("["))
+							&& EsIgual(clavAnt.ToLower(), "ent", "kar", "kla", "log", "mat", "obj", "rea", "sxn"))
+						{
+							cont++;
+							string x = "";
+							if (cont > 3 && cajatexto[i - 4].ToLower() == "mat")
+							{
+								x = "MAT ";
+							}
+							if (clavAnt.ToLower() == "ent")
+							{
+								x += "ENT";
+							}
+							else if (clavAnt.ToLower() == "kar")
+							{
+								x += "KAR";
+							}
+							else if (clavAnt.ToLower() == "kla")
+							{
+								x += "KLA";
+							}
+							else if (clavAnt.ToLower() == "log")
+							{
+								x += "LOG";
+							}
+							else if (clavAnt.ToLower() == "mat")
+							{
+								x += "MAT";
+							}
+							else if (clavAnt.ToLower() == "obj")
+							{
+								x += "OBJ";
+							}
+							else if (clavAnt.ToLower() == "rea")
+							{
+								x += "REA";
+							}
+							else
+							{
+								x += "SXN";
+							}
+							dtgSimbolo.Rows.Add(cont, cajatexto[i], x);
+
+						} else if (cont > 2 && tx == "_" && cajatexto[i-2].Length > 0 && cajatexto[i-1].Length>0
+							&& cajatexto[i - 1].Substring(0, 1) == "_" 
+							&& cajatexto[i - 2].ToLower() == "obj")
+						{
+							dtgSimbolo.Rows.Add(cont, cajatexto[i], "OBJ");
+						}
+						
+						if(!EsIgual(cajatexto[i]," ",""+careEspacio,""+careFin,""+careEnter,"[","]","(",")"))
+						{
+							clavAnt = cajatexto[i];
+						}
+					}
+					
 					
 					InicializarCodigo(rchLexico, cadenaLexico, false);//true enseña todos los caracteres ocultos
 					rhcAnalisisLexico.Text = consola;
@@ -3482,6 +3572,7 @@ namespace MyLenguaje
 			rchConsola3.Text = "";
 			rhcAnalisisLexico.Text = "";
 			rchAnalisisSintactico.Text = "";
+			dtgSimbolo.Rows.Clear();
 		}
 
 		private void label2_Click(object sender, EventArgs e)
