@@ -1,5 +1,16 @@
-| ent _id02 = 1 ||
-| ent _id01 = 1 ||
-| ent _id03 = 1 ||
+CXFA KLA _MAIN 
+| 
+   | ent _x = 2 ||
+   :0 Se 0:
+   | SE ( _x RSQ 2 )
+       |
+          | SKR ( "X es mayor que 2" ) ||
+       ||
+       ALI
+       |
+          | SKR ( "X es menor que 2" ) ||
+      ||
+   ||
+||
 
 

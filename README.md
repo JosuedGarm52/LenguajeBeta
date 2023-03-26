@@ -15,3 +15,4 @@ a
 1.4.1 Correcion y detalles | inclusion de metodo y nuegos bugs  
 1.5.0 Prueba finalizada  
 1.6.1 Tabla de simbolos
+1.7.1 Cambios en el lexico | y en un metodo para el sintactico
