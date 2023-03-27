@@ -456,129 +456,555 @@ namespace MyLenguaje
 					{
 						//bool final = true;
 						string[] lexicos = cadenaLexico.Split(careEspacio, '\n', ' ');//rchLexico.Text.Split(' ','\n');
-						//int y = 0;
-						//int numI = 0;
-						//int numF = 0;
-						//int PosicionI = 0;
-						//int PosicionF = 0;
-						//do//Analizar si todos los inicios y cierras estan completos
-						//{
-						//	if (lexicos[y] == "INIS")
-						//	{
-						//		PosicionI = y - 1;
-						//		numI++;
+						string[] entreEnter = cadenaLexico.Split('\n');
 
-						//	}
-						//	if (lexicos[y] == "FIIN")
-						//	{
-						//		PosicionF = y - 1;
-						//		numF++;
-						//	}
-						//	if (lexicos[y] == "" + careFin || lexicos[y] == " " + careFin)
-						//	{
-						//		final = false;
-						//	}
-						//	else
-						//		y++;
-						//} while (final);
-						//if (numI == numF)
-
-						string cadena1 = "";
-						string[] codigo;
-						int count = 0;
-						int numid = 1;
-						//Borrar los coms y asignar IDs
-						foreach (string str in lexicos)
+						int MayorFila = 0;
+						int[] MetaArray;
+						string CadenaNumeros = "";
+						bool primero = true;
+						for (int i = 0; i < entreEnter.Length; i++)
 						{
-							if (count != 0)
+							string[] lex = entreEnter[i].Split(careEspacio);
+							string cod1 = "";
+							int cont1 = 0;
+							foreach (string str in lex)
 							{
-								cadena1 += " ";
-							}
-							else
-							{
-								count++;
-							}
-							if (str == "COMS")
-							{
-								cadena1 += "";
-								count--;
-							}
-							else
-							if (str == "IDEN")
-							{
-								if (Math.Floor(Math.Log10(numid) + 1) == 1)
+
+								if (str != "" && str != "" + careFin)
 								{
-									cadena1 += "ID" + "0" + numid;
+									if (cont1 == 0)
+									{
+										cont1++;
+									}
+									else
+									{
+										cod1 += " ";
+									}
+									cod1 += str;
 								}
 								else
 								{
 
-									cadena1 += "ID" + numid;
 								}
-								numid++;
+							}
+							lex = cod1.Split(' ');
+							int x = lex.Length;
+							//if((lex.Length-1) > 0)
+							//{
+							//	x = lex.Length - 1;
+							//}
+							if (primero)
+							{
+								CadenaNumeros = "" + x;
+								primero = false;
 							}
 							else
 							{
-								cadena1 += str;
+								CadenaNumeros += " " + x;
 							}
-
+							if (x > MayorFila)
+							{
+								MayorFila = x;
+							}
 						}
-						codigo = cadena1.Split(' ', '\n');
-						int sinCambios = 0;
-						int cambios = 0;
-						//string mirarString = "";
-						//string temp = "";
-						string cat = "";
-						bool Finalizo = false;
-						int compVuelta = 0;
-						//string UltDec = "";
-						do
-						{
-							SintacticoSinClase(ref codigo, ref Finalizo, ref sinCambios,ref compVuelta,ref cambios);
-							//sinCambios++;
+						string cadena1 = "";
+						MetaArray = Array.ConvertAll<string, int>(CadenaNumeros.Split(' '), int.Parse);
+						string[,] arrayCodigo = new string[entreEnter.Length, MayorFila];
 
-						} while (sinCambios < 4 && !Finalizo);
-						//if (sinCambios > 3)
-						//{
-						//	Advertir(rchConsola3, "No encontro mas cambios", "Revisa la consola 3");
-						//}
-						//else
+						//llenar arreglo
+						for (int i = 0; i < entreEnter.Length; i++)
 						{
-							cadenaSintactico = "";
-							int errores = 0;
-							foreach (string str in codigo)
+							string[] fila = entreEnter[i].Split(careEspacio);
+							string cod1 = "";
+							int cont1 = 0;
+							int numid = 0;
+							foreach (string str in fila)
 							{
 
-								cadenaSintactico += str + "\n";
-								if (!(str == "SKLA" || str == "SCXF"))
+								if (str != "" && str != "" + careFin)
 								{
-									errores++;
+									if (cont1 == 0)
+									{
+										cont1++;
+									}
+									else
+									{
+										cod1 += " ";
+									}
+									cod1 += str;
+								}
+								else
+								{
+
 								}
 							}
-							if (errores > 0)
+							fila = cod1.Split(' ');
+							for (int j = 0; j < fila.Length; j++)
 							{
-								rchConsola3.Text = "Se encontraron errores";
+								if (fila[j] == "IDEN")
+								{
+									numid++;
+									if (Math.Floor(Math.Log10(numid) + 1) == 1)
+									{
+										arrayCodigo[i, j] = "ID" + "0" + numid;
+									}
+									else
+									{
 
+										cadena1 += "ID" + numid;
+									}
+								}
+								else
+									arrayCodigo[i, j] = fila[j];
 							}
-							else
-							{
-
-								rchConsola3.Text = "Exito";
-							}
-							rchAnalisisSintactico.Text = cat;
-							rchSintactico.Text = cadenaSintactico;
 						}
-					
 
-					
-						//else if (numI > numF)
-						//{
-						//	rchConsola3.Text = "Ocurrio un error con un '|' sin cerrar cerca de la palabra numero " + PosicionI;
-						//}
-						//else
-						//{
-						//	rchConsola3.Text = "Ocurrio un error parece tener un '||' extra, compruebelo en la posicion " + PosicionF;
-						//}
+						string[,] respaldo = arrayCodigo;//por si acaso 
+						bool finalizo = false;
+						int sinCambios = 0;
+						int compVuelta = 0;
+						int cambios = 0;
+
+						for (int i = 0; i < arrayCodigo.GetLength(0); i++)
+						{
+							if (MetaArray[i] > 1)
+							{
+
+								string[] arregloFila = new string[MetaArray[i]];
+								for (int j = 0; j < arregloFila.Length; j++)
+								{
+									arregloFila[j] = arrayCodigo[i, j];
+								}
+								do
+								{
+									SintacticoSinClase(ref arregloFila, ref compVuelta, ref cambios, ref sinCambios, ref finalizo);
+									int cont2 = 0;
+									string cod2 = "";
+									foreach (string str in arregloFila)
+									{
+
+										if (str != "" && str != "" + careFin)
+										{
+											if (cont2 == 0)
+											{
+												cont2++;
+											}
+											else
+											{
+												cod2 += " ";
+											}
+											cod2 += str;
+										}
+										else
+										{
+
+										}
+									}
+									arregloFila = cod2.Split(' ');
+								} while (sinCambios < 4 );
+								for (int j = 0; j < arrayCodigo.GetLength(1); j++)
+								{
+									arrayCodigo[i, j] = null;
+								}
+								for (int j = 0; j < arregloFila.Length; j++)
+								{
+
+									arrayCodigo[i, j] = arregloFila[j];
+								}
+							}
+						}
+						string prueba = "";
+						//imprimir la matriz
+						for (int i = 0; i < arrayCodigo.GetLength(0); i++)
+						{
+							for (int j = 0; j < MetaArray[i]; j++)
+							{
+								if (j != 0)
+								{
+									prueba += " ";
+								}
+								prueba += arrayCodigo[i, j];
+							}
+							prueba += "\n";
+						}
+						cadenaSintactico = prueba;
+						rchSintactico.Text = cadenaSintactico+"";
+						int numeroErrores = 0;
+						string consolaError = "";
+						string catEstado = "";
+						bool verificado = false;
+						//Busqueda de errores
+						for (int i = 0; i < arrayCodigo.GetLength(0); i++)
+						{
+							int errores = 0;
+							int longitud =0;
+							int fila = i + 1;
+							bool estaticoReglaCXFA = false;
+							for (int j = 0; j < arrayCodigo.GetLength(1); j++)
+							{
+								if(arrayCodigo[i,j] != null)
+								{
+									longitud++;
+								}
+							}
+							
+							for (int j = 0; j < longitud; j++)
+							{
+								if(arrayCodigo[i,j] != null)
+								{
+									if (longitud > 1)
+									{
+										int expRestantes = longitud - j;
+										//Reglas
+										if (!estaticoReglaCXFA && longitud > 2 && arrayCodigo[i, 0] == "PR26")
+										{
+											if (arrayCodigo[i, 1] == "PR10"
+												&& arrayCodigo[i, 2].Substring(0, 2) == "ID")
+											{
+												estaticoReglaCXFA = true;
+											}
+											else if (arrayCodigo[i, 1] != "PR10"
+											   && arrayCodigo[i, 2].Substring(0, 2) == "ID")
+											{
+												estaticoReglaCXFA = true;
+												numeroErrores++;
+												errores++;
+												consolaError += "Error" + $" {numeroErrores}:" + $"({fila},{4 + 1}) " + "Debe seguir la palabra 'KLA' despues de la palabra 'CXFA'\n";
+											}
+											else if (arrayCodigo[i, 1] == "PR10"
+												&& arrayCodigo[i, 2].Substring(0, 2) != "ID")
+											{
+												estaticoReglaCXFA = true;
+												numeroErrores++;
+												errores++;
+												consolaError += "Error" + $" {numeroErrores}:" + $"({fila},{4 + 1 + 4 + 1}) "
+													+ "Despues de 'KLA' se espera un identificador\n";
+											}
+											else
+											{
+												estaticoReglaCXFA = true;
+												numeroErrores++;
+												errores++;
+												consolaError += "Error" + $" {numeroErrores}:" + $"({fila},{4 + 1}) "
+													+ "Despues del 'CXFA' se espera la palabra 'KLA' y un identificador\n";
+											}
+											verificado = true;
+										}
+										else if (!estaticoReglaCXFA && longitud > 1 && arrayCodigo[i, 0] == "PR26")
+										{
+											if (arrayCodigo[i, 1].Substring(0, 2) == "ID")
+											{
+												estaticoReglaCXFA = true;
+												numeroErrores++;
+												errores++;
+												consolaError += "Error" + $" {numeroErrores}:" + $"({fila},{4 + 1}) " + "Debe seguir la palabra 'KLA' despues de la palabra 'CXFA'\n";
+											}
+											else if (arrayCodigo[i, 1] != "PR10"
+												&& arrayCodigo[i, 2].Substring(0, 2) == "ID")
+											{
+												estaticoReglaCXFA = true;
+												numeroErrores++;
+												errores++;
+												consolaError += "Error" + $" {numeroErrores}:" + $"({i},{4 + 1 + 4 + 1}) "
+													+ "Despues de 'KLA' se espera un identificador\n";
+											}
+											else
+											{
+												estaticoReglaCXFA = true;
+												numeroErrores++;
+												errores++;
+												consolaError += "Error" + $" {numeroErrores}:" + $"({i},{4 + 1}) "
+													+ "Despues del 'CXFA' se espera la palabra 'KLA' y un identificador\n";
+											}
+										}
+										//CXFA KLA _ID
+										if (!verificado && expRestantes >= 3 && arrayCodigo[i, j] == "PR26")
+										{
+											int caracFila = CountCharactersBeforeWord(arrayCodigo, i, "PR26");
+											if (arrayCodigo[i, j + 1] == "PR10"
+												&& arrayCodigo[i, j + 2].Substring(0, 2) == "ID")
+											{
+
+											}
+											else if (arrayCodigo[i, j + 1] != "PR10"
+											   && arrayCodigo[i, j + 2].Substring(0, 2) == "ID")
+											{
+
+												numeroErrores++;
+												errores++;
+												consolaError += "Error" + $" {numeroErrores}:" + $"({fila},{caracFila + 5}) " + "Debe seguir la palabra 'KLA' despues de la palabra 'CXFA'\n";
+											}
+											else if (arrayCodigo[i, j + 1] == "PR10"
+												&& arrayCodigo[i, j + 2].Substring(0, 2) != "ID")
+											{
+
+												numeroErrores++;
+												errores++;
+												consolaError += "Error" + $" {numeroErrores}:" + $"({fila},{caracFila + 9}) "
+													+ "Despues de 'KLA' se espera un identificador\n";
+											}
+											else
+											{
+
+												numeroErrores++;
+												errores++;
+												consolaError += "Error" + $" {numeroErrores}:" + $"({fila},{caracFila + 5}) "
+													+ "Despues del 'CXFA' se espera la palabra 'KLA' y un identificador\n";
+											}
+											verificado = true;
+										}
+										else
+										if (!verificado && expRestantes >= 2 && arrayCodigo[i, j] == "PR26")
+										{
+											int caracFila = CountCharactersBeforeWord(arrayCodigo, i, "PR26");
+											if (arrayCodigo[i, j + 1] != "PR10"
+											   && arrayCodigo[i, j + 2].Substring(0, 2) == "ID")
+											{
+												numeroErrores++;
+												errores++;
+												consolaError += "Error" + $" {numeroErrores}:" + $"({fila},{caracFila + 5}) " + "Debe seguir la palabra 'KLA' despues de la palabra 'CXFA'\n";
+											}
+										}
+										//x  pr21 cex( BLN  ó pr21 BLN cex)
+										if (expRestantes >= 2 && arrayCodigo[i, j] == "PR21")
+										{
+											if (arrayCodigo[i, j + 1] == "CEX(" &&
+												arrayCodigo[i, j + 2] == "BLN")
+											{
+												int caracFila = CountCharactersBeforeWord(arrayCodigo, i, "PR21");
+												numeroErrores++;
+												errores++;
+												consolaError += "Error"
+													+ $" {numeroErrores}:"
+													+ $"({fila},{caracFila + 10}) "
+													+ "Se espera que cierres los parentesis con )"
+													+ "\n";
+											}
+											else if (expRestantes >= 3 && arrayCodigo[i, j + 1] == "CEX(" &&
+											   arrayCodigo[i, j + 2] == "BLN" &&
+											   arrayCodigo[i, j + 3] != "CEX)")
+											{
+												int caracFila = CountCharactersBeforeWord(arrayCodigo, i, "PR21");
+												numeroErrores++;
+												errores++;
+												consolaError += "Error"
+													+ $" {numeroErrores}:"
+													+ $"({fila},{caracFila + 10}) "
+													+ "Se espera que cierres los parentesis con )"
+													+ "\n";
+											}
+											else if (arrayCodigo[i, j + 1] == "BLN"
+												&& arrayCodigo[i, j + 2] == "CEX)")
+											{
+												int caracFila = CountCharactersBeforeWord(arrayCodigo, i, "PR21");
+												numeroErrores++;
+												errores++;
+												consolaError += "Error"
+													+ $" {numeroErrores}:"
+													+ $"({fila},{caracFila + 5}) "
+													+ "Se espera que cierres los parentesis con ("
+													+ "\n";
+											}
+										}
+										//| ent _x = 1 . || 
+										//x INIS CEX. DECENT ASIG ASIGENT FIIN
+										if (expRestantes >= 5
+											&& arrayCodigo[i, j] == "INIS"
+											&& arrayCodigo[i, j + 1] != "DECENT"
+											&& arrayCodigo[i, j + 2] == "DECENT"
+											&& arrayCodigo[i, j + 3] == "ASIG"
+											&& arrayCodigo[i, j + 4] == "ASIGENT"
+											&& arrayCodigo[i, j + 5] == "FIIN")
+										{
+											int caracFila = CountCharactersBeforeWord(arrayCodigo, i, "INIS");
+											numeroErrores++;
+											errores++;
+											consolaError += "Error"
+												+ $" {numeroErrores}:"
+												+ $"({fila},{caracFila + 1}) "
+												+ "Se esperaba una palabra reservada"
+												+ "\n";
+										}
+										//| ent _x . = 1 || 
+										//x INIS DECENT CEX. ASIG CONE FIIN 
+										if (expRestantes >= 5
+											&& arrayCodigo[i, j] == "INIS"
+											&& arrayCodigo[i, j + 1] == "DECENT"
+											&& arrayCodigo[i, j + 2] != "ASIG"
+											&& arrayCodigo[i, j + 3] == "ASIG"
+											&& (arrayCodigo[i, j + 4] == "ASIGENT" || arrayCodigo[i, j + 4] == "CONE")
+											&& arrayCodigo[i, j + 5] == "FIIN")
+										{
+											int caracFila = CountCharactersBeforeWord(arrayCodigo, i, "DECENT");
+											numeroErrores++;
+											errores++;
+											consolaError += "Error"
+												+ $" {numeroErrores}:"
+												+ $"({fila},{caracFila + 1}) "
+												+ "Se esperaba un identificador"
+												+ "\n";
+										}
+										//| ent _x = . 1 ||
+										//x   INIS PR04 ID01 ASIG CEX. CONE FIIN 
+										if (expRestantes >= 6
+											&& arrayCodigo[i, j] == "INIS"
+											&& arrayCodigo[i, j + 1] == "PR04"
+											&& arrayCodigo[i, j + 2].Substring(0, 2) == "ID"
+											&& arrayCodigo[i, j + 3] == "ASIG"
+											&& !(arrayCodigo[i, j + 4] == "ASIGENT" || arrayCodigo[i, j + 4] == "CONE")
+											&& (arrayCodigo[i, j + 5] == "ASIGENT" || arrayCodigo[i, j + 5] == "CONE")
+											&& arrayCodigo[i, j + 6] == "FIIN")
+										{
+											int caracFila = CountCharactersBeforeWord(arrayCodigo, i, "ASIG");
+											numeroErrores++;
+											errores++;
+											consolaError += "Error"
+												+ $" {numeroErrores}:"
+												+ $"({fila},{caracFila + 1}) "
+												+ "Ese caracter no es valido en este contexto"
+												+ "\n";
+										}
+										//| ent _x = 1 . || 
+										//x INIS DECENT ASIG ASIGENT CEX. FIIN
+										if (expRestantes >= 4
+											&& arrayCodigo[i, j] == "INIS"
+											&& arrayCodigo[i, j + 1] == "DECENT"
+											&& arrayCodigo[i, j + 2] == "ASIG"
+											&& arrayCodigo[i, j + 3] == "ASIGENT"
+											&& arrayCodigo[i, j + 4] != "FIIN")
+										{
+											int caracFila = CountCharactersBeforeWord(arrayCodigo, i, "ASIGENT");
+											numeroErrores++;
+											errores++;
+											consolaError += "Error"
+												+ $" {numeroErrores}:"
+												+ $"({fila},{caracFila + 1}) "
+												+ "Se espera un identificador o un valor"
+												+ "\n";
+										}
+										//| ent _x _y ||
+										//x INIS PR04 ID01 ID02 FIIN
+										if (expRestantes >= 4
+											&& arrayCodigo[i, j] == "INIS"
+											&& arrayCodigo[i, j + 1] == "PR04"
+											&& arrayCodigo[i, j + 2].Substring(0, 2) == "ID"
+											&& arrayCodigo[i, j + 3].Substring(0, 2) == "ID"
+											&& arrayCodigo[i, j + 4] == "FIIN")
+										{
+											int caracFila = CountCharactersBeforeWord(arrayCodigo, i, "ID");
+											numeroErrores++;
+											errores++;
+											consolaError += "Error"
+												+ $" {numeroErrores}:"
+												+ $"({fila},{caracFila + 2 + 1}) "
+												+ "Se esperaba un '||' o un ',' "
+												+ "\n";
+										}
+										//| = 1 ||
+										//x INIS ASIG CONE FIIN
+										if (expRestantes >= 3
+											&& arrayCodigo[i, j] == "INIS"
+											&& arrayCodigo[i, j + 1] == "ASIG"
+									&& EsIgual(arrayCodigo[i, j + 2], "ASIGENT", "CONE", "ASIGCONE")
+											&& arrayCodigo[i, j + 3] == "FIIN")
+										{
+											int caracFila = CountCharactersBeforeWord(arrayCodigo, i, "INIS");
+											numeroErrores++;
+											errores++;
+											consolaError += "Error"
+												+ $" {numeroErrores}:"
+												+ $"({fila},{caracFila + 1}) "
+												+ "El caracter '=' no es valido en este contexto "
+												+ "\n";
+										}
+										//( _x rsq rsq _y )
+										//x	CEX( ID01 OPR1 OPR1 ID02 CEX)  
+										if (expRestantes >= 5
+											&& arrayCodigo[i, j] == "CEX("
+											&& arrayCodigo[i, j + 1].Substring(0, 2) == "ID"
+									&& EsIgual(arrayCodigo[i, j + 2], "OPR1", "OPR2", "OPR3", "OPR4", "OPR5", "OPR6", "OPSM", "OPRS", "OPML", "OPDV", "OPEX", "OPLA", "OPLO", "OPLN") //ES Operador
+									&& EsIgual(arrayCodigo[i, j + 3], "OPR1", "OPR2", "OPR3", "OPR4", "OPR5", "OPR6", "OPSM", "OPRS", "OPML", "OPDV", "OPEX", "OPLA", "OPLO", "OPLN") //ES Operador
+											&& arrayCodigo[i, j + 4].Substring(0, 2) == "ID"
+											&& arrayCodigo[i, j + 5] == "CEX)")
+										{
+											int caracFila = CountCharactersBeforeWord(arrayCodigo, i, "ID");
+											numeroErrores++;
+											errores++;
+											consolaError += "Error"
+												+ $" {numeroErrores}:"
+												+ $"({fila},{caracFila + 2 + 1}) "
+												+ "Esa expresion no es valida"
+												+ "\n";
+										}
+										//| ent _x = 1 | 
+										//x INIS DECENT ASIG ASIGENT INIS
+										if (expRestantes >= 4
+											&& arrayCodigo[i, j] == "INIS"
+											&& arrayCodigo[i, j + 1] == "DECENT"
+											&& arrayCodigo[i, j + 2] == "ASIG"
+											&& arrayCodigo[i, j + 3] == "ASIGENT"
+											&& arrayCodigo[i, j + 4] == "INIS")
+										{
+											int caracFila = CountCharactersBeforeWord(arrayCodigo, i, "ASIGENT");
+											numeroErrores++;
+											errores++;
+											consolaError += "Error"
+												+ $" {numeroErrores}:"
+												+ $"({fila},{caracFila + 1}) "
+												+ "Se esperaba un '||'"
+												+ "\n";
+										}
+										//| ent _x |
+										//x INIS DECENT INIS
+										if (expRestantes >= 2
+											&& arrayCodigo[i, j] == "INIS"
+											&& arrayCodigo[i, j + 1] == "DECENT"
+											&& arrayCodigo[i, j + 2] == "INIS")
+										{
+											int caracFila = CountCharactersBeforeWord(arrayCodigo, i, "DECENT");
+											numeroErrores++;
+											errores++;
+											consolaError += "Error"
+												+ $" {numeroErrores}:"
+												+ $"({fila},{caracFila + 1}) "
+												+ "Se esperaba un '||'"
+												+ "\n";
+										}
+										//| _x = 1 |
+										//x INIS ASIGENT INIS
+										if (expRestantes >= 2
+											&& arrayCodigo[i, j] == "INIS"
+											&& arrayCodigo[i, j + 1] == "ASIGENT"
+											&& arrayCodigo[i, j + 2] == "INIS")
+										{
+											int caracFila = CountCharactersBeforeWord(arrayCodigo, i, "ASIGENT");
+											numeroErrores++;
+											errores++;
+											consolaError += "Error"
+												+ $" {numeroErrores}:"
+												+ $"({fila},{caracFila + 1}) "
+												+ "Se esperaba un '||'"
+												+ "\n";
+										}
+									}
+								}
+							}
+							if(errores == 0)
+							{
+								catEstado += "Fila " + fila + ": CORRECTA\n";
+							}else
+							{
+								catEstado += "Fila " + fila + ": Con error/es\n";
+							}
+						}
+						rchAnalisisSintactico.Text = catEstado;
+						if(numeroErrores == 0)
+						{
+							rchConsola3.Text = "Exito";
+						}else
+						{
+							rchConsola3.Text = consolaError;
+						}
 					}
 					catch (Exception ex)
 					{
@@ -600,6 +1026,59 @@ namespace MyLenguaje
 				MessageBox.Show("Debes corregir los errores primero");
 			}
 		}
+		public static int CountCharactersBeforeWord(string[,] matrix, int rowIndex, string word)
+		{
+			string[] rowArray = new string[matrix.GetLength(1)];
+			for (int j = 0; j < matrix.GetLength(1); j++)
+			{
+				rowArray[j] = matrix[rowIndex, j];
+			}
+			string rowString = string.Join(" ", rowArray);
+			int index = rowString.IndexOf(word);
+			if (index == -1)
+			{
+				return rowString.Length;
+			}
+			else
+			{
+				return index;
+			}
+		}
+		public static int[] ConvertirArregloStringAInt(string[] arregloString)
+		{
+			int[] arregloInt = new int[arregloString.Length];
+			for (int i = 0; i < arregloString.Length; i++)
+			{
+				int.TryParse(arregloString[i], out arregloInt[i]);
+			}
+			return arregloInt;
+		}
+		public static int CountUntilWord(string inputString, string word)
+		{
+			int count = 0;
+			int index = inputString.IndexOf(word);
+			if (index != -1)
+			{
+				count = index;
+			}
+			else
+			{
+				count = inputString.Length;
+			}
+			return count;
+		}
+
+		public string[] ObtenerFilaDeMatriz(string[,] matriz, int fila)
+		{
+			int columnas = matriz.GetLength(1);
+			string[] filaArreglo = new string[columnas];
+			for (int i = 0; i < columnas; i++)
+			{
+				filaArreglo[i] = matriz[fila, i];
+			}
+			return filaArreglo;
+		}
+
 		private bool BLOQUEA(string text)
 		{
 			if(text == "SPR03" || text == "SPR04" || text == "SPR06" || text == "SPR07" || text == "SPR08" || text == "SPR09" || text == "SPR11" || text == "SPR12" || text == "SPR13" || text == "SPR15" || text == "SPR16" || text == "SPR17" || text == "SPR18" || text == "SPR21" || text == "SPR22" || text == "SPR23" || text == "SPR24" || text == "DAR" || text == "ROM" || text == "ASIGID" )
@@ -624,9 +1103,9 @@ namespace MyLenguaje
 			string MensajeError = "";
 			string mirarString = "";
 			string temp = "";
-			string cat = "";
+			string cat = "";//recordar colocar
 			//int compVuelta = 0;
-			string UltDec = "";
+			string UltDec = "";//Se utiliza despues
 			string[] codigx = codigo;
 			string cod1 = "";
 			int cont1 = 0;
@@ -3466,7 +3945,7 @@ namespace MyLenguaje
 				sinCambios++;
 			}
 		}
-		private void SintacticoSinClase(ref string[] codigo, ref bool Finalizo, ref int sinCambios, ref int compVuelta,ref int cambios)
+		private void SintacticoSinClase(ref string[] codigo,ref int compVuelta, ref int cambios,ref int sinCambios,ref bool Finalizo)
 		{
 
 			//int cambios = 0;
@@ -3475,7 +3954,6 @@ namespace MyLenguaje
 			string temp = "";
 			string cat = "";
 			//compVuelta = 0;
-			string UltDec = "";//No quitar se utiliza despues ;)
 			string[] codigx = codigo;
 			string cod1 = "";
 			int cont1 = 0;
@@ -3663,14 +4141,7 @@ namespace MyLenguaje
 						codigo[s] = "";
 						break;
 					}
-					//if (s >= 2 && posx == 0 && codigo[s - 2] == "DECENT" && codigo[s - 1] == "CEX," && codigo[s].Substring(0, 2) == "ID")
-					//{
-					//	sinCambios = 0;
-					//	codigo[s - 2] = "ASIGENT";
-					//	codigo[s - 1] = "";
-					//	codigo[s] = "";
-					//	break;
-					//}
+					
 					//DECENT ASIGCONE
 					if (s >= 3 && codigo[s - 3] == "DECENT" && codigo[s - 2] == "ASIGCONE" && codigo[s - 1] == "CEX," && codigo[s] == "ASIGENT")
 					{
@@ -4004,9 +4475,9 @@ namespace MyLenguaje
 					if (s >= 2
 						&& (
 						((codigo[s - 2] == "ASIGCDNA" || codigo[s - 2] == "CDNA" || codigo[s - 2].Substring(0, 2) == "ID") && (codigo[s] == "ASIGCDNA" || codigo[s] == "CDNA" || codigo[s].Substring(0, 2) == "ID"))
-					 || ((codigo[s - 2] == "ASIGCONE" || codigo[s - 2] == "CONE" || codigo[s - 2] == "ASIGCONR" || codigo[s - 2] == "CONR" || codigo[s - 2].Substring(0, 2) == "ID") && (codigo[s - 2] == "ASIGCONE" || codigo[s - 2] == "CONE" || codigo[s - 2] == "ASIGCONR" || codigo[s - 2] == "CONR" || codigo[s - 2].Substring(0, 2) == "ID"))
-					 || ((codigo[s - 2] == "ASIGCRTR" || codigo[s - 2] == "CRTR" || codigo[s - 2].Substring(0, 2) == "ID") && (codigo[s - 2] == "ASIGCRTR" || codigo[s - 2] == "CRTR" || codigo[s - 2].Substring(0, 2) == "ID"))
-					 || ((codigo[s - 2] == "ASIGBLN" || codigo[s - 2] == "BLN" || codigo[s - 2].Substring(0, 2) == "ID") && (codigo[s - 2] == "ASIGBLN" || codigo[s - 2] == "BLN" || codigo[s - 2].Substring(0, 2) == "ID"))
+					 || ((codigo[s - 2] == "ASIGCONE" || codigo[s - 2] == "CONE" || codigo[s - 2] == "ASIGCONR" || codigo[s - 2] == "CONR" || codigo[s - 2].Substring(0, 2) == "ID") && (codigo[s] == "ASIGCONE" || codigo[s] == "CONE" || codigo[s] == "ASIGCONR" || codigo[s] == "CONR" || codigo[s].Substring(0, 2) == "ID"))
+					 || ((codigo[s - 2] == "ASIGCRTR" || codigo[s - 2] == "CRTR" || codigo[s - 2].Substring(0, 2) == "ID") && (codigo[s] == "ASIGCRTR" || codigo[s] == "CRTR" || codigo[s].Substring(0, 2) == "ID"))
+					 || ((codigo[s - 2] == "ASIGBLN" || codigo[s - 2] == "BLN" || codigo[s - 2].Substring(0, 2) == "ID") && (codigo[s] == "ASIGBLN" || codigo[s] == "BLN" || codigo[s].Substring(0, 2) == "ID"))
 						)
 						&& (SiOpRelacional(codigo[s - 1]))
 					)
@@ -5644,10 +6115,7 @@ namespace MyLenguaje
 					}
 					//Zona Metodo
 
-					//if(EsIgual(codigo[s], "PR04", "PR07", "PR11", "PR12", "PR13", "PR14", "PR17", "PR18", "PR23", "PR27"))
-					//{
-					//	Bloc = true;
-					//}
+					
 					//SVMT
 					if (s >= 1
 					&& codigo[0] == "MDEC"
@@ -5774,110 +6242,7 @@ namespace MyLenguaje
 						codigo[s] = "";
 						break;
 					}
-					////BMET 
-					//if (s >= 1
-					//	&& EsIgual(codigo[s - 1], "SPR01", "SPR21", "SPR02", "SPR24", "SPR03", "SPR06", "SPR08", "SPR09", "SPR22", "SPR20", "SPR16", "SPR04", "SPR07", "SPR11", "SPR12", "SPR13", "SPR14", "SPR17", "SPR18", "SPR23", "BMET", "DECENT", "ASIGID") //BMET
-					//	&& EsIgual(codigo[s], "SPR01", "SPR21", "SPR02", "SPR24", "SPR03", "SPR06", "SPR08", "SPR09", "SPR22", "SPR20", "SPR16", "SPR04", "SPR07", "SPR11", "SPR12", "SPR13", "SPR14", "SPR17", "SPR18", "SPR23", "BMET", "DECENT", "ASIGID", "SIMT", "")) //BMET
-					//{
-					//	sinCambios = 0;
-					//	codigo[s - 1] = "BMET";
-					//	codigo[s] = "";
-					//	break;
-					//}
-					////BRMT
-					//if (s >= 2 && codigo[s - 2] == "INIS" && codigo[s - 1] == "BRMT" && codigo[s] == "FIIN")
-					//{
-					//	sinCambios = 0;
-					//	codigo[s - 2] = "BRMT";
-					//	codigo[s - 1] = "";
-					//	codigo[s] = "";
-					//	break;
-					//}
-					////BRMT --BMET
-					//if (s >= 1
-					//	&& ((codigo[s - 1] == "BRMT" && codigo[s] == "BMET") || (codigo[s - 1] == "BRMT" && codigo[s] == "BMET")))
-					//{
-					//	sinCambios = 0;
-					//	codigo[s - 1] = "BRMT";
-					//	codigo[s] = "";
-					//	break;
-					//}
-
-					////Comprobar valor
-					//if (s >= 1
-					//	&& EsIgual(codigo[s - 1], "PR04", "PR07", "PR11", "PR12", "PR13", "PR15", "PR18", "PR23") //MARG1 - 27
-					//	&& (EsIgual(codigo[s], "MDEC", "MTDX") || codigo[s].Substring(0, 2) == "ID"))
-					//{
-					//	UltDec = codigo[s - 1];
-					//}
-					////BRMT
-					//if (s >= 2
-					//	&& codigo[s - 2] == "INIS"
-					//	&& codigo[s] == "FIIN")
-					//{
-					//	if (UltDec == "PR04" && (codigo[s - 1] == "S19CONE" || codigo[s - 1] == "S19ID"))
-					//	{//ent
-					//		sinCambios = 0;
-					//		codigo[s - 2] = "BRMT";
-					//		codigo[s - 1] = "";
-					//		codigo[s] = "";
-					//		break;
-					//	}
-					//	else
-					//	if (UltDec == "PR07" && (codigo[s - 1] == "CRTR" || codigo[s - 1] == "SPR07" || codigo[s - 1].Substring(0, 2) == "ID"))
-					//	{//kar
-					//		sinCambios = 0;
-					//		codigo[s - 2] = "BRMT";
-					//		codigo[s - 1] = "";
-					//		codigo[s] = "";
-					//		break;
-					//	}
-					//	else
-					//	if (UltDec == "PR11" && (codigo[s - 1] == "PR05" || codigo[s - 1] == "PR25" || codigo[s - 1] == "SPR11" || codigo[s - 1].Substring(0, 2) == "ID"))
-					//	{//log
-					//		sinCambios = 0;
-					//		codigo[s - 2] = "BRMT";
-					//		codigo[s - 1] = "";
-					//		codigo[s] = "";
-					//		break;
-					//	}
-					//	else
-					//	if (UltDec == "PR13" && (codigo[s - 1] == "SPR15" || codigo[s - 1] == "SPR13" || codigo[s - 1].Substring(0, 2) == "ID"))
-					//	{//mat
-					//		sinCambios = 0;
-					//		codigo[s - 2] = "BRMT";
-					//		codigo[s - 1] = "";
-					//		codigo[s] = "";
-					//		break;
-					//	}
-					//	else
-					//	if (UltDec == "PR15" && (codigo[s - 1] == "SPR15" || codigo[s - 1].Substring(0, 2) == "ID"))
-					//	{//obj
-					//		sinCambios = 0;
-					//		codigo[s - 2] = "BRMT";
-					//		codigo[s - 1] = "";
-					//		codigo[s] = "";
-					//		break;
-					//	}
-					//	else
-					//	if (UltDec == "PR18" && (codigo[s - 1] == "S19CONR" || codigo[s - 1] == "S19ID"))
-					//	{//rea
-					//		sinCambios = 0;
-					//		codigo[s - 2] = "BRMT";
-					//		codigo[s - 1] = "";
-					//		codigo[s] = "";
-					//		break;
-					//	}
-					//	else
-					//	if (UltDec == "PR23" && (codigo[s - 1] == "CDNA" || codigo[s - 1] == "SPR23" || codigo[s - 1].Substring(0, 2) == "ID"))
-					//	{//sxn
-					//		sinCambios = 0;
-					//		codigo[s - 2] = "BRMT";
-					//		codigo[s - 1] = "";
-					//		codigo[s] = "";
-					//		break;
-					//	}
-					//}
+					
 					//Zona Clase KLA
 					//ASIGID
 					if (s >= 2 && codigo[s - 2] == "INIS" && codigo[s - 1] == "ASIGID" && codigo[s] == "FIIN")
@@ -5888,42 +6253,7 @@ namespace MyLenguaje
 						codigo[s] = "";
 						break;
 					}
-					////SKLA
-					//if (posx >= 4 && codigo[s] != "PR26" && codigo[s + 1] == "XKLA" && codigo[s + 2] == "CABZ" && codigo[s + 3] == "BKLA" && codigo[s + 4] == "FIIN")
-					//{
-					//	sinCambios = 0;
-					//	codigo[s + 1] = "SKLA";
-					//	codigo[s + 2] = "";
-					//	codigo[s + 3] = "";
-					//	codigo[s + 4] = "";
-					//	break;
-					//}
-					//if (codigo[0] == "XKLA" && codigo[1] == "CABZ" && codigo[2] == "BKLA" && codigo[3] == "FIIN")
-					//{
-					//	sinCambios = 0;
-					//	codigo[0] = "SKLA";
-					//	codigo[1] = "";
-					//	codigo[2] = "";
-					//	codigo[3] = "";
-					//	break;
-					//}
-					////SKLA
-					//if (posx >= 4 && codigo[s] != "PR26" && codigo[s + 1] == "XKLA" && codigo[s + 2] == "BKLA" && codigo[s + 3] == "FIIN")
-					//{
-					//	sinCambios = 0;
-					//	codigo[s + 1] = "SKLA";
-					//	codigo[s + 2] = "";
-					//	codigo[s + 3] = "";
-					//	break;
-					//}
-					//if (codigo[0] == "XKLA" && codigo[1] == "BKLA" && codigo[2] == "FIIN")
-					//{
-					//	sinCambios = 0;
-					//	codigo[0] = "SKLA";
-					//	codigo[1] = "";
-					//	codigo[2] = "";
-					//	break;
-					//}
+					
 					//SCXF
 					if (posx >= 5 && codigo[s] == "PR26" && codigo[s + 1] == "XKLA" && codigo[s + 2] == "CABZ" && codigo[s + 3] == "BODY" && codigo[s + 4] == "FIIN")
 					{
@@ -6083,70 +6413,7 @@ namespace MyLenguaje
 						codigo[s] = "";
 						break;
 					}
-					////CABZ
-					//if (s >= 3
-					//	&& codigo[s - 3] == "MTDX"
-					//	&& codigo[s - 2] == "CEX)"
-					//	&& codigo[s - 1] == "INIS"
-					//	&& codigo[s] == "FIIN")
-					//{
-					//	sinCambios = 0;
-					//	codigo[s - 3] = "CABZ";
-					//	codigo[s - 2] = "";
-					//	codigo[s - 1] = "";
-					//	codigo[s] = "";
-					//	break;
-					//}
-					////CABZ
-					//if (s >= 4
-					//	&& codigo[s - 4] == "MTDX"
-					//	&& codigo[s - 3] == "CEX)"
-					//	&& codigo[s - 2] == "INIS"
-					//	&& codigo[s - 1] == "BKLA"
-					//	&& codigo[s] == "FIIN")
-					//{
-					//	sinCambios = 0;
-					//	codigo[s - 4] = "CABZ";
-					//	codigo[s - 3] = "";
-					//	codigo[s - 2] = "";
-					//	codigo[s - 1] = "";
-					//	codigo[s] = "";
-					//	break;
-					//}
-					////CABZ
-					//if (s >= 4
-					//	&& codigo[s - 4] == "MTDX"
-					//	&& codigo[s - 3] == "SVMT"
-					//	&& codigo[s - 2] == "INIS"
-					//	&& codigo[s - 1] == "BKLA"
-					//	&& codigo[s] == "FIIN")
-					//{
-					//	sinCambios = 0;
-					//	codigo[s - 4] = "CABZ";
-					//	codigo[s - 3] = "";
-					//	codigo[s - 2] = "";
-					//	codigo[s - 1] = "";
-					//	codigo[s] = "";
-					//	break;
-					//}
-					////CABZ BKLA
-					//if (s >= 1 && codigo[s - 1] == "BKLA"
-					//	&& codigo[s] == "CABZ")
-					//{
-					//	sinCambios = 0;
-					//	codigo[s - 1] = "CABZ";
-					//	codigo[s] = "BKLA";
-					//	break;
-					//}
-					////CABZ BODY
-					//if (s >= 1 && codigo[s - 1] == "BODY"
-					//	&& codigo[s] == "CABZ")
-					//{
-					//	sinCambios = 0;
-					//	codigo[s - 1] = "CABZ";
-					//	codigo[s] = "BODY";
-					//	break;
-					//}
+					
 					//MTDX SVMT INIS
 					if (s >= 3
 						&& codigo[s - 3].Substring(0, 2) == "ID"
@@ -6183,133 +6450,7 @@ namespace MyLenguaje
 						codigo[s] = "";
 						break;
 					}
-				//	//PR26 MTDX SVMT INIS BODY
-				//	if (s >= 4
-				//		&& codigo[s - 4] == "PR26"
-				//		&& codigo[s - 3] == "MTDX"
-				//		&& codigo[s - 2] == "SVMT"
-				//		&& codigo[s - 1] == "INIS"
-				//		&& EsIgual(codigo[s], "SPR03", "SPR06", "SPR09", "SPR12", "SPR16", "SPR17", "SPR21", "SPR22", "SPR24", "SPR04", "DECENT", "ASIGENT", "SPR18", "DECREA", "ASIGREA", "SPR11", "SPR13", "SPR15", "SPR23", "SIMT", "SIMV", "ASIGID", "BRMT", "DECENT", "SIMT"))//BODY
-				//	{
-				//		sinCambios = 0;
-				//		codigo[s - 4] = "PR26";
-				//		codigo[s - 3] = "MTDX";
-				//		codigo[s - 2] = "SVMT";
-				//		codigo[s - 1] = "INIS";
-				//		codigo[s] = "BODY";
-				//		break;
-				//	}
-				//	//PR26 XKLA CABZ BODY
-				//	if (s >= 5
-				//		&& codigo[s - 5] == "PR26"
-				//		&& codigo[s - 4] == "PR10"
-		  //&& codigo[s - 3].Substring(0, 2) == "ID"
-				//		&& codigo[s - 2] == "INIS"
-				//		&& codigo[s - 1] == "CABZ"
-				//		&& EsIgual(codigo[s], "SPR03", "SPR06", "SPR09", "SPR12", "SPR16", "SPR17", "SPR21", "SPR22", "SPR24", "SPR04", "DECENT", "ASIGENT", "SPR18", "DECREA", "ASIGREA", "SPR11", "SPR13", "SPR15", "SPR23", "SIMT", "SIMV", "ASIGID"))
-				//	{
-				//		sinCambios = 0;
-				//		codigo[s - 5] = "PR26";
-				//		codigo[s - 4] = "XKLA";
-				//		codigo[s - 3] = "CABZ";
-				//		codigo[s - 2] = "BODY";
-				//		codigo[s - 1] = "PR26";
-				//		codigo[s] = "";
-				//		break;
-				//	}
-				//	//PR26 XKLA BODY
-				//	if (s >= 4
-				//		&& codigo[s - 4] == "PR26"
-				//		&& codigo[s - 3] == "PR10"
-		  //&& codigo[s - 2].Substring(0, 2) == "ID"
-				//		&& codigo[s - 1] == "INIS"
-				//		&& EsIgual(codigo[s], "SPR03", "SPR06", "SPR09", "SPR12", "SPR16", "SPR17", "SPR21", "SPR22", "SPR24", "SPR04", "DECENT", "ASIGENT", "SPR18", "DECREA", "ASIGREA", "SPR11", "SPR13", "SPR15", "SPR23", "SIMT", "SIMV", "ASIGID"))
-				//	{
-				//		sinCambios = 0;
-				//		codigo[s - 4] = "PR26";
-				//		codigo[s - 3] = "XKLA";
-				//		codigo[s - 2] = "BODY";
-				//		codigo[s - 1] = "";
-				//		codigo[s] = "";
-				//		break;
-				//	}
-				//	if (posx >= 4
-				//		&& codigo[s] == "SVMT"
-				//		&& codigo[s + 1] == "INIS"
-				//		&& codigo[s + 2] == "INIS"
-				//		&& codigo[s + 3] == "ASIGID"
-				//		&& codigo[s + 4] == "FIN")
-				//	{
-				//		sinCambios = 0;
-				//		codigo[s] = "SVMT";
-				//		codigo[s + 1] = "INIS";
-				//		codigo[s + 2] = "BKLA";
-				//		codigo[s + 3] = "";
-				//		codigo[s + 4] = "";
-				//		break;
-				//	}
-					////MTDX SVMT INIS BKLA
-					//if (s >= 3
-					//	&& codigo[s - 3] == "MTDX"
-					//	&& codigo[s - 2] == "SVMT"
-					//	&& codigo[s - 1] == "INIS"
-					//	&& EsIgual(codigo[s], "SPR04", "DECENT", "ASIGENT", "SPR18", "DECREA", "ASIGREA", "SPR11", "SPR13", "SPR15", "SPR23", "SIMT", "SIMV", "ASIGID", "ASIGVARMAT", "SOBJ"))
-					//{
-					//	sinCambios = 0;
-					//	codigo[s - 3] = "MTDX";
-					//	codigo[s - 2] = "SVMT";
-					//	codigo[s - 1] = "INIS";
-					//	codigo[s] = "BKLA";
-					//	break;
-					//}
-				//	//XKLA CABZ BKLA
-				//	if (s >= 4
-				//		&& codigo[s - 4] == "PR10"
-		  //&& codigo[s - 3].Substring(0, 2) == "ID"
-				//		&& codigo[s - 2] == "INIS"
-				//		&& codigo[s - 1] == "CABZ"
-				//		&& EsIgual(codigo[s], "SPR04", "DECENT", "ASIGENT", "SPR18", "DECREA", "ASIGREA", "SPR11", "SPR13", "SPR15", "SPR23", "SIMT", "SIMV", "ASIGID", "ASIGVARMAT", "SMAT", "SOBJ"))
-				//	{
-				//		sinCambios = 0;
-				//		codigo[s - 4] = "XKLA";
-				//		codigo[s - 3] = "BKLA";
-				//		codigo[s - 2] = "";
-				//		codigo[s - 1] = "";
-				//		codigo[s] = "";
-				//		break;
-				//	}
-				//	//XKLA BKLA
-				//	if (s >= 3
-				//		&& codigo[s - 3] == "PR10"
-		  //&& codigo[s - 2].Substring(0, 2) == "ID"
-				//		&& codigo[s - 1] == "INIS"
-				//		&& EsIgual(codigo[s], "SPR04", "DECENT", "ASIGENT", "SPR18", "DECREA", "ASIGREA", "SPR11", "SPR13", "SPR15", "SPR23", "SIMT", "SIMV", "ASIGID", "ASIGVARMAT", "SMAT", "SOBJ"))
-				//	{
-				//		sinCambios = 0;
-				//		codigo[s - 3] = "XKLA";
-				//		codigo[s - 2] = "BKLA";
-				//		codigo[s - 1] = "";
-				//		codigo[s] = "";
-				//		break;
-				//	}
-				//	//BKLA
-				//	if (s >= 1 && codigo[s - 1] == "BKLA"
-				//		&& EsIgual(codigo[s], "SPR04", "DECENT", "ASIGENT", "SPR18", "DECREA", "ASIGREA", "SPR11", "SPR13", "SPR15", "SPR23", "SIMT", "SIMV", "ASIGID", "ASIGVARMAT", "SMAT", "SOBJ")) //$BKLA
-				//	{
-				//		sinCambios = 0;
-				//		codigo[s - 1] = "BKLA";
-				//		codigo[s] = "";
-				//		break;
-				//	}
-				//	//BODY
-				//	if (s >= 1 && codigo[s - 1] == "BODY"
-				//		&& EsIgual(codigo[s], "SPR03", "SPR06", "SPR09", "SPR12", "SPR16", "SPR17", "SPR21", "SPR22", "SPR24", "SPR04", "DECENT", "ASIGENT", "SPR18", "DECREA", "ASIGREA", "SPR11", "SPR13", "SPR15", "SPR23", "SIMT", "SIMV", "ASIGID", "ASIGVARMAT", "SMAT", "BMET", "SOBJ")) //$BODY
-				//	{
-				//		sinCambios = 0;
-				//		codigo[s - 1] = "BODY";
-				//		codigo[s] = "";
-				//		break;
-				//	}
+				
 				}
 
 				if (s == codigo.Length - 1 && sinCambios == 2)
@@ -6469,7 +6610,7 @@ namespace MyLenguaje
 
 		private void label8_Click(object sender, EventArgs e)
 		{
-
+			
 		}
 		bool MenSi = false;
 		private void chbMensaje_CheckedChanged(object sender, EventArgs e)

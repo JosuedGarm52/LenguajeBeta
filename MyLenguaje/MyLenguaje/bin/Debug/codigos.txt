@@ -1,16 +1,12 @@
-CXFA KLA _MAIN 
-| 
-   | ent _x = 2 ||
-   :0 Se 0:
-   | SE ( _x RSQ 2 )
-       |
-          | SKR ( "X es mayor que 2" ) ||
-       ||
-       ALI
-       |
-          | SKR ( "X es menor que 2" ) ||
-      ||
-   ||
-||
-
-
+se ( _x rsq 1 
+se _x rsq 1 )
+| ent _x = 1 . ||
+| , ent _x = 1 ||
+| ent _x . = 1 ||
+| ent _x = . 1 ||
+| ent _x _y ||
+| = 1 ||
+( _x rsq rsq _y )
+| ent _x = 1 |
+| ent _x |
+| _x = 1 |
