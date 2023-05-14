@@ -1,12 +1,18 @@
-se ( _x rsq 1 
-se _x rsq 1 )
-| ent _x = 1 . ||
-| , ent _x = 1 ||
-| ent _x . = 1 ||
-| ent _x = . 1 ||
-| ent _x _y ||
-| = 1 ||
-( _x rsq rsq _y )
-| ent _x = 1 |
-| ent _x |
-| _x = 1 |
+| ENT _num = 1 ||
+| KAR _carac = 'c' ||
+| LOG _true = VERA ||
+| LOG _false = FALSA ||
+| MAT ENT [ ] _entArray ||
+| MAT sxn _sxnArray = NOV sxn [ 0 ] ||
+| _entArray = { 1 , 3 , 4 } ||
+| REA _dinero = 12.50 ||
+| SXN _saludo = "Hola Mundo" ||
+| OBJ _Prueba _prueba = nov _Prueba (  ) ||
+kla _Prueba
+|
+   :0Aqui va el codigo0:
+||
+CXFA KLA _main
+|
+   :0Aqui va el codigo0:
+||

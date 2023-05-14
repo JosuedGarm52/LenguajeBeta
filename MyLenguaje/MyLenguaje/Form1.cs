@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace MyLenguaje
 {
@@ -27,6 +28,9 @@ namespace MyLenguaje
 		string cadenaSintactico;
 		int LexicoErrores = 0;
 		bool EstadoAnalisis = false;
+		string[][] matrizLexico;
+		string[][] matrizCodigo;
+		List<MetaDatos> _listaMeta = new List<MetaDatos>();
 
 		public Form1()
 		{
@@ -224,84 +228,48 @@ namespace MyLenguaje
 					else
 					{
 						cadenaLexico = cat;
-					}
-					int cont = 0;
-					string[] lexicos = cadenaLexico.Split(careEspacio, '\n', ' ');
-					string[] cajatexto = rchTexto.Text.Split(' ','\n','\0');
-					string[] ident = palabras.Split(' ');
-					string clavAnt = "";
-					for (int i = 0; i < cajatexto.Length; i++)
+					} 
+					matrizLexico = ConvertirTextoEnMatriz(cadenaLexico);
+					matrizCodigo = ConvertirCodigoEnMatriz(rchTexto.Text);
+					int count = 0;
+					int NumID = 0;
+					for (int i = 0; i < matrizLexico.Length; i++)
 					{
-						//if(cajatexto[i].Substring(0,2) == "\n" || cajatexto[i].Substring(0, 2) == "\0")
-						//{
-						//	cajatexto[i].Remove(0, 2);
-						//}
- 						string tx = "aaa";
-						string ty = "bbbb";
-						if (cajatexto[i].Length > 0)
-						{
-							tx = cajatexto[i].Substring(0, 1);
-							ty = cajatexto[i];
-						}
-						if (tx == "_" && !(ty.Contains("(") || ty.Contains("["))
-							&& EsIgual(clavAnt.ToLower(), "ent", "kar", "kla", "log", "mat", "obj", "rea", "sxn"))
-						{
-							cont++;
-							string x = "";
-							if (cont > 3 && cajatexto[i - 4].ToLower() == "mat")
-							{
-								x = "MAT ";
-							}
-							if (clavAnt.ToLower() == "ent")
-							{
-								x += "ENT";
-							}
-							else if (clavAnt.ToLower() == "kar")
-							{
-								x += "KAR";
-							}
-							else if (clavAnt.ToLower() == "kla")
-							{
-								x += "KLA";
-							}
-							else if (clavAnt.ToLower() == "log")
-							{
-								x += "LOG";
-							}
-							else if (clavAnt.ToLower() == "mat")
-							{
-								x += "MAT";
-							}
-							else if (clavAnt.ToLower() == "obj")
-							{
-								x += "OBJ";
-							}
-							else if (clavAnt.ToLower() == "rea")
-							{
-								x += "REA";
-							}
-							else
-							{
-								x += "SXN";
-							}
-							dtgSimbolo.Rows.Add(cont, cajatexto[i], x);
+						// Obtener el número de columnas de la fila actual
+						int numColumnas = matrizLexico[i].Length;
 
-						} else if (cont > 2 && tx == "_" && cajatexto[i-2].Length > 0 && cajatexto[i-1].Length>0
-							&& cajatexto[i - 1].Substring(0, 1) == "_" 
-							&& cajatexto[i - 2].ToLower() == "obj")
+						for (int j = 0; j < numColumnas; j++)
 						{
-							dtgSimbolo.Rows.Add(cont, cajatexto[i], "OBJ");
+							//Declaracion de variable
+							//Guardar ENT PR04 KAR PR07 LOG PR11 REA PR18 SXN PR23
+							if (j >= 4 && matrizLexico[i][j - 1] == "ASIG"
+									 && matrizLexico[i][j - 2] == "IDEN"
+									 && EsIgual(matrizLexico[i][j - 3], "PR04", "PR07", "PR11", "PR18", "PR23")
+									 && matrizLexico[i][j - 4] != "PR13")
+							{
+								//matrizLexico[i][j - 0] == "CONE" 
+								MetaDatos meta = new MetaDatos();
+								count++;
+								meta.ID = count;
+								meta.Variable = matrizCodigo[i][j - 2];
+								meta.TipoDato = matrizCodigo[i][j - 3].ToUpper();//Tipo de dato Mayuscula = ENT
+								meta.Token = matrizLexico[i][j - 2];
+								meta.Valor = matrizCodigo[i][j];
+								NumID++;
+								meta.TokenUnico = MarcarToken("ID", NumID);
+								meta.Fila = i;
+								//Declaracion de id
+								_listaMeta.Add(meta);
+							}
 						}
-						
-						if(!EsIgual(cajatexto[i]," ",""+careEspacio,""+careFin,""+careEnter,"[","]","(",")"))
-						{
-							clavAnt = cajatexto[i];
-						}
+
+						// Saltar de línea al terminar la fila
+						Console.WriteLine();
 					}
-					
-					
+					LlenarTablaSimbolos();
 					InicializarCodigo(rchLexico, cadenaLexico, false);//true enseña todos los caracteres ocultos
 					rhcAnalisisLexico.Text = consola;
+
 					//rchConsola2.Text = consola;
 				}else
 				{
@@ -322,6 +290,98 @@ namespace MyLenguaje
 				btnLexicar.Focus();
 			}
 			
+		}
+		public static string MarcarToken(string str, int num)
+		{
+			string numStr = num.ToString();
+			if (num < 10)
+			{
+				numStr = "0" + numStr;
+			}
+			return str + numStr;
+		}
+		public string[][] ConvertirTextoEnMatriz(string texto)
+		{
+			string[] lineas = texto.Split('\n'); // Dividimos el texto en líneas
+			int numFilas = lineas.Length;
+
+			// Encontrar la longitud máxima de cualquier renglón
+			int longitudMaxima = 0;
+			foreach (string linea in lineas)
+			{
+				int longitud = linea.Split(careEspacio).Length;
+				if (longitud > longitudMaxima)
+				{
+					longitudMaxima = longitud;
+				}
+			}
+
+			// Inicializar la matriz con la longitud máxima encontrada
+			string[][] matriz = new string[numFilas][];
+
+			for (int i = 0; i < numFilas; i++)
+			{
+				string[] palabras = lineas[i].Split(careEspacio); // Dividimos cada línea en palabras
+				int longitudReal = palabras.Length;
+				matriz[i] = new string[longitudReal];
+				for (int j = 0; j < longitudReal; j++)
+				{
+					matriz[i][j] = palabras[j]; // Asignamos cada palabra a la posición correspondiente de la matriz
+				}
+			}
+
+			return matriz;
+		}
+
+		public static string[][] ConvertirCodigoEnMatriz(string texto)
+		{
+			string[] lineas = texto.Split('\n'); // Dividimos el texto en líneas
+			int numFilas = lineas.Length;
+			string[][] matriz = new string[numFilas][];
+
+			for (int i = 0; i < numFilas; i++)
+			{
+				string[] palabras = lineas[i].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries); // Dividimos cada línea en palabras
+				List<string> fila = new List<string>();
+
+				for (int j = 0; j < palabras.Length; j++)
+				{
+					string palabraActual = palabras[j];
+					if (palabraActual.StartsWith("\""))
+					{
+						// Si la palabra actual empieza con una comilla doble, concatenamos las palabras siguientes hasta encontrar una que termine con una comilla doble
+						while (!palabraActual.EndsWith("\"") && j < palabras.Length - 1)
+						{
+							j++;
+							palabraActual += " " + palabras[j];
+						}
+					}
+					fila.Add(palabraActual); // Agregamos la palabra a la fila actual
+				}
+
+				matriz[i] = fila.ToArray(); // Convertimos la fila actual en un arreglo y la agregamos a la matriz
+			}
+
+			return matriz;
+		}
+
+		private void LlenarTablaSimbolos()
+		{
+			dtgSimbolo.Rows.Clear();
+			if(_listaMeta.Count > 0)
+			{
+				foreach (MetaDatos meta in _listaMeta)
+				{
+					string a1 = meta.ID+"";
+					string a2 = meta.Variable ;
+					string a3 = meta.TipoDato ;
+					string a4 = meta.Token ;
+					string a5 = meta.Valor;
+					string a6 = meta.TokenUnico ;
+					string a7 = meta.Fila+"";
+					dtgSimbolo.Rows.Add(a1, a2, a3, a4, a5, a6, a7);
+				}
+			}
 		}
 		private void Advertir(RichTextBox rich , string textoRich, string textoMensaje)
 		{
@@ -6590,7 +6650,8 @@ namespace MyLenguaje
 			rchConsola3.Text = "";
 			rhcAnalisisLexico.Text = "";
 			rchAnalisisSintactico.Text = "";
-			dtgSimbolo.Rows.Clear();
+			dtgSimbolo.Rows.Clear();//vaciar datagridview
+			_listaMeta.Clear();//vaciar lista
 		}
 
 		private void label2_Click(object sender, EventArgs e)
@@ -6628,6 +6689,29 @@ namespace MyLenguaje
 		{
 			rchTexto.SelectionFont = new Font("Microsoft Sans Serif", 9, FontStyle.Regular);
 			rchTexto.SelectionColor = Color.Black;
+		}
+
+		private void btnBiblioteca_Click(object sender, EventArgs e)
+		{
+			using (var formularioSecundario = new Biblioteca())
+			{
+				if (formularioSecundario.ShowDialog() == DialogResult.Yes)
+				{
+					string texto = formularioSecundario.codigo;
+					int pos = rchTexto.SelectionStart;
+					rchTexto.Text = rchTexto.Text.Insert(pos, texto);
+					rchTexto.SelectionStart = pos + texto.Length;
+
+				}
+			}
+		}
+
+		private void btnPPrueba_Click(object sender, EventArgs e)
+		{
+			//boton para pruebas
+			int pos = rchTexto.SelectionStart;
+			rchTexto.Text = rchTexto.Text.Insert(pos, "nueva");
+			rchTexto.SelectionStart = pos + "nueva".Length;
 		}
 	}
 }
