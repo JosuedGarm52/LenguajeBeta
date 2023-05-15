@@ -71,6 +71,7 @@ namespace MyLenguaje
 			{
 				EstaForma.Cursor = Cursors.AppStarting;
 				dtgSimbolo.Rows.Clear();
+				_listaMeta.Clear();
 				if (!String.IsNullOrEmpty(rchTexto.Text))
 				{
 					rchConsola1.Text = "Exito";
@@ -240,6 +241,8 @@ namespace MyLenguaje
 
 						for (int j = 0; j < numColumnas; j++)
 						{
+							int faltantes = numColumnas - j;
+							MetaDatos meta = new MetaDatos();
 							//Declaracion de variable
 							//Guardar ENT PR04 KAR PR07 LOG PR11 REA PR18 SXN PR23
 							if (j >= 4 && matrizLexico[i][j - 1] == "ASIG"
@@ -248,23 +251,352 @@ namespace MyLenguaje
 									 && matrizLexico[i][j - 4] != "PR13")
 							{
 								//matrizLexico[i][j - 0] == "CONE" 
-								MetaDatos meta = new MetaDatos();
+								meta = new MetaDatos();
 								count++;
 								meta.ID = count;
-								meta.Variable = matrizCodigo[i][j - 2];
+								meta.Variable = matrizCodigo[i][j - 2];//_x
 								meta.TipoDato = matrizCodigo[i][j - 3].ToUpper();//Tipo de dato Mayuscula = ENT
 								meta.Token = matrizLexico[i][j - 2];
 								meta.Valor = matrizCodigo[i][j];
 								NumID++;
 								meta.TokenUnico = MarcarToken("ID", NumID);
-								meta.Fila = i;
+								meta.Fila = i + 1;
 								//Declaracion de id
 								_listaMeta.Add(meta);
 							}
+							else
+							//Guardar declaraciones sin asignacion
+							if (j >= 3 && faltantes > 0
+									 && matrizLexico[i][j - 1] == "IDEN"
+									 && EsIgual(matrizLexico[i][j - 2], "PR04", "PR07", "PR11", "PR18", "PR23")
+									 && matrizLexico[i][j - 3] != "PR13"
+									 && matrizLexico[i][j] != "ASIG")//	3:!MAT 2:ENT 1:_X 0:!ASIG
+							{
+								//matrizLexico[i][j - 0] == "FIIN" 
+								meta = new MetaDatos();
+								count++;
+								meta.ID = count;
+								meta.Variable = matrizCodigo[i][j - 1];//_x
+								meta.TipoDato = matrizCodigo[i][j - 2].ToUpper();//Tipo de dato Mayuscula = ENT
+								meta.Token = matrizLexico[i][j - 1];
+								meta.Valor = "NULL";
+								NumID++;
+								meta.TokenUnico = MarcarToken("ID", NumID);
+								meta.Fila = i + 1;
+								//Declaracion de id
+								_listaMeta.Add(meta);
+							}
+							else
+							//Guardar declaracion y asigancion de OBJ PR15
+							if (j >= 5 && matrizLexico[i][j] == "IDEN"
+									  && matrizLexico[i][j - 1] == "PR14"
+									  && matrizLexico[i][j - 2] == "ASIG"
+									  && matrizLexico[i][j - 3] == "IDEN"
+									  && matrizLexico[i][j - 4] == "IDEN"
+									  && matrizLexico[i][j - 5] == "PR15")
+							// INIS 5:PR15 4:IDEN 3:IDEN 2:ASIG 1:PR14 0:IDEN CEX( CEX) FIIN
+							{
+								meta = new MetaDatos();
+								count++;
+								meta.ID = count;
+								meta.Variable = matrizCodigo[i][j - 3];//Nombre var: _x
+								meta.TipoDato = matrizCodigo[i][j - 5].ToUpper() + "." + matrizCodigo[i][j - 4];
+								//Tipo de dato Mayuscula = OBJ._y
+								meta.Token = matrizLexico[i][j - 3];
+								meta.Valor = matrizCodigo[i][j - 4] + "()";
+								NumID++;
+								meta.TokenUnico = MarcarToken("ID", NumID);
+								meta.Fila = i + 1;
+								//Declaracion de id
+								_listaMeta.Add(meta);
+							}
+							else
+							//Guardar declaracion y asignacion de OBJ PR15
+							if (j >= 3 && matrizLexico[i][j - 0] != "ASIG"
+									  && matrizLexico[i][j - 1] == "IDEN"
+									  && matrizLexico[i][j - 2] == "IDEN"
+									  && matrizLexico[i][j - 3] == "PR15")// INIS 3:PR15 2:IDEN 1:IDEN 0:!ASIG 
+							{
+								meta = new MetaDatos();
+								count++;
+								meta.ID = count;
+								meta.Variable = matrizCodigo[i][j - 1];//Nombre var: _x
+								meta.TipoDato = matrizCodigo[i][j - 3].ToUpper() + "." + matrizCodigo[i][j - 2];//Tipo de dato Mayuscula = ENT
+								meta.Token = matrizLexico[i][j - 3];
+								meta.Valor = "NULL";
+								NumID++;
+								meta.TokenUnico = MarcarToken("ID", NumID);
+								meta.Fila = i + 1;
+								//Declaracion de id
+								_listaMeta.Add(meta);
+							}
+							else
+							//Declarar arreglo Mat e inicializado
+							if (j >= 9 && matrizLexico[i][j - 0] == "CONE"
+									  && matrizLexico[i][j - 1] == "CEX["
+									  && (matrizLexico[i][j - 2] == matrizLexico[i][j - 8])//Los dos sean igual sxn = sxn
+									  && matrizLexico[i][j - 3] == "PR14"
+									  && matrizLexico[i][j - 4] == "ASIG"
+									  && matrizLexico[i][j - 5] == "IDEN"
+									  && matrizLexico[i][j - 6] == "CEX]"
+									  && matrizLexico[i][j - 7] == "CEX["
+									  && matrizLexico[i][j - 9] == "PR13")
+							//INIS 9:PR13 8:PR23 7:CEX[ 6:CEX] 5:IDEN       4:ASIG 3:PR14 2:PR23 1:CEX[ 0:CONE CEX] FIIN
+							//  |  MAT       sxn  [        ]   _sxnArray       =     NOV    sxn   [        0    ] ||
+							{
+								meta = new MetaDatos();
+								count++;
+								meta.ID = count;
+								meta.Variable = matrizCodigo[i][j - 5];//Nombre var: _x
+								meta.TipoDato = "MAT " + matrizCodigo[i][j - 2].ToUpper();
+								meta.Token = matrizLexico[i][j - 5];
+								int n = int.Parse(matrizCodigo[i][j]);
+								meta.Valor = "{ " + string.Join(", ", Enumerable.Repeat("null", n)) + " }";
+								NumID++;
+								meta.TokenUnico = MarcarToken("ID", NumID);
+								meta.Fila = i + 1;
+								//Declaracion de id
+								_listaMeta.Add(meta);
+							}
+							else
+							//Declarar arreglo Mat y meterle valores
+							if (j >= 6 && matrizLexico[i][j - 0] == "CEX{"
+									   && matrizLexico[i][j - 1] == "ASIG"
+									   && matrizLexico[i][j - 2] == "IDEN"
+									   && matrizLexico[i][j - 3] == "CEX]"
+									   && matrizLexico[i][j - 4] == "CEX["
+									   && EsIgual(matrizLexico[i][j - 5], "PR04", "PR07", "PR11", "PR18", "PR23")
+									   && matrizLexico[i][j - 6] == "PR13")
+							//INIS   6:PR13 5:PR04 4:CEX[ 3:CEX] 2:IDEN       1:ASIG 0:CEX{ CONE CEX, CONE CEX, CONE CEX} FIIN
+							// |     MAT ENT    [     ]  _entArray1 =     {     1 , 3 , 4 } ||
+							{
+								meta = new MetaDatos();
+								count++;
+								meta.ID = count;
+								meta.Variable = matrizCodigo[i][j - 2];//Nombre var: _x
+								meta.TipoDato = "MAT " + matrizCodigo[i][j - 5].ToUpper();
+								meta.Token = matrizLexico[i][j - 2];
+								//int n = int.Parse(matrizCodigo[i][j]);
+								// Encuentra la posición del primer '{'
+								int startIndex = Array.IndexOf(matrizCodigo[i], "{");
+
+								// Encuentra la posición del último '}'
+								int endIndex = Array.LastIndexOf(matrizCodigo[i], "}");
+								// Crea un nuevo arreglo que contenga solo los elementos entre el primer '{' y el último '}'
+								string[] newArr = new string[endIndex - startIndex - 1];
+								Array.Copy(matrizCodigo[i], startIndex + 1, newArr, 0, endIndex - startIndex - 1);
+
+								// Convierte el nuevo arreglo en una cadena usando la función string.Join()
+								string result = "{" + string.Join("", newArr) + "}";
+								meta.Valor = result;
+								NumID++;
+								meta.TokenUnico = MarcarToken("ID", NumID);
+								meta.Fila = i + 1;
+								//Declaracion de id
+								_listaMeta.Add(meta);
+							}
+							else
+							//Declarar arreglo Mat Sin inicializar
+							if (j >= 4 && faltantes > 1
+										&& matrizLexico[i][j +1 ] != "ASIG"
+									  && matrizLexico[i][j - 0] == "IDEN"
+									  && EsIgual(matrizLexico[i][j - 3], "PR04", "PR07", "PR11", "PR18", "PR23")
+									  && matrizLexico[i][j - 4] == "PR13")
+							//INIS  PR13    3:PR04 2:CEX[ 1:CEX] 0:IDEN FIIN !ASIG
+							//|     MAT     ENT   [     ]  _entArray ||
+							{
+								meta = new MetaDatos();
+								count++;
+								meta.ID = count;
+								meta.Variable = matrizCodigo[i][j - 0];//Nombre var: _x
+								meta.TipoDato = "MAT " + matrizCodigo[i][j - 3].ToUpper();
+								meta.Token = "IDEN";
+								meta.Valor = "NULL";
+								NumID++;
+								meta.TokenUnico = MarcarToken("ID", NumID);
+								meta.Fila = i + 1;
+								//Declaracion de id
+								_listaMeta.Add(meta);
+							}
+							else
+							//Declaracion de clase main
+							if(j >= 2 && matrizLexico[i][j - 0] == "IDEN"
+									  && matrizLexico[i][j - 1] == "PR10"
+									  && matrizLexico[i][j - 2] == "PR26")// PR26 PR10 IDEN-CXFA KLA _X
+							{
+								meta = new MetaDatos();
+								count++;
+								meta.ID = count;
+								meta.Variable = matrizCodigo[i][j - 0];//Nombre var: _x
+								meta.TipoDato = "CXFA KLA";
+								meta.Token = matrizLexico[i][j - 0];
+								meta.Valor = "KLA";
+								NumID++;
+								meta.TokenUnico = MarcarToken("ID", NumID);
+								meta.Fila = i + 1;
+								//Declaracion de id
+								_listaMeta.Add(meta);
+							}else
+							//Declaracion de clase
+							if (j >= 2 && matrizLexico[i][j - 0] == "IDEN"
+									  && matrizLexico[i][j - 1] == "PR10"
+									  && matrizLexico[i][j - 2] != "PR26")// !PR26 PR10 IDEN- KLA _X
+							{
+								meta = new MetaDatos();
+								count++;
+								meta.ID = count;
+								meta.Variable = matrizCodigo[i][j - 0];//Nombre var: _x
+								meta.TipoDato = "KLA";
+								meta.Token = matrizLexico[i][j - 0];
+								meta.Valor = "KLA";
+								NumID++;
+								meta.TokenUnico = MarcarToken("ID", NumID);
+								meta.Fila = i + 1;
+								//Declaracion de id
+								_listaMeta.Add(meta);
+							}
+							else
+							//Declaracion de clase
+							if (j >= 1 && matrizLexico[i][j - 0] == "IDEN"
+									  && matrizLexico[i][j - 1] == "PR10")// PR10 IDEN-KLA _X
+							{
+								meta = new MetaDatos();
+								count++;
+								meta.ID = count;
+								meta.Variable = matrizCodigo[i][j - 0];//Nombre var: _x
+								meta.TipoDato = "KLA";
+								meta.Token = matrizLexico[i][j - 0];
+								meta.Valor = "KLA";
+								NumID++;
+								meta.TokenUnico = MarcarToken("ID", NumID);
+								meta.Fila = i + 1;
+								//Declaracion de id
+								_listaMeta.Add(meta);
+							}else
+							//Declaracion de metodos con parametros
+							if(j >= 4 && matrizLexico[i][j - 0] == "IDEN"
+									  && matrizLexico[i][j - 2] == "CEX("
+									  && matrizLexico[i][j - 3] == "IDEN"
+									  && EsIgual(matrizLexico[i][j - 4], "PR04", "PR07", "PR11", "PR18", "PR23","PR27") )
+								//4:PR27 3:IDEN 2:CEX( 1:PR04 0:IDEN CEX)
+							{
+								meta = new MetaDatos();
+								count++;
+								meta.ID = count;
+								meta.Variable = matrizCodigo[i][j - 3];//Nombre var: _x
+								meta.TipoDato = "MTDX "+matrizCodigo[i][j - 4].ToUpper();//MLP
+								meta.Token = matrizLexico[i][j - 3];
+								meta.Valor = matrizCodigo[i][j - 0];
+								int n = numColumnas - 3;
+
+								string[] ultimosL = matrizLexico[i].Reverse().Take(n).ToArray();
+								string[] ultimosC = matrizCodigo[i].Reverse().Take(n).ToArray();
+								Array.Reverse(ultimosL); Array.Reverse(ultimosC);
+								while (ultimosL.Length > 1)
+								{
+									if (n >= 2 && ultimosL.Length >= 3 
+										  && ultimosL[2] == "CEX,"
+										  //&& ultimosL[1] == "PR04"
+										  && ultimosL[0] == "IDEN")
+									{
+										meta.Valor += ", " + ultimosC[0];
+									}
+									// Eliminar el primer elemento de los arreglos
+									Array.Resize(ref ultimosL, ultimosL.Length - 1);
+									Array.Resize(ref ultimosC, ultimosC.Length - 1);
+
+									// Si queda solo un elemento en los arreglos, salir del ciclo
+									if (ultimosL.Length == 1) break;
+								}
+								
+								NumID++;
+								meta.TokenUnico = MarcarToken("ID", NumID);
+								meta.Fila = i + 1;
+								//Declaracion de id
+								_listaMeta.Add(meta);
+							}else
+							if (j >= 2 && faltantes>1 
+									  && !EsIgual(matrizLexico[i][j + 1], "PR04", "PR07", "PR11", "PR18", "PR23")
+									  && matrizLexico[i][j - 0] == "CEX("
+									  && matrizLexico[i][j - 1] == "IDEN"
+									  && EsIgual(matrizLexico[i][j - 2], "PR04", "PR07", "PR11", "PR18", "PR23", "PR27"))
+							//2:PR27 1:IDEN 0:CEX( +1:Tipo
+							{
+								meta = new MetaDatos();
+								count++;
+								meta.ID = count;
+								meta.Variable = matrizCodigo[i][j - 1];//Nombre var: _x
+								meta.TipoDato = "MTDX "+matrizCodigo[i][j - 2].ToUpper();
+								meta.Token = matrizLexico[i][j - 1];
+								meta.Valor = "NULL";
+								NumID++;
+								meta.TokenUnico = MarcarToken("ID", NumID);
+								meta.Fila = i + 1;
+								//Declaracion de id
+								_listaMeta.Add(meta);
+							}else
+							//Asignacion de variables
+							if( j >= 2 && faltantes > 1
+									   && EsIgual(matrizLexico[i][j - 2],"INIS","CEX,")
+									   && matrizLexico[i][j - 1] == "IDEN"
+									   && matrizLexico[i][j - 0] == "ASIG")
+									  //&& matrizLexico[i][j + 1] != "ASIG")
+							//2:INIS  1:IDEN   0:ASIG +1:CONE FIIN
+							//|     _num   =    2    ||
+							//| _entArray2 = { 1 , 3 , 4 } ||
+							//INIS IDEN    ASIG PR14 IDEN CEX( CEX) FIIN
+							//   |  _prueba =   nov _Prueba (  ) ||
+							{
+								meta = new MetaDatos();
+								count++;
+								meta.ID = count;
+								meta.Variable = matrizCodigo[i][j - 1];//Nombre var: _x
+								meta.TipoDato = "VAR";
+								meta.Token = matrizLexico[i][j-1];
+								if (matrizLexico[i][j + 1] == "CEX{")
+								{
+									// Encuentra la posición del primer '{'
+									int startIndex = Array.IndexOf(matrizCodigo[i], "{");
+
+									// Encuentra la posición del último '}'
+									int endIndex = Array.LastIndexOf(matrizCodigo[i], "}");
+									// Crea un nuevo arreglo que contenga solo los elementos entre el primer '{' y el último '}'
+									string[] newArr = new string[endIndex - startIndex - 1];
+									Array.Copy(matrizCodigo[i], startIndex + 1, newArr, 0, endIndex - startIndex - 1);
+
+									// Convierte el nuevo arreglo en una cadena usando la función string.Join()
+									string result = "{" + string.Join("", newArr) + "}";
+									meta.Valor = result;
+								}else 
+								if(faltantes > 2 && matrizLexico[i][j + 1] == "PR14")
+								{
+									meta.Valor = matrizCodigo[i][j + 2] + "()";
+								}
+								else
+								{
+									meta.Valor = matrizCodigo[i][j + 1];
+								}
+								NumID++;
+								meta.TokenUnico = MarcarToken("ID", NumID);
+								meta.Fila = i + 1;
+								//Declaracion de id
+								if (!_listaMeta.Any(m => m.Variable == meta.Variable))
+								{
+									_listaMeta.Add(meta);
+								}else
+								{
+									foreach (MetaDatos objeto in _listaMeta)
+									{
+										if (objeto.Variable == meta.Variable)
+										{
+											objeto.Valor = meta.Valor;
+											break;
+										}
+									}
+								}
+							}
 						}
 
-						// Saltar de línea al terminar la fila
-						Console.WriteLine();
 					}
 					LlenarTablaSimbolos();
 					InicializarCodigo(rchLexico, cadenaLexico, false);//true enseña todos los caracteres ocultos
