@@ -234,6 +234,7 @@ namespace MyLenguaje
 					matrizCodigo = ConvertirCodigoEnMatriz(rchTexto.Text);
 					int count = 0;
 					int NumID = 0;
+					int NumENT = 0, NumREA = 0, NumSXN = 0, NumKAR = 0;
 					for (int i = 0; i < matrizLexico.Length; i++)
 					{
 						// Obtener el número de columnas de la fila actual
@@ -241,6 +242,17 @@ namespace MyLenguaje
 
 						for (int j = 0; j < numColumnas; j++)
 						{
+							if(i == 106 && j == 0) //ignorar
+							{
+
+							}
+							if(matrizLexico[i][j] == "IDEN") //Buscador --ignorar
+							{
+								if( matrizCodigo[i][j] == "_Operaciones(")
+								{
+
+								}
+							}
 							int faltantes = numColumnas - j;
 							MetaDatos meta = new MetaDatos();
 							//Declaracion de variable
@@ -548,8 +560,6 @@ namespace MyLenguaje
 							//   |  _prueba =   nov _Prueba (  ) ||
 							{
 								meta = new MetaDatos();
-								count++;
-								meta.ID = count;
 								meta.Variable = matrizCodigo[i][j - 1];//Nombre var: _x
 								meta.TipoDato = "VAR";
 								meta.Token = matrizLexico[i][j-1];
@@ -573,6 +583,7 @@ namespace MyLenguaje
 									meta.Valor = matrizCodigo[i][j + 2] + "()";
 								}
 								else
+								if(matrizLexico[i][j + 1] != "IDEN")
 								{
 									meta.Valor = matrizCodigo[i][j + 1];
 								}
@@ -582,6 +593,8 @@ namespace MyLenguaje
 								//Declaracion de id
 								if (!_listaMeta.Any(m => m.Variable == meta.Variable))
 								{
+									count++;
+									meta.ID = count;
 									_listaMeta.Add(meta);
 								}else
 								{
@@ -589,11 +602,97 @@ namespace MyLenguaje
 									{
 										if (objeto.Variable == meta.Variable)
 										{
-											objeto.Valor = meta.Valor;
-											break;
+											if(matrizLexico[i][j + 1] != "IDEN" && meta.Valor != "")
+											{
+												objeto.Valor = meta.Valor;
+												break;
+											}
 										}
 									}
 								}
+							}
+							if (matrizLexico[i][j] == "CONE")
+							{
+								meta = new MetaDatos();
+								meta.Variable = "NULL";
+								meta.TipoDato = "ENT";
+								meta.Token = matrizLexico[i][j];
+								meta.Valor = matrizCodigo[i][j];
+								meta.Fila = 0;
+								// Buscamos si existe un objeto con el mismo valor
+								if (!_listaMeta.Any(m => m.Valor == meta.Valor && m.Variable == "NULL"))
+								{
+									count++;
+									meta.ID = count;
+									NumENT++;
+									meta.TokenUnico = MarcarToken("CNE", NumENT);//regresa CNE01
+									// Si no existe, lo agregamos a la lista
+									_listaMeta.Add(meta);
+								}
+							}
+							else
+							if (matrizLexico[i][j] == "CONR")
+							{
+								meta = new MetaDatos();
+								meta.Variable = "NULL";
+								meta.TipoDato = "REA";
+								meta.Token = matrizLexico[i][j];
+								meta.Valor = matrizCodigo[i][j];
+								meta.Fila = 0;
+								// Buscamos si existe un objeto con el mismo valor
+								if (!_listaMeta.Any(m => m.Valor == meta.Valor && m.Variable == "NULL"))
+								{
+									count++;
+									meta.ID = count;
+									NumREA++;
+									meta.TokenUnico = MarcarToken("CNR", NumREA);//regresa CNE01
+																				 // Si no existe, lo agregamos a la lista
+									_listaMeta.Add(meta);
+								}
+							}
+							else
+							if (matrizLexico[i][j] == "CDNA")
+							{
+								meta = new MetaDatos();
+								meta.Variable = "NULL";
+								meta.TipoDato = "SXN";
+								meta.Token = matrizLexico[i][j];
+								meta.Valor = matrizCodigo[i][j];
+								meta.Fila = 0;
+								// Buscamos si existe un objeto con el mismo valor
+								if (!_listaMeta.Any(m => m.Valor == meta.Valor && m.Variable == "NULL"))
+								{
+									count++;
+									meta.ID = count;
+									NumSXN++;
+									meta.TokenUnico = MarcarToken("CDN", NumSXN);//regresa CNE01
+																				 // Si no existe, lo agregamos a la lista
+									_listaMeta.Add(meta);
+								}
+							}
+							else
+							if (matrizLexico[i][j] == "CRTR")
+							{
+								meta = new MetaDatos();
+								meta.Variable = "NULL";
+								meta.TipoDato = "KAR";
+								meta.Token = matrizLexico[i][j];
+								meta.Valor = matrizCodigo[i][j];
+								meta.Fila = 0;
+								// Buscamos si existe un objeto con el mismo valor
+								if (!_listaMeta.Any(m => m.Valor == meta.Valor && m.Variable == "NULL"))
+								{
+									count++;
+									meta.ID = count;
+									NumKAR++;
+									meta.TokenUnico = MarcarToken("CTR", NumKAR);//regresa CNE01
+																				 // Si no existe, lo agregamos a la lista
+									_listaMeta.Add(meta);
+								}
+							}
+							else
+							{
+								//VERA y FALSA ya tiene su identicador unico y son solo dos valores
 							}
 						}
 
