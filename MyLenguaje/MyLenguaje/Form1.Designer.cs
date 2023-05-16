@@ -75,6 +75,8 @@
 			this.dtgColValor = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dtgColTokenUnico = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dtgColFila = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.rchAnalisisSemantica = new System.Windows.Forms.RichTextBox();
+			this.label11 = new System.Windows.Forms.Label();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox3.SuspendLayout();
@@ -397,13 +399,15 @@
 			// 
 			// groupBox4
 			// 
+			this.groupBox4.Controls.Add(this.label11);
+			this.groupBox4.Controls.Add(this.rchAnalisisSemantica);
 			this.groupBox4.Controls.Add(this.rchAnalisisSintactico);
 			this.groupBox4.Controls.Add(this.label8);
 			this.groupBox4.Controls.Add(this.rhcAnalisisLexico);
 			this.groupBox4.Controls.Add(this.label7);
 			this.groupBox4.Location = new System.Drawing.Point(3, 10);
 			this.groupBox4.Name = "groupBox4";
-			this.groupBox4.Size = new System.Drawing.Size(392, 266);
+			this.groupBox4.Size = new System.Drawing.Size(585, 266);
 			this.groupBox4.TabIndex = 13;
 			this.groupBox4.TabStop = false;
 			this.groupBox4.Text = "Caja de analisis";
@@ -572,6 +576,26 @@
 			this.dtgColFila.Name = "dtgColFila";
 			this.dtgColFila.ReadOnly = true;
 			// 
+			// rchAnalisisSemantica
+			// 
+			this.rchAnalisisSemantica.BackColor = System.Drawing.Color.Orange;
+			this.rchAnalisisSemantica.Location = new System.Drawing.Point(391, 49);
+			this.rchAnalisisSemantica.Name = "rchAnalisisSemantica";
+			this.rchAnalisisSemantica.ReadOnly = true;
+			this.rchAnalisisSemantica.Size = new System.Drawing.Size(184, 202);
+			this.rchAnalisisSemantica.TabIndex = 4;
+			this.rchAnalisisSemantica.Text = "";
+			this.rchAnalisisSemantica.WordWrap = false;
+			// 
+			// label11
+			// 
+			this.label11.AutoSize = true;
+			this.label11.Location = new System.Drawing.Point(399, 20);
+			this.label11.Name = "label11";
+			this.label11.Size = new System.Drawing.Size(54, 13);
+			this.label11.TabIndex = 5;
+			this.label11.Text = "Sintactico";
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -651,6 +675,8 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn dtgColValor;
 		private System.Windows.Forms.DataGridViewTextBoxColumn dtgColTokenUnico;
 		private System.Windows.Forms.DataGridViewTextBoxColumn dtgColFila;
+		private System.Windows.Forms.Label label11;
+		private System.Windows.Forms.RichTextBox rchAnalisisSemantica;
 	}
 }
 

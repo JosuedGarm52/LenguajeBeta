@@ -17,3 +17,7 @@ a
 1.6.1 Tabla de simbolos  
 1.7.1 Cambios en el lexico | y en un metodo para el sintactico  
 1.7.2 Add deteccion errores | funcionamiento correcto? del sintactico  
+3.1.0 Mejora en la tabla de simbolos p1 | Ahora puede identificar los id declarados  
+3.2.0 Tabla de simbolos V2 | Ahora puede saber los valores constantes como 1 y "Hola"  
+3.4.0 Tabla de simbolos V3 1 correcion de errores.  
+1.4.1 Se agrego semantica | Ahora funciona la semantica y se añadieron criterios de error.  
