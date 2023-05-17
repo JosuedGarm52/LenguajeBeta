@@ -1,8 +1,14 @@
 CXFA KLA _MAIN 
 | 
+   | ent _x = 2 ||
    | ent _y = ( 2 + 3 + 5 + 8 ) ||
-   | ent _var2 ||
+   | ent _z = 1 ||
    | rea _area1 = 2.2 ||
    | rea _area2 = _area1 + 1 ||
+   | rea _area3 = _area2 + _x ||
+   | ent _var1 ||
+   | _var1 = ( 1 * ( 2 - 3 ) ) ( 4 + 5 ) ||
+   | ent _var2 ||
    | _var2 = 10 * _y - ( _area2 + 1 ) ||
+   | ent _W = _x + _y + 24 - _z ||
 ||

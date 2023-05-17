@@ -10003,7 +10003,7 @@ namespace MyLenguaje
 									{
 										if (metaDato.TipoDato == "ENT")
 										{
-											//if (!int.TryParse(metaDato.Valor, out int valorEntero))
+											//if (!int.TryParse(metaDato.Valor, out int valorEntero) )
 											//{
 											//	errorReport += ("Error: El valor de la variable " + metaDato.Variable + " que esta en la fila (" + metaDato.Fila + ") no es un número entero.\n");
 											//	errores++;
