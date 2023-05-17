@@ -29,9 +29,13 @@ namespace MyLenguaje
 		int LexicoErrores = 0;
 		bool EstadoAnalisis = false;
 		bool EstadoSintactico = false;
+		bool EstadoSemantico = false;
 		string[][] matrizLexico;
 		string[][] matrizCodigo;
+		string[][] matrizPrePosFijoLexico;
 		List<MetaDatos> _listaMeta = new List<MetaDatos>();
+		List<int> listaFilasAceptadas = new List<int>();
+		List<string[]> listaDeStringCodIntermed = new List<string[]>();
 
 		public Form1()
 		{
@@ -73,7 +77,11 @@ namespace MyLenguaje
 				EstaForma.Cursor = Cursors.AppStarting;
 				dtgSimbolo.Rows.Clear();
 				_listaMeta.Clear();
+				listaFilasAceptadas.Clear();
 				EstadoSintactico = false;
+				EstadoSemantico = false;
+				listaDeStringCodIntermed.Clear();
+				IsCorrectInPosPrefijo = false;
 				if (!String.IsNullOrEmpty(rchTexto.Text))
 				{
 					rchConsola1.Text = "Exito";
@@ -83,6 +91,7 @@ namespace MyLenguaje
 					rchLexico.Text = "";
 					rchSintactico.Text = "";
 					rchSemantico.Text = "";
+					rchConsola5.Text = "Exito";
 					string codigo2 = "";
 					int y = 0;
 					
@@ -597,18 +606,21 @@ namespace MyLenguaje
 								//Declaracion de id
 								if (!_listaMeta.Any(m => m.Variable == meta.Variable))
 								{
+									//Si no existe lo agrega pero sin TiPoDato especifico: VAR
 									count++;
 									meta.ID = count;
 									_listaMeta.Add(meta);
+									//listaFilasAceptadas.Add(meta.Fila);
 								}else
 								{
 									foreach (MetaDatos objeto in _listaMeta)
 									{
-										if (objeto.Variable == meta.Variable)
+										if (objeto.Variable == meta.Variable)//Busca que ambas tengan el mismo nombre _x
 										{
-											if(matrizLexico[i][j + 1] != "IDEN" && meta.Valor != "")
+											if(matrizLexico[i][j + 1] != "IDEN" && meta.Valor != "")//Si no es un idenficador y su valor esta vacio
 											{
 												objeto.Valor = meta.Valor;
+												listaFilasAceptadas.Add(meta.Fila);
 												break;
 											}
 										}
@@ -9947,6 +9959,7 @@ namespace MyLenguaje
 										errores++;
 									}
 								}
+								errores = 0;
 								string v1 = "";
 								foreach (MetaDatos dato in _listaMeta)
 								{
@@ -9971,50 +9984,58 @@ namespace MyLenguaje
 								//Vericar que los identificadores tengan un valor y tipoDato igual
 								foreach (var metaDato in _listaMeta)
 								{
-									if(metaDato.Variable != "NULL" && metaDato.Valor != "NULL")
+									if (metaDato.Variable != "NULL" && metaDato.Valor != "NULL")
 									{
 										if (metaDato.TipoDato == "ENT")
 										{
-											if (!int.TryParse(metaDato.Valor, out int valorEntero))
+											//if (!int.TryParse(metaDato.Valor, out int valorEntero))
+											//{
+											//	errorReport += ("Error: El valor de la variable " + metaDato.Variable + " que esta en la fila (" + metaDato.Fila + ") no es un número entero.\n");
+											//	errores++;
+											//}
+											//else
 											{
-												errorReport += ("Error: El valor de la variable " + metaDato.Variable + " que esta en la fila (" + metaDato.Fila + ") no es un número entero.\n");
-												errores++;
+												listaFilasAceptadas.Add(metaDato.Fila);
 											}
 										}
 										if (metaDato.TipoDato == "REA")
 										{
-											if (!double.TryParse(metaDato.Valor, out double valor) && !int.TryParse(metaDato.Valor, out int intValor))
+											//if ((!double.TryParse(metaDato.Valor, out double valor) && !int.TryParse(metaDato.Valor, out int intValor)) || metaDato.Valor[0] != '_')
+											//{
+											//	errorReport += ("Error: El valor de la variable " + metaDato.Variable + " que esta en la fila (" + metaDato.Fila + ") no es un número válido.\n");
+											//	errores++;
+											//}
+											//else
 											{
-												errorReport += ("Error: El valor de la variable " + metaDato.Variable + " que esta en la fila (" + metaDato.Fila + ") no es un número válido.\n");
-												errores++;
+												listaFilasAceptadas.Add(metaDato.Fila);
 											}
 										}
-										if (metaDato.TipoDato == "KAR")
-										{
-											if (metaDato.Valor.Length != 3 || metaDato.Valor[0] != '\'' || metaDato.Valor[2] != '\'')
-											{
-												errorReport += ("Error: El valor de la variable " + metaDato.Variable + " que esta en la fila (" + metaDato.Fila + ") no es un caracter.\n");
-												errores++;
-											}
-										}
-										if (metaDato.TipoDato == "SXN")
-										{
-											if (!metaDato.Valor.StartsWith("\"") || !metaDato.Valor.EndsWith("\""))
-											{
-												errorReport += ("Error: El valor de la variable " + metaDato.Variable + " que esta en la fila (" + metaDato.Fila + ") debe ser una cadena.\n");
-												errores++;
-											}
-										}
-										if (metaDato.TipoDato == "LOG")
-										{
-											string valorBooleano = metaDato.Valor.ToUpper();
-											// Verificar que el valor sea true o false
-											if (valorBooleano != "VERA" && valorBooleano != "FALSA")
-											{
-												errorReport += ("Error: El valor de la variable " + metaDato.Variable + " que esta en la fila (" + metaDato.Fila + ") debe ser VERA o FALSA.\n");
-												errores++;
-											}
-										}
+										//if (metaDato.TipoDato == "KAR")
+										//{
+										//	if (metaDato.Valor.Length != 3 || metaDato.Valor[0] != '\'' || metaDato.Valor[2] != '\'')
+										//	{
+										//		errorReport += ("Error: El valor de la variable " + metaDato.Variable + " que esta en la fila (" + metaDato.Fila + ") no es un caracter.\n");
+										//		errores++;
+										//	}
+										//}
+										//if (metaDato.TipoDato == "SXN")
+										//{
+										//	if (!metaDato.Valor.StartsWith("\"") || !metaDato.Valor.EndsWith("\""))
+										//	{
+										//		errorReport += ("Error: El valor de la variable " + metaDato.Variable + " que esta en la fila (" + metaDato.Fila + ") debe ser una cadena.\n");
+										//		errores++;
+										//	}
+										//}
+										//if (metaDato.TipoDato == "LOG")
+										//{
+										//	string valorBooleano = metaDato.Valor.ToUpper();
+										//	// Verificar que el valor sea true o false
+										//	if (valorBooleano != "VERA" && valorBooleano != "FALSA")
+										//	{
+										//		errorReport += ("Error: El valor de la variable " + metaDato.Variable + " que esta en la fila (" + metaDato.Fila + ") debe ser VERA o FALSA.\n");
+										//		errores++;
+										//	}
+										//}
 									}
 								}
 
@@ -10080,10 +10101,11 @@ namespace MyLenguaje
 								if (errores > 0)
 								{
 									rchConsola4.Text = "Se encontraron errores.\n"+errorReport;
+									EstadoSemantico = false;
 								}
 								else
 								{
-
+									EstadoSemantico = true;
 									rchConsola4.Text = "Exito";
 								}
 								rchAnalisisSemantica.Text = cat;
@@ -10094,10 +10116,13 @@ namespace MyLenguaje
 						else if (numI > numF)
 						{
 							rchConsola4.Text = "Ocurrio un error con un '|' sin cerrar.";
+							EstadoSemantico = false;
+
 						}
 						else
 						{
 							rchConsola4.Text = "Ocurrio un error parece tener un '||' extra. Comprueba que no te falte un '|'";
+							EstadoSemantico = false;
 						}
 					}
 					catch (Exception ex)
@@ -10215,6 +10240,9 @@ namespace MyLenguaje
 			rchAnalisisSemantica.Text = "";
 			dtgSimbolo.Rows.Clear();//vaciar datagridview
 			_listaMeta.Clear();//vaciar lista
+			listaDeStringCodIntermed.Clear();
+			rchConsola5.Text = "";
+			dtgCuadruplo.Rows.Clear();
 		}
 
 		private void label2_Click(object sender, EventArgs e)
@@ -10276,5 +10304,639 @@ namespace MyLenguaje
 			rchTexto.Text = rchTexto.Text.Insert(pos, "nueva");
 			rchTexto.SelectionStart = pos + "nueva".Length;
 		}
+
+		private void btnInPrePosFija_Click(object sender, EventArgs e)
+		{
+			if(EstadoSemantico)
+			{
+				matrizPrePosFijoLexico = matrizLexico;
+				string[][] matrizCodigoFijo = matrizCodigo;
+
+				//Prueba
+				//string[][] matrizPrePosFijoLexico = new string[][] { new string[] { "", "", "" } }; // Inicializas el arreglo con una fila vacía
+				//matrizPrePosFijoLexico[0] = new string[]  { "INIS", "PR04", "IDEN", "ASIG", "CONE", "FIIN" };// Asignas el valor a la primera fila
+				//string[][] matrizCodigoFijo = new string[][] { new string[] { "", "", "" } }; // Inicializas el arreglo con una fila vacía
+				//matrizCodigoFijo[0] = new string[]  { "|", "ent", "_x", "=", "2", "||" };// Asignas el valor a la primera fila
+				//listaFilasAceptadas.Add(0);
+
+				for (int i = 0; i < matrizPrePosFijoLexico.GetLength(0); i++)
+				{
+					if(matrizPrePosFijoLexico[i].Length > 1 )//Si tiene mas valores
+					{
+						if(listaFilasAceptadas.Contains(i+1))
+						{
+							if ((matrizPrePosFijoLexico[i][1] == "PR04" || matrizPrePosFijoLexico[i][1] == "PR18" ) && matrizPrePosFijoLexico[i].Length > 5)//Si son ENT o REA 
+							{
+								//Obtiene todo el arreglo menos los primeros dos y el ultimo [ | ent _x = 1 || => [ _x = 1 ]
+								string[] elementosLexico = matrizPrePosFijoLexico[i].Skip(2).Take(matrizPrePosFijoLexico[i].Length - 3).ToArray();
+								string[] elementosCodigo = matrizCodigoFijo[i].Skip(2).Take(matrizPrePosFijoLexico[i].Length - 3).ToArray();
+								ConversionPosfijaDoble(elementosLexico, elementosCodigo, out string[] salidaCodigo, out string[] salidaLexico);
+								elementosCodigo = salidaCodigo;
+								elementosLexico = salidaLexico;
+
+								matrizCodigoFijo[i] = matrizCodigoFijo[i].Take(2)
+										 .Concat(LimpiarArreglo(elementosCodigo))
+										 .Concat(matrizCodigoFijo[i].Skip(2))
+										 .ToArray();
+								matrizCodigoFijo[i] = matrizCodigoFijo[i].Take(2).Concat(elementosCodigo).Concat(new string[] { "||" }).ToArray();
+								matrizCodigoFijo[i] = LimpiarArreglo(matrizCodigoFijo[i]);
+
+								listaDeStringCodIntermed.Add(elementosCodigo);
+
+								matrizPrePosFijoLexico[i] = matrizPrePosFijoLexico[i].Take(2)
+										 .Concat(LimpiarArreglo(elementosLexico))
+										 .Concat(matrizPrePosFijoLexico[i].Skip(2))
+										 .ToArray();
+								matrizPrePosFijoLexico[i] = matrizPrePosFijoLexico[i].Take(2).Concat(elementosLexico).Concat(new string[] { "FIIN" }).ToArray();
+								matrizPrePosFijoLexico[i] = LimpiarArreglo(matrizPrePosFijoLexico[i]);
+								int x = 1;
+
+								
+							}
+							if(!(matrizPrePosFijoLexico[i][1] == "PR04" || matrizPrePosFijoLexico[i][1] == "PR18"))
+							{//Si son con asignacion
+							 //Obtiene todo el arreglo menos el primero y el ultimo [ | _x = 1 || => [ _x = 1 ]
+								string[] elementosLexico = matrizPrePosFijoLexico[i].Skip(1).Take(matrizPrePosFijoLexico[i].Length - 2).ToArray();
+								string[] elementosCodigo = matrizCodigoFijo[i].Skip(1).Take(matrizPrePosFijoLexico[i].Length - 2).ToArray();
+								ConversionPosfijaDoble(elementosLexico, elementosCodigo, out string[] salidaCodigo, out string[] salidaLexico);
+								elementosCodigo = salidaCodigo;
+								elementosLexico = salidaLexico;
+
+								matrizCodigoFijo[i] = matrizCodigoFijo[i].Take(2)
+															 .Concat(LimpiarArreglo(elementosCodigo))
+															 .Concat(matrizCodigoFijo[i].Skip(1).Take(matrizCodigoFijo[i].Length - 2))
+															 .ToArray();
+								matrizCodigoFijo[i] = matrizCodigoFijo[i].Take(2).Concat(elementosCodigo).Concat(new string[] { "||" }).ToArray();
+								matrizCodigoFijo[i] = LimpiarArreglo(matrizCodigoFijo[i]);
+
+								listaDeStringCodIntermed.Add(elementosCodigo);
+
+								matrizPrePosFijoLexico[i] = matrizPrePosFijoLexico[i].Take(2)
+																	 .Concat(LimpiarArreglo(elementosLexico))
+																	 .Concat(matrizPrePosFijoLexico[i].Skip(1).Take(matrizPrePosFijoLexico[i].Length - 2))
+																	 .ToArray();
+								matrizPrePosFijoLexico[i] = matrizPrePosFijoLexico[i].Take(2).Concat(elementosLexico).Concat(new string[] { "FIIN" }).ToArray();
+								matrizPrePosFijoLexico[i] = LimpiarArreglo(matrizPrePosFijoLexico[i]);
+								int x = 1;
+							}
+						}
+						try
+						{
+							for (int j = 0; j < matrizCodigoFijo[i].Length; j++)
+							{
+								foreach (MetaDatos datos in _listaMeta)
+								{
+									if (datos.Token == "IDEN" && datos.Variable == matrizCodigoFijo[i][j])//Si su token es iden es un id y si su nombre es igual a uno guardado _x = _x
+									{
+										matrizPrePosFijoLexico[i][j] = datos.TokenUnico;
+									}
+									if (datos.Variable == "NULL" && datos.Valor == matrizCodigoFijo[i][j])//Si es un numero y tienen el mismo valor se reemplaza su token
+									{
+										matrizPrePosFijoLexico[i][j] = datos.TokenUnico;
+									}
+								}
+							}
+						}
+						catch (Exception ex)
+						{
+							rchConsola5.Text = "Error: " + ex.Message;
+							throw;
+						}
+					}
+				}
+				string strConversionPosfija = "";
+				for (int i = 0; i < matrizPrePosFijoLexico.Length; i++)
+				{
+					for (int j = 0; j < matrizPrePosFijoLexico[i].Length; j++)
+					{
+						if(j != 0)
+						{
+							strConversionPosfija += " ";
+						}
+						if(matrizPrePosFijoLexico[i][j] != careFin+"")
+						{
+							strConversionPosfija += matrizPrePosFijoLexico[i][j];
+						}
+					}
+					strConversionPosfija += "\n";
+				}
+				rchPosPrefijo.Text = strConversionPosfija;
+				rchConsola5.Text = "Exito";
+				IsCorrectInPosPrefijo = true;
+			}
+		}
+		private bool EsIgualSigno(params string[] coleccion)
+		{
+			foreach (string signo in coleccion)
+			{
+				if (signo == '^' + "" || signo == '/' + "" || signo == '*' + "" || signo == '-' + "" || signo == '+' + "" || signo == '=' + "")
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+		private bool EsIgual(char cad1, params char[] conjunto)
+		{
+			foreach (char cad in conjunto)
+			{
+				if (cad == cad1)
+					return true;
+			}
+			return false;
+		}
+		private bool EsIgualSigno(params char[] coleccion)
+		{
+			foreach (char signo in coleccion)
+			{
+				if (signo == '^' || signo == '/' || signo == '*' || signo == '-' || signo == '+' || signo == '=')
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+		private void ConversionPrefija(string[] arreglo, out string salida)
+		{
+			string[] lista = arreglo;
+			salida = "";
+			Stack<char> pila = new Stack<char>();
+			int inicios = 0;
+			int cierres = 0;
+			for (int i = lista.Length - 1; i >= 0; i--)
+			{
+				if (lista[i] == " ")
+				{
+
+				}
+				else
+				// si es un signo de exponente o raiz cuadrada P2
+				if (EsIgual(lista[i], "^", "**", "\u221A"))
+				{
+					if (lista[i] == "**")
+					{
+						pila.Push('.');
+					}
+					else
+						pila.Push(Convert.ToChar(lista[i]));
+				}
+				else
+				if (EsIgualSigno(lista[i]) || lista[i] == "(" || lista[i] == ")")
+				{
+					char letra = Convert.ToChar(lista[i]);
+					//Si es parentesis P1
+					if (EsIgual(letra, '(', ')'))
+					{
+						if (letra == ')')
+						{
+							inicios++;
+						}
+						else
+						{
+							cierres++;
+						}
+						pila.Push(Convert.ToChar(lista[i]));
+						if (inicios > 0 && cierres > 0)
+						{
+							char p;
+							while (pila.Peek() != ')')
+							{
+								if (pila.Peek() == '(')
+								{
+									p = pila.Pop();//Saca el (
+								}
+								else
+								{
+									p = pila.Pop(); // saca el elemento
+									salida += p + " ";
+								}
+
+							}
+							pila.Pop();//Saca el )
+
+							inicios--; cierres--;
+						}
+					}
+					else
+					// si es mutiplicacion o division P3
+					if (EsIgual(letra, '*', '/'))
+					{
+						if (pila.Count > 0 && EsIgual(pila.Peek(), '.', '^', '\u221A', '*', '/'))
+						{
+							salida += pila.Pop() + " ";
+							pila.Push(letra);
+						}
+						else
+						{
+							pila.Push(letra);
+						}
+					}
+					else
+					//si es suma o resta P4
+					if (EsIgual(letra, '+', '-'))
+					{
+						if (pila.Count > 0 && EsIgual(pila.Peek(), '.', '^', '\u221A', '*', '/', '+', '-'))
+						{
+							salida += pila.Pop() + " ";
+							pila.Push(letra);
+						}
+						else
+						{
+							pila.Push(letra);
+						}
+					}
+					else
+					//si es suma o resta P5
+					if (letra == '=')
+					{
+						if (pila.Count > 0 && EsIgual(pila.Peek(), '.', '^', '\u221A', '*', '/', '+', '-'))
+						{
+							salida += pila.Pop() + " ";
+							pila.Push(letra);
+						}
+						else
+						{
+							pila.Push(letra);
+						}
+					}
+					else
+					{
+						//algo fuera de lo comun, no hacer nada
+					}
+				}
+				else
+				{
+					string sinEspacios = "";
+					foreach (char item in lista[i])
+					{
+						if (item != ' ')
+						{
+							sinEspacios += item;
+						}
+					}
+					salida += sinEspacios + " ";
+				}
+				if (i == 0)
+				{
+					while (pila.Count > 0)
+					{
+						char x = pila.Pop();
+						if (x == '(' || x == ')')
+						{
+
+						}
+						else
+						{
+							salida += x + " ";
+						}
+
+					}
+
+				}
+			}
+			salida = InvertirElementos(salida);
+		}
+
+		private void ConversionPosfijaDoble(string[] lexico, string[] codigo, out string[] salidaOut1, out string[] salidaOut2)
+		{
+			string[] lista = codigo;
+			string salida = "";
+			string salida2 = "";
+			Stack<char> pila = new Stack<char>();
+			Stack<string> pila2 = new Stack<string>();
+			int inicios = 0;
+			int cierres = 0;
+			for (int i = 0; i <= lista.Length - 1; i++)
+			{
+				if (lista[i] == " ")
+				{
+
+				}
+				else
+				// si es un signo de exponente o raiz cuadrada P2
+				if (EsIgual(lista[i], "^", "**", "\u221A"))
+				{
+					if (lista[i] == "**")
+					{
+						pila.Push('.');
+						pila2.Push(lexico[i]);
+					}
+					else
+					{
+						pila.Push(Convert.ToChar(lista[i]));
+						pila2.Push(lexico[i]);
+					}
+				}
+				else
+				if (EsIgualSigno(lista[i]) || lista[i] == "(" || lista[i] == ")")
+				{
+					char letra = Convert.ToChar(lista[i]);
+					//Si es parentesis P1
+					if (EsIgual(letra, '(', ')'))
+					{
+						if (letra == '(')
+						{
+							inicios++;
+						}
+						else
+						{
+							cierres++;
+						}
+						pila.Push(Convert.ToChar(lista[i]));
+						pila2.Push(lexico[i]);
+						if (inicios > 0 && cierres > 0)
+						{
+							char p;
+							while (pila.Peek() != '(')
+							{
+								if (pila.Peek() == ')')
+								{
+									p = pila.Pop();//Saca el )
+									pila2.Pop();
+								}
+								else
+								{
+									p = pila.Pop(); // saca el elemento
+									salida += p + " ";
+									salida2 += pila2.Pop() + " ";
+								}
+
+							}
+							pila.Pop();//Saca el (
+							pila2.Pop();
+
+							inicios--; cierres--;
+						}
+					}
+					else
+					// si es mutiplicacion o division P3
+					if (EsIgual(letra, '*', '/'))
+					{
+						if (pila.Count > 0 && EsIgual(pila.Peek(), '.', '^', '\u221A', '*', '/'))
+						{
+							salida += pila.Pop() + " ";
+							pila.Push(letra);
+							salida2 += pila2.Pop() + " ";
+							pila2.Push(lexico[i]);
+						}
+						else
+						{
+							pila.Push(letra);
+							pila2.Push(lexico[i]);
+						}
+					}
+					else
+					//si es suma o resta P4
+					if (EsIgual(letra, '+', '-'))
+					{
+						if (pila.Count > 0 && EsIgual(pila.Peek(), '.', '^', '\u221A', '*', '/', '+', '-'))
+						{
+							salida += pila.Pop() + " ";
+							salida2 += pila2.Pop()+" ";
+							pila.Push(letra);
+							pila2.Push(lexico[i]);
+						}
+						else
+						{
+							pila.Push(letra);
+							pila2.Push(lexico[i]);
+						}
+					}
+					else
+					//si es suma o resta P5
+					if (letra == '=')
+					{
+						if (pila.Count > 0 && EsIgual(pila.Peek(), '.', '^', '\u221A', '*', '/', '+', '-'))
+						{
+							salida += pila.Pop() + " ";
+							salida2 += pila2.Pop() + " ";
+							pila.Push(letra);
+							pila2.Push(lexico[i]);
+						}
+						else
+						{
+							pila.Push(letra);
+							pila2.Push("ASIG");
+						}
+					}
+					else
+					{
+						//algo fuera de lo comun, no hacer nada
+					}
+				}
+				else
+				{
+					string sinEspacios = "";
+					foreach (char item in lista[i])
+					{
+						if (item != ' ')
+						{
+							sinEspacios += item;
+						}
+					}
+					salida += sinEspacios + " ";
+					string sinEspacios2 = "";
+					foreach (char item in lexico[i])
+					{
+						if (item != ' ')
+						{
+							sinEspacios2 += item;
+						}
+					}
+					salida2 += sinEspacios2 + " ";
+				}
+				if (i == lista.Length - 1)
+				{
+					while (pila.Count > 0)
+					{
+						char x = pila.Pop();
+						if (x == '(' || x == ')')
+						{
+
+						}
+						else
+						{
+							salida += x + " ";
+						}
+						string y = pila2.Pop();
+						if (y == "CEX(" || y == "CEX)")
+						{
+
+						}
+						else
+						{
+							salida2 += y + " ";
+						}
+					}
+
+				}
+			}
+			//salida = (salida);
+			salidaOut1 = salida.Split(' ');
+			salidaOut2 = salida2.Split(' ');
+		}
+		private string InvertirElementos(string expresion)
+		{
+			string[] elementos = expresion.Split(' ');
+			List<string> elementosInvertidos = new List<string>();
+
+			// invertir solo los elementos que no son números
+			foreach (string elemento in elementos)
+			{
+				if (double.TryParse(elemento, out double numero))
+				{
+					// si el elemento es un número, lo agregamos a la lista tal cual
+					elementosInvertidos.Add(elemento);
+				}
+				else
+				{
+					// si el elemento no es un número, invertimos sus caracteres y lo agregamos a la lista
+					char[] caracteres = elemento.ToCharArray();
+					Array.Reverse(caracteres);
+					elementosInvertidos.Add(new string(caracteres));
+				}
+			}
+
+			// invertimos toda la lista de elementos invertidos
+			elementosInvertidos.Reverse();
+
+			// unimos los elementos invertidos para formar la expresión invertida
+			return string.Join(" ", elementosInvertidos);
+		}
+		public static string[] LimpiarArreglo(string[] arreglo)
+		{
+			return arreglo.Select(s => s.TrimEnd()).Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();
+		}
+
+		private void label4_Click(object sender, EventArgs e)
+		{
+
+		}
+		bool IsCorrectInPosPrefijo = false;
+		private void btnCuadruploTriplo_Click(object sender, EventArgs e)
+		{
+			dtgCuadruplo.Rows.Clear();
+			if(IsCorrectInPosPrefijo && listaDeStringCodIntermed.Count > 0)
+			{
+				string[][] arregloConvertido = listaDeStringCodIntermed.Select(arr => arr.ToArray()).ToArray();
+
+				for (int i = 0; i < arregloConvertido.Length; i++)
+				{
+					Stack<string> pilaIntermedia = new Stack<string>();
+					Stack<string> Aux2 = new Stack<string>();
+
+					for (int j = 0; j < arregloConvertido[i].Length; j++)
+					{
+						string x = arregloConvertido[i][j];
+
+						if (EsIgualSigno(x))
+						{
+							try
+							{
+								Aux2.Push(pilaIntermedia.Pop());
+								Aux2.Push(pilaIntermedia.Pop());
+								string var2 = Aux2.Pop();
+								string var1 = Aux2.Pop();
+								string Operador = "";
+								string Nombre = "T01";
+
+								if (x == "=")
+								{
+									int id = 1;
+
+									while (arregloConvertido[i].Contains(Nombre))
+									{
+										id++;
+										Nombre = "T" + id.ToString("D2");
+									}
+
+									arregloConvertido[i] = ReplaceValuesInArray(arregloConvertido[i], var1, var2, Nombre);
+								}
+								else
+								{
+									if (x == "+")
+									{
+										Operador = "OPSM";
+									}
+									else if (x == "-")
+									{
+										Operador = "OPRS";
+									}
+									else if (x == "*")
+									{
+										Operador = "OPML";
+									}
+									else if (x == "/")
+									{
+										Operador = "OPDV";
+									}
+
+									string salida1 = ObtenerTokenUnico(var1);
+									string salida2 = ObtenerTokenUnico(var2);
+
+									dtgCuadruplo.Rows.Add(Nombre, salida1, salida2, Operador);
+								}
+							}
+							catch (Exception ex)
+							{
+								rchConsola5.Text = "Error: " + ex.Message;
+							}
+						}
+						else
+						{
+							pilaIntermedia.Push(x);
+						}
+					}
+				}
+
+			}
+			else
+			{
+				rchConsola5.Text = "No se encontro ningun elemento para el codigo intermedio";
+			}
+		}
+		public static string[] ReplaceValuesInArray(string[] array, string oldValue1, string oldValue2, string newValue)
+		{
+			string[] newArray = new string[array.Length];
+
+			for (int i = 0; i < array.Length; i++)
+			{
+				string token = array[i];
+
+				if (token == oldValue1 || token == oldValue2)
+				{
+					newArray[i] = newValue;
+				}
+				else
+				{
+					newArray[i] = token;
+				}
+			}
+
+			return newArray;
+		}
+		private string ObtenerTokenUnico(string variable)
+		{
+			if (variable.StartsWith("_"))
+			{
+				var objetoFiltrado = _listaMeta.FirstOrDefault(objeto => objeto.Variable == variable);
+				if (objetoFiltrado != null)
+				{
+					return objetoFiltrado.TokenUnico;
+				}
+			}
+			else
+			{
+				var objetoFiltrado = _listaMeta.FirstOrDefault(objeto => objeto.Valor == variable);
+				if (objetoFiltrado != null)
+				{
+					return objetoFiltrado.TokenUnico;
+				}
+			}
+
+			return ""; // En caso de no encontrar el token único
+		}
+
+
 	}
 }

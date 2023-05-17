@@ -36,18 +36,31 @@
 			this.label2 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.label13 = new System.Windows.Forms.Label();
+			this.label12 = new System.Windows.Forms.Label();
+			this.dtgCuadruplo = new System.Windows.Forms.DataGridView();
+			this.dtgColDatoObjeto = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.dtgColDatoFuente1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.dtgColDatoFuente2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.dtgColOperador = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.rchPosPrefijo = new System.Windows.Forms.RichTextBox();
 			this.label9 = new System.Windows.Forms.Label();
 			this.rchSemantico = new System.Windows.Forms.RichTextBox();
 			this.btnAnalizar = new System.Windows.Forms.Button();
 			this.btnLexicar = new System.Windows.Forms.Button();
 			this.btnSintactizar = new System.Windows.Forms.Button();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
+			this.btnInPrePosFija = new System.Windows.Forms.Button();
+			this.btnPPrueba = new System.Windows.Forms.Button();
+			this.btnBiblioteca = new System.Windows.Forms.Button();
 			this.btnAjustar = new System.Windows.Forms.Button();
 			this.chbMensaje = new System.Windows.Forms.CheckBox();
 			this.btnLimpiar = new System.Windows.Forms.Button();
 			this.btnRellenar = new System.Windows.Forms.Button();
 			this.btnComprobar = new System.Windows.Forms.Button();
 			this.groupBox3 = new System.Windows.Forms.GroupBox();
+			this.label14 = new System.Windows.Forms.Label();
+			this.rchConsola5 = new System.Windows.Forms.RichTextBox();
 			this.label10 = new System.Windows.Forms.Label();
 			this.rchConsola4 = new System.Windows.Forms.RichTextBox();
 			this.label6 = new System.Windows.Forms.Label();
@@ -57,17 +70,14 @@
 			this.rchConsola2 = new System.Windows.Forms.RichTextBox();
 			this.rchConsola1 = new System.Windows.Forms.RichTextBox();
 			this.groupBox4 = new System.Windows.Forms.GroupBox();
+			this.label11 = new System.Windows.Forms.Label();
+			this.rchAnalisisSemantica = new System.Windows.Forms.RichTextBox();
 			this.rchAnalisisSintactico = new System.Windows.Forms.RichTextBox();
 			this.label8 = new System.Windows.Forms.Label();
 			this.rhcAnalisisLexico = new System.Windows.Forms.RichTextBox();
 			this.label7 = new System.Windows.Forms.Label();
 			this.groupBox5 = new System.Windows.Forms.GroupBox();
 			this.dtgSimbolo = new System.Windows.Forms.DataGridView();
-			this.panelCodigo = new System.Windows.Forms.Panel();
-			this.panelCaja = new System.Windows.Forms.Panel();
-			this.panelBotones = new System.Windows.Forms.Panel();
-			this.btnBiblioteca = new System.Windows.Forms.Button();
-			this.btnPPrueba = new System.Windows.Forms.Button();
 			this.dtgColSimboloID = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dtgColSimboloVariable = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dtgColSimboloTipoDato = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -75,9 +85,12 @@
 			this.dtgColValor = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dtgColTokenUnico = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dtgColFila = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.rchAnalisisSemantica = new System.Windows.Forms.RichTextBox();
-			this.label11 = new System.Windows.Forms.Label();
+			this.panelCodigo = new System.Windows.Forms.Panel();
+			this.panelCaja = new System.Windows.Forms.Panel();
+			this.panelBotones = new System.Windows.Forms.Panel();
+			this.btnCuadruploTriplo = new System.Windows.Forms.Button();
 			this.groupBox1.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.dtgCuadruplo)).BeginInit();
 			this.groupBox2.SuspendLayout();
 			this.groupBox3.SuspendLayout();
 			this.groupBox4.SuspendLayout();
@@ -163,6 +176,10 @@
 			// 
 			// groupBox1
 			// 
+			this.groupBox1.Controls.Add(this.label13);
+			this.groupBox1.Controls.Add(this.label12);
+			this.groupBox1.Controls.Add(this.dtgCuadruplo);
+			this.groupBox1.Controls.Add(this.rchPosPrefijo);
 			this.groupBox1.Controls.Add(this.label9);
 			this.groupBox1.Controls.Add(this.rchSemantico);
 			this.groupBox1.Controls.Add(this.rchTexto);
@@ -173,10 +190,76 @@
 			this.groupBox1.Controls.Add(this.rchLexico);
 			this.groupBox1.Location = new System.Drawing.Point(5, 10);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(1152, 258);
+			this.groupBox1.Size = new System.Drawing.Size(1882, 258);
 			this.groupBox1.TabIndex = 7;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Tab de codificacion y transformacion";
+			// 
+			// label13
+			// 
+			this.label13.AutoSize = true;
+			this.label13.Location = new System.Drawing.Point(1427, 16);
+			this.label13.Name = "label13";
+			this.label13.Size = new System.Drawing.Size(168, 13);
+			this.label13.TabIndex = 12;
+			this.label13.Text = "Transformacion Codigo Intermedio";
+			// 
+			// label12
+			// 
+			this.label12.AutoSize = true;
+			this.label12.Location = new System.Drawing.Point(1147, 16);
+			this.label12.Name = "label12";
+			this.label12.Size = new System.Drawing.Size(142, 13);
+			this.label12.TabIndex = 11;
+			this.label12.Text = "Transformacion InPrePosFijo";
+			// 
+			// dtgCuadruplo
+			// 
+			this.dtgCuadruplo.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.dtgCuadruplo.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dtgColDatoObjeto,
+            this.dtgColDatoFuente1,
+            this.dtgColDatoFuente2,
+            this.dtgColOperador});
+			this.dtgCuadruplo.Location = new System.Drawing.Point(1423, 36);
+			this.dtgCuadruplo.Name = "dtgCuadruplo";
+			this.dtgCuadruplo.Size = new System.Drawing.Size(444, 211);
+			this.dtgCuadruplo.TabIndex = 10;
+			// 
+			// dtgColDatoObjeto
+			// 
+			this.dtgColDatoObjeto.HeaderText = "Dato Objeto";
+			this.dtgColDatoObjeto.Name = "dtgColDatoObjeto";
+			this.dtgColDatoObjeto.ReadOnly = true;
+			// 
+			// dtgColDatoFuente1
+			// 
+			this.dtgColDatoFuente1.HeaderText = "Dato Fuente 1";
+			this.dtgColDatoFuente1.Name = "dtgColDatoFuente1";
+			this.dtgColDatoFuente1.ReadOnly = true;
+			// 
+			// dtgColDatoFuente2
+			// 
+			this.dtgColDatoFuente2.HeaderText = "Dato Fuente 2";
+			this.dtgColDatoFuente2.Name = "dtgColDatoFuente2";
+			this.dtgColDatoFuente2.ReadOnly = true;
+			// 
+			// dtgColOperador
+			// 
+			this.dtgColOperador.HeaderText = "Operador";
+			this.dtgColOperador.Name = "dtgColOperador";
+			this.dtgColOperador.ReadOnly = true;
+			// 
+			// rchPosPrefijo
+			// 
+			this.rchPosPrefijo.BackColor = System.Drawing.SystemColors.MenuHighlight;
+			this.rchPosPrefijo.Location = new System.Drawing.Point(1143, 36);
+			this.rchPosPrefijo.Name = "rchPosPrefijo";
+			this.rchPosPrefijo.ReadOnly = true;
+			this.rchPosPrefijo.Size = new System.Drawing.Size(265, 211);
+			this.rchPosPrefijo.TabIndex = 9;
+			this.rchPosPrefijo.Text = "";
+			this.rchPosPrefijo.WordWrap = false;
 			// 
 			// label9
 			// 
@@ -230,6 +313,8 @@
 			// 
 			// groupBox2
 			// 
+			this.groupBox2.Controls.Add(this.btnCuadruploTriplo);
+			this.groupBox2.Controls.Add(this.btnInPrePosFija);
 			this.groupBox2.Controls.Add(this.btnPPrueba);
 			this.groupBox2.Controls.Add(this.btnBiblioteca);
 			this.groupBox2.Controls.Add(this.btnAjustar);
@@ -248,6 +333,36 @@
 			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Botones";
 			this.groupBox2.Enter += new System.EventHandler(this.groupBox2_Enter);
+			// 
+			// btnInPrePosFija
+			// 
+			this.btnInPrePosFija.Location = new System.Drawing.Point(515, 19);
+			this.btnInPrePosFija.Name = "btnInPrePosFija";
+			this.btnInPrePosFija.Size = new System.Drawing.Size(130, 23);
+			this.btnInPrePosFija.TabIndex = 18;
+			this.btnInPrePosFija.Text = "Semantico -> PrePosFija";
+			this.btnInPrePosFija.UseVisualStyleBackColor = true;
+			this.btnInPrePosFija.Click += new System.EventHandler(this.btnInPrePosFija_Click);
+			// 
+			// btnPPrueba
+			// 
+			this.btnPPrueba.Location = new System.Drawing.Point(515, 43);
+			this.btnPPrueba.Name = "btnPPrueba";
+			this.btnPPrueba.Size = new System.Drawing.Size(130, 23);
+			this.btnPPrueba.TabIndex = 17;
+			this.btnPPrueba.Text = "Prueba";
+			this.btnPPrueba.UseVisualStyleBackColor = true;
+			this.btnPPrueba.Click += new System.EventHandler(this.btnPPrueba_Click);
+			// 
+			// btnBiblioteca
+			// 
+			this.btnBiblioteca.Location = new System.Drawing.Point(515, 72);
+			this.btnBiblioteca.Name = "btnBiblioteca";
+			this.btnBiblioteca.Size = new System.Drawing.Size(130, 23);
+			this.btnBiblioteca.TabIndex = 16;
+			this.btnBiblioteca.Text = "Biblioteca de codigo";
+			this.btnBiblioteca.UseVisualStyleBackColor = true;
+			this.btnBiblioteca.Click += new System.EventHandler(this.btnBiblioteca_Click);
 			// 
 			// btnAjustar
 			// 
@@ -302,6 +417,8 @@
 			// 
 			// groupBox3
 			// 
+			this.groupBox3.Controls.Add(this.label14);
+			this.groupBox3.Controls.Add(this.rchConsola5);
 			this.groupBox3.Controls.Add(this.label10);
 			this.groupBox3.Controls.Add(this.rchConsola4);
 			this.groupBox3.Controls.Add(this.label6);
@@ -312,10 +429,30 @@
 			this.groupBox3.Controls.Add(this.rchConsola1);
 			this.groupBox3.Location = new System.Drawing.Point(11, 267);
 			this.groupBox3.Name = "groupBox3";
-			this.groupBox3.Size = new System.Drawing.Size(1108, 226);
+			this.groupBox3.Size = new System.Drawing.Size(1440, 226);
 			this.groupBox3.TabIndex = 12;
 			this.groupBox3.TabStop = false;
 			this.groupBox3.Text = "Tab Consola";
+			// 
+			// label14
+			// 
+			this.label14.AutoSize = true;
+			this.label14.Location = new System.Drawing.Point(1202, 31);
+			this.label14.Name = "label14";
+			this.label14.Size = new System.Drawing.Size(51, 13);
+			this.label14.TabIndex = 9;
+			this.label14.Text = "Analisis 5";
+			// 
+			// rchConsola5
+			// 
+			this.rchConsola5.BackColor = System.Drawing.SystemColors.HotTrack;
+			this.rchConsola5.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+			this.rchConsola5.Location = new System.Drawing.Point(1107, 51);
+			this.rchConsola5.Name = "rchConsola5";
+			this.rchConsola5.ReadOnly = true;
+			this.rchConsola5.Size = new System.Drawing.Size(268, 169);
+			this.rchConsola5.TabIndex = 8;
+			this.rchConsola5.Text = "";
 			// 
 			// label10
 			// 
@@ -363,6 +500,7 @@
 			this.label4.Size = new System.Drawing.Size(51, 13);
 			this.label4.TabIndex = 3;
 			this.label4.Text = "Analisis 1";
+			this.label4.Click += new System.EventHandler(this.label4_Click);
 			// 
 			// rchConsola3
 			// 
@@ -411,6 +549,26 @@
 			this.groupBox4.TabIndex = 13;
 			this.groupBox4.TabStop = false;
 			this.groupBox4.Text = "Caja de analisis";
+			// 
+			// label11
+			// 
+			this.label11.AutoSize = true;
+			this.label11.Location = new System.Drawing.Point(399, 20);
+			this.label11.Name = "label11";
+			this.label11.Size = new System.Drawing.Size(54, 13);
+			this.label11.TabIndex = 5;
+			this.label11.Text = "Sintactico";
+			// 
+			// rchAnalisisSemantica
+			// 
+			this.rchAnalisisSemantica.BackColor = System.Drawing.Color.Orange;
+			this.rchAnalisisSemantica.Location = new System.Drawing.Point(391, 49);
+			this.rchAnalisisSemantica.Name = "rchAnalisisSemantica";
+			this.rchAnalisisSemantica.ReadOnly = true;
+			this.rchAnalisisSemantica.Size = new System.Drawing.Size(184, 202);
+			this.rchAnalisisSemantica.TabIndex = 4;
+			this.rchAnalisisSemantica.Text = "";
+			this.rchAnalisisSemantica.WordWrap = false;
 			// 
 			// rchAnalisisSintactico
 			// 
@@ -479,55 +637,6 @@
 			this.dtgSimbolo.Size = new System.Drawing.Size(757, 316);
 			this.dtgSimbolo.TabIndex = 0;
 			// 
-			// panelCodigo
-			// 
-			this.panelCodigo.AutoScroll = true;
-			this.panelCodigo.Controls.Add(this.groupBox1);
-			this.panelCodigo.Controls.Add(this.groupBox3);
-			this.panelCodigo.Location = new System.Drawing.Point(12, 2);
-			this.panelCodigo.Name = "panelCodigo";
-			this.panelCodigo.Size = new System.Drawing.Size(768, 503);
-			this.panelCodigo.TabIndex = 6;
-			// 
-			// panelCaja
-			// 
-			this.panelCaja.AutoScroll = true;
-			this.panelCaja.Controls.Add(this.groupBox4);
-			this.panelCaja.Controls.Add(this.groupBox5);
-			this.panelCaja.Location = new System.Drawing.Point(786, 2);
-			this.panelCaja.Name = "panelCaja";
-			this.panelCaja.Size = new System.Drawing.Size(421, 638);
-			this.panelCaja.TabIndex = 15;
-			// 
-			// panelBotones
-			// 
-			this.panelBotones.AutoScroll = true;
-			this.panelBotones.Controls.Add(this.groupBox2);
-			this.panelBotones.Location = new System.Drawing.Point(3, 511);
-			this.panelBotones.Name = "panelBotones";
-			this.panelBotones.Size = new System.Drawing.Size(777, 129);
-			this.panelBotones.TabIndex = 16;
-			// 
-			// btnBiblioteca
-			// 
-			this.btnBiblioteca.Location = new System.Drawing.Point(515, 72);
-			this.btnBiblioteca.Name = "btnBiblioteca";
-			this.btnBiblioteca.Size = new System.Drawing.Size(130, 23);
-			this.btnBiblioteca.TabIndex = 16;
-			this.btnBiblioteca.Text = "Biblioteca de codigo";
-			this.btnBiblioteca.UseVisualStyleBackColor = true;
-			this.btnBiblioteca.Click += new System.EventHandler(this.btnBiblioteca_Click);
-			// 
-			// btnPPrueba
-			// 
-			this.btnPPrueba.Location = new System.Drawing.Point(515, 43);
-			this.btnPPrueba.Name = "btnPPrueba";
-			this.btnPPrueba.Size = new System.Drawing.Size(130, 23);
-			this.btnPPrueba.TabIndex = 17;
-			this.btnPPrueba.Text = "Prueba";
-			this.btnPPrueba.UseVisualStyleBackColor = true;
-			this.btnPPrueba.Click += new System.EventHandler(this.btnPPrueba_Click);
-			// 
 			// dtgColSimboloID
 			// 
 			this.dtgColSimboloID.FillWeight = 50F;
@@ -576,25 +685,44 @@
 			this.dtgColFila.Name = "dtgColFila";
 			this.dtgColFila.ReadOnly = true;
 			// 
-			// rchAnalisisSemantica
+			// panelCodigo
 			// 
-			this.rchAnalisisSemantica.BackColor = System.Drawing.Color.Orange;
-			this.rchAnalisisSemantica.Location = new System.Drawing.Point(391, 49);
-			this.rchAnalisisSemantica.Name = "rchAnalisisSemantica";
-			this.rchAnalisisSemantica.ReadOnly = true;
-			this.rchAnalisisSemantica.Size = new System.Drawing.Size(184, 202);
-			this.rchAnalisisSemantica.TabIndex = 4;
-			this.rchAnalisisSemantica.Text = "";
-			this.rchAnalisisSemantica.WordWrap = false;
+			this.panelCodigo.AutoScroll = true;
+			this.panelCodigo.Controls.Add(this.groupBox1);
+			this.panelCodigo.Controls.Add(this.groupBox3);
+			this.panelCodigo.Location = new System.Drawing.Point(12, 2);
+			this.panelCodigo.Name = "panelCodigo";
+			this.panelCodigo.Size = new System.Drawing.Size(768, 503);
+			this.panelCodigo.TabIndex = 6;
 			// 
-			// label11
+			// panelCaja
 			// 
-			this.label11.AutoSize = true;
-			this.label11.Location = new System.Drawing.Point(399, 20);
-			this.label11.Name = "label11";
-			this.label11.Size = new System.Drawing.Size(54, 13);
-			this.label11.TabIndex = 5;
-			this.label11.Text = "Sintactico";
+			this.panelCaja.AutoScroll = true;
+			this.panelCaja.Controls.Add(this.groupBox4);
+			this.panelCaja.Controls.Add(this.groupBox5);
+			this.panelCaja.Location = new System.Drawing.Point(786, 2);
+			this.panelCaja.Name = "panelCaja";
+			this.panelCaja.Size = new System.Drawing.Size(421, 638);
+			this.panelCaja.TabIndex = 15;
+			// 
+			// panelBotones
+			// 
+			this.panelBotones.AutoScroll = true;
+			this.panelBotones.Controls.Add(this.groupBox2);
+			this.panelBotones.Location = new System.Drawing.Point(3, 511);
+			this.panelBotones.Name = "panelBotones";
+			this.panelBotones.Size = new System.Drawing.Size(777, 129);
+			this.panelBotones.TabIndex = 16;
+			// 
+			// btnCuadruploTriplo
+			// 
+			this.btnCuadruploTriplo.Location = new System.Drawing.Point(661, 19);
+			this.btnCuadruploTriplo.Name = "btnCuadruploTriplo";
+			this.btnCuadruploTriplo.Size = new System.Drawing.Size(139, 23);
+			this.btnCuadruploTriplo.TabIndex = 19;
+			this.btnCuadruploTriplo.Text = "PrePosFija -> Cuadruplos";
+			this.btnCuadruploTriplo.UseVisualStyleBackColor = true;
+			this.btnCuadruploTriplo.Click += new System.EventHandler(this.btnCuadruploTriplo_Click);
 			// 
 			// Form1
 			// 
@@ -611,6 +739,7 @@
 			this.Load += new System.EventHandler(this.Form1_Load);
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox1.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.dtgCuadruplo)).EndInit();
 			this.groupBox2.ResumeLayout(false);
 			this.groupBox2.PerformLayout();
 			this.groupBox3.ResumeLayout(false);
@@ -677,6 +806,18 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn dtgColFila;
 		private System.Windows.Forms.Label label11;
 		private System.Windows.Forms.RichTextBox rchAnalisisSemantica;
+		private System.Windows.Forms.Label label13;
+		private System.Windows.Forms.Label label12;
+		private System.Windows.Forms.DataGridView dtgCuadruplo;
+		private System.Windows.Forms.DataGridViewTextBoxColumn dtgColDatoObjeto;
+		private System.Windows.Forms.DataGridViewTextBoxColumn dtgColDatoFuente1;
+		private System.Windows.Forms.DataGridViewTextBoxColumn dtgColDatoFuente2;
+		private System.Windows.Forms.DataGridViewTextBoxColumn dtgColOperador;
+		private System.Windows.Forms.RichTextBox rchPosPrefijo;
+		private System.Windows.Forms.Button btnInPrePosFija;
+		private System.Windows.Forms.Label label14;
+		private System.Windows.Forms.RichTextBox rchConsola5;
+		private System.Windows.Forms.Button btnCuadruploTriplo;
 	}
 }
 

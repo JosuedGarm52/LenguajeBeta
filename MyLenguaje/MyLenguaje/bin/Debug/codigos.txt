@@ -1,15 +1,6 @@
 CXFA KLA _MAIN 
 | 
-   | kar _c = 'c' ||
-   | ent _x = 2 ||
-   | ent _x = 3 ||
-   | rea _y = 2.3 ||
-   | rea _y = 3.4 ||
-   | sxn _palabra = 1 ||
-   | rea _entero = 1 ||
-   | ent _caracter = 'c' ||
-   | log _bool = 1 ||
-   | ent _suma = 1 + 2 + 3 ||
+   | ent _y = ( 2 + 3 + 5 + 8 ) ||
+   | ent _var2 ||
+   | _var2 = 10 * _y - ( _area2 + 1 ) ||
 ||
-
-
