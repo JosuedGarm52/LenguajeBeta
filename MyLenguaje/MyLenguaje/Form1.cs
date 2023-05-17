@@ -51,7 +51,7 @@ namespace MyLenguaje
 			result = Encoding.Unicode.GetString(decryted);
 			return result;
 		}
-	
+
 
 		private void btnSalir_Click(object sender, EventArgs e)
 		{
@@ -94,17 +94,19 @@ namespace MyLenguaje
 					rchConsola5.Text = "Exito";
 					string codigo2 = "";
 					int y = 0;
-					
+
 					foreach (char car in rchTexto.Text)
 					{
-						if(car == ' ')
+						if (car == ' ')
 						{
-							codigo2 += ""+careEspacio;
-						}else
-						if(car == '\n')
+							codigo2 += "" + careEspacio;
+						}
+						else
+						if (car == '\n')
 						{
 							codigo2 += "" + careEnter;
-						}else
+						}
+						else
 						{
 							codigo2 += "" + car;
 						}
@@ -114,7 +116,7 @@ namespace MyLenguaje
 					codigo = codigo2.ToCharArray();
 					y = 0;
 					byte[] ascii = Encoding.ASCII.GetBytes(codigo);//convierte a ascii el caracter
-					//Mensaje("Ascii: " + ascii[0] + " Caracter: "+ (char)ascii[0]);
+																   //Mensaje("Ascii: " + ascii[0] + " Caracter: "+ (char)ascii[0]);
 					string indice = "0";
 					LexicoErrores = 0;
 					string posicion = "0";
@@ -138,16 +140,16 @@ namespace MyLenguaje
 						{
 							indice = reader["ESTSIM"].ToString();
 							string espacio = reader["_32"].ToString();
-							if ((codigo[y] > 125 && codigo[y] != careEnter && codigo[y] != careEspacio && codigo[y] != careFin) || CaracterProhibido(posicion) )
+							if ((codigo[y] > 125 && codigo[y] != careEnter && codigo[y] != careEspacio && codigo[y] != careFin) || CaracterProhibido(posicion))
 							{
 								rchConsola1.Text = "Error: Letra no permitida en el lenguaje " + codigo[y];
-								throw new Exception("Se a encontrado un caracter fuera del rango valido: Caracter: "+ codigo[y]);
+								throw new Exception("Se a encontrado un caracter fuera del rango valido: Caracter: " + codigo[y]);
 							}
-							if (codigo[y] == careEspacio || codigo[y] == careFin  || codigo[y] == careEnter)
+							if (codigo[y] == careEspacio || codigo[y] == careFin || codigo[y] == careEnter)
 							{
-								if(espacio == "92" )
+								if (espacio == "92")
 								{
-									if(modoLetra)
+									if (modoLetra)
 									{
 										palabras += letras + ' ';
 										letras = "";
@@ -181,11 +183,11 @@ namespace MyLenguaje
 									//	wancho = 1;
 									//	listo = false;
 									//}
-									
+
 									consola += reader["FDC"].ToString();
 									consola += "\n";
 								}
-								if(codigo[y] == careEnter)
+								if (codigo[y] == careEnter)
 								{
 									cat += "\n";
 									haltura++;
@@ -196,16 +198,16 @@ namespace MyLenguaje
 							}
 							else
 							{
-								if(codigo[y] == '_')
+								if (codigo[y] == '_')
 								{
 									modoLetra = true;
 								}
-								if(modoLetra)
+								if (modoLetra)
 								{
 									letras += codigo[y];
 								}
 								string ced = "_" + ascii[y];
-								
+
 								posicion = reader[ced].ToString();
 								letraAnt = codigo[y];
 								listo = true;
@@ -220,13 +222,14 @@ namespace MyLenguaje
 					{
 						rchConsola2.Text = "Exito";//Revision exitosa --cambio
 						EstadoAnalisis = true;
-					}else
+					}
+					else
 					{
 						rchConsola2.Text = textoError;
 						EstadoAnalisis = false;
 					}
 					char gar = char.Parse(cat.Substring(cat.Length - 1, 1));
-					if(gar == '\n')
+					if (gar == '\n')
 					{
 						cadenaLexico = cat + careFin;
 					}
@@ -234,15 +237,16 @@ namespace MyLenguaje
 					if (gar == careFin)
 					{
 						cadenaLexico = cat;
-					}else
-					if ( gar == careEspacio)
+					}
+					else
+					if (gar == careEspacio)
 					{
-						cadenaLexico = cat + " " +careFin;
+						cadenaLexico = cat + " " + careFin;
 					}
 					else
 					{
 						cadenaLexico = cat;
-					} 
+					}
 					matrizLexico = ConvertirTextoEnMatriz(cadenaLexico);
 					matrizCodigo = ConvertirCodigoEnMatriz(rchTexto.Text);
 					int count = 0;
@@ -255,13 +259,13 @@ namespace MyLenguaje
 
 						for (int j = 0; j < numColumnas; j++)
 						{
-							if(i == 106 && j == 0) //ignorar
+							if (i == 106 && j == 0) //ignorar
 							{
 
 							}
-							if(matrizLexico[i][j] == "IDEN") //Buscador --ignorar
+							if (matrizLexico[i][j] == "IDEN") //Buscador --ignorar
 							{
-								if( matrizCodigo[i][j] == "_Operaciones(")
+								if (matrizCodigo[i][j] == "_Operaciones(")
 								{
 
 								}
@@ -423,7 +427,7 @@ namespace MyLenguaje
 							else
 							//Declarar arreglo Mat Sin inicializar
 							if (j >= 4 && faltantes > 1
-										&& matrizLexico[i][j +1 ] != "ASIG"
+										&& matrizLexico[i][j + 1] != "ASIG"
 									  && matrizLexico[i][j - 0] == "IDEN"
 									  && EsIgual(matrizLexico[i][j - 3], "PR04", "PR07", "PR11", "PR18", "PR23")
 									  && matrizLexico[i][j - 4] == "PR13")
@@ -445,7 +449,7 @@ namespace MyLenguaje
 							}
 							else
 							//Declaracion de clase main
-							if(j >= 2 && matrizLexico[i][j - 0] == "IDEN"
+							if (j >= 2 && matrizLexico[i][j - 0] == "IDEN"
 									  && matrizLexico[i][j - 1] == "PR10"
 									  && matrizLexico[i][j - 2] == "PR26")// PR26 PR10 IDEN-CXFA KLA _X
 							{
@@ -461,7 +465,8 @@ namespace MyLenguaje
 								meta.Fila = i + 1;
 								//Declaracion de id
 								_listaMeta.Add(meta);
-							}else
+							}
+							else
 							//Declaracion de clase
 							if (j >= 2 && matrizLexico[i][j - 0] == "IDEN"
 									  && matrizLexico[i][j - 1] == "PR10"
@@ -497,19 +502,20 @@ namespace MyLenguaje
 								meta.Fila = i + 1;
 								//Declaracion de id
 								_listaMeta.Add(meta);
-							}else
+							}
+							else
 							//Declaracion de metodos con parametros
-							if(j >= 4 && matrizLexico[i][j - 0] == "IDEN"
+							if (j >= 4 && matrizLexico[i][j - 0] == "IDEN"
 									  && matrizLexico[i][j - 2] == "CEX("
 									  && matrizLexico[i][j - 3] == "IDEN"
-									  && EsIgual(matrizLexico[i][j - 4], "PR04", "PR07", "PR11", "PR18", "PR23","PR27") )
-								//4:PR27 3:IDEN 2:CEX( 1:PR04 0:IDEN CEX)
+									  && EsIgual(matrizLexico[i][j - 4], "PR04", "PR07", "PR11", "PR18", "PR23", "PR27"))
+							//4:PR27 3:IDEN 2:CEX( 1:PR04 0:IDEN CEX)
 							{
 								meta = new MetaDatos();
 								count++;
 								meta.ID = count;
 								meta.Variable = matrizCodigo[i][j - 3];//Nombre var: _x
-								meta.TipoDato = "MTDX "+matrizCodigo[i][j - 4].ToUpper();//MLP
+								meta.TipoDato = "MTDX " + matrizCodigo[i][j - 4].ToUpper();//MLP
 								meta.Token = matrizLexico[i][j - 3];
 								meta.Valor = matrizCodigo[i][j - 0];
 								int n = numColumnas - 3;
@@ -519,7 +525,7 @@ namespace MyLenguaje
 								Array.Reverse(ultimosL); Array.Reverse(ultimosC);
 								while (ultimosL.Length > 1)
 								{
-									if (n >= 2 && ultimosL.Length >= 3 
+									if (n >= 2 && ultimosL.Length >= 3
 										  && ultimosL[2] == "CEX,"
 										  //&& ultimosL[1] == "PR04"
 										  && ultimosL[0] == "IDEN")
@@ -533,14 +539,15 @@ namespace MyLenguaje
 									// Si queda solo un elemento en los arreglos, salir del ciclo
 									if (ultimosL.Length == 1) break;
 								}
-								
+
 								NumID++;
 								meta.TokenUnico = MarcarToken("ID", NumID);
 								meta.Fila = i + 1;
 								//Declaracion de id
 								_listaMeta.Add(meta);
-							}else
-							if (j >= 2 && faltantes>1 
+							}
+							else
+							if (j >= 2 && faltantes > 1
 									  && !EsIgual(matrizLexico[i][j + 1], "PR04", "PR07", "PR11", "PR18", "PR23")
 									  && matrizLexico[i][j - 0] == "CEX("
 									  && matrizLexico[i][j - 1] == "IDEN"
@@ -551,7 +558,7 @@ namespace MyLenguaje
 								count++;
 								meta.ID = count;
 								meta.Variable = matrizCodigo[i][j - 1];//Nombre var: _x
-								meta.TipoDato = "MTDX "+matrizCodigo[i][j - 2].ToUpper();
+								meta.TipoDato = "MTDX " + matrizCodigo[i][j - 2].ToUpper();
 								meta.Token = matrizLexico[i][j - 1];
 								meta.Valor = "NULL";
 								NumID++;
@@ -559,13 +566,14 @@ namespace MyLenguaje
 								meta.Fila = i + 1;
 								//Declaracion de id
 								_listaMeta.Add(meta);
-							}else
+							}
+							else
 							//Asignacion de variables
-							if( j >= 2 && faltantes > 1
-									   && EsIgual(matrizLexico[i][j - 2],"INIS","CEX,")
+							if (j >= 2 && faltantes > 1
+									   && EsIgual(matrizLexico[i][j - 2], "INIS", "CEX,")
 									   && matrizLexico[i][j - 1] == "IDEN"
 									   && matrizLexico[i][j - 0] == "ASIG")
-									  //&& matrizLexico[i][j + 1] != "ASIG")
+							//&& matrizLexico[i][j + 1] != "ASIG")
 							//2:INIS  1:IDEN   0:ASIG +1:CONE FIIN
 							//|     _num   =    2    ||
 							//| _entArray2 = { 1 , 3 , 4 } ||
@@ -575,7 +583,7 @@ namespace MyLenguaje
 								meta = new MetaDatos();
 								meta.Variable = matrizCodigo[i][j - 1];//Nombre var: _x
 								meta.TipoDato = "VAR";
-								meta.Token = matrizLexico[i][j-1];
+								meta.Token = matrizLexico[i][j - 1];
 								if (matrizLexico[i][j + 1] == "CEX{")
 								{
 									// Encuentra la posición del primer '{'
@@ -590,13 +598,14 @@ namespace MyLenguaje
 									// Convierte el nuevo arreglo en una cadena usando la función string.Join()
 									string result = "{" + string.Join("", newArr) + "}";
 									meta.Valor = result;
-								}else 
-								if(faltantes > 2 && matrizLexico[i][j + 1] == "PR14")
+								}
+								else
+								if (faltantes > 2 && matrizLexico[i][j + 1] == "PR14")
 								{
 									meta.Valor = matrizCodigo[i][j + 2] + "()";
 								}
 								else
-								if(matrizLexico[i][j + 1] != "IDEN")
+								if (matrizLexico[i][j + 1] != "IDEN")
 								{
 									meta.Valor = matrizCodigo[i][j + 1];
 								}
@@ -611,13 +620,14 @@ namespace MyLenguaje
 									meta.ID = count;
 									_listaMeta.Add(meta);
 									//listaFilasAceptadas.Add(meta.Fila);
-								}else
+								}
+								else
 								{
 									foreach (MetaDatos objeto in _listaMeta)
 									{
 										if (objeto.Variable == meta.Variable)//Busca que ambas tengan el mismo nombre _x
 										{
-											if(matrizLexico[i][j + 1] != "IDEN" && meta.Valor != "")//Si no es un idenficador y su valor esta vacio
+											if (matrizLexico[i][j + 1] != "IDEN" && meta.Valor != "")//Si no es un idenficador y su valor esta vacio
 											{
 												objeto.Valor = meta.Valor;
 												listaFilasAceptadas.Add(meta.Fila);
@@ -642,7 +652,7 @@ namespace MyLenguaje
 									meta.ID = count;
 									NumENT++;
 									meta.TokenUnico = MarcarToken("CNE", NumENT);//regresa CNE01
-									// Si no existe, lo agregamos a la lista
+																				 // Si no existe, lo agregamos a la lista
 									_listaMeta.Add(meta);
 								}
 							}
@@ -718,11 +728,12 @@ namespace MyLenguaje
 					rhcAnalisisLexico.Text = consola;
 
 					//rchConsola2.Text = consola;
-				}else
+				}
+				else
 				{
 					Advertir(rchConsola1, "Error: El codigo esta vacio", "Error: Compruebe la consola 1");
 				}
-				
+
 
 			}
 			catch (Exception ex)
@@ -736,7 +747,7 @@ namespace MyLenguaje
 				EstaForma.Cursor = Cursors.Default;
 				btnLexicar.Focus();
 			}
-			
+
 		}
 		public static string MarcarToken(string str, int num)
 		{
@@ -815,32 +826,33 @@ namespace MyLenguaje
 		private void LlenarTablaSimbolos()
 		{
 			dtgSimbolo.Rows.Clear();
-			if(_listaMeta.Count > 0)
+			if (_listaMeta.Count > 0)
 			{
 				foreach (MetaDatos meta in _listaMeta)
 				{
-					string a1 = meta.ID+"";
-					string a2 = meta.Variable ;
-					string a3 = meta.TipoDato ;
-					string a4 = meta.Token ;
+					string a1 = meta.ID + "";
+					string a2 = meta.Variable;
+					string a3 = meta.TipoDato;
+					string a4 = meta.Token;
 					string a5 = meta.Valor;
-					string a6 = meta.TokenUnico ;
-					string a7 = meta.Fila+"";
+					string a6 = meta.TokenUnico;
+					string a7 = meta.Fila + "";
 					dtgSimbolo.Rows.Add(a1, a2, a3, a4, a5, a6, a7);
 				}
 			}
 		}
-		private void Advertir(RichTextBox rich , string textoRich, string textoMensaje)
+		private void Advertir(RichTextBox rich, string textoRich, string textoMensaje)
 		{
 			rich.Text = textoRich;
-			Mensaje(textoMensaje); 
+			Mensaje(textoMensaje);
 		}
 		private void InicializarCodigo(RichTextBox rich, string cadena, bool All)
 		{
-			if(All)
+			if (All)
 			{
 				rich.Text = cadena;
-			}else
+			}
+			else
 			{
 				string temp = "";
 				foreach (char c in cadena)
@@ -864,7 +876,7 @@ namespace MyLenguaje
 				}
 				rich.Text = temp;
 			}
-			
+
 		}
 		private void Mensaje(string men)
 		{
@@ -932,9 +944,9 @@ namespace MyLenguaje
 			string x = "";
 			for (int i = 0; i < cc.Length; i++)
 			{
-				x += ""+cc[i];
+				x += "" + cc[i];
 			}
-			MessageBox.Show(""+x,"Mensaje de arreglo");
+			MessageBox.Show("" + x, "Mensaje de arreglo");
 		}
 		private string MensajeArray(string[] cc, bool comp)
 		{
@@ -943,7 +955,7 @@ namespace MyLenguaje
 			{
 				x += cc[i] + " ";
 			}
-			if(comp)
+			if (comp)
 			{
 				MessageBox.Show(x, "Mensaje de arreglo");
 			}
@@ -951,7 +963,7 @@ namespace MyLenguaje
 		}
 		private void btnLexicar_Click(object sender, EventArgs e)
 		{
-			if(EstadoAnalisis)
+			if (EstadoAnalisis)
 			{
 				EstaForma.Cursor = Cursors.AppStarting;
 				rchConsola3.Text = "";
@@ -1108,7 +1120,7 @@ namespace MyLenguaje
 										}
 									}
 									arregloFila = cod2.Split(' ');
-								} while (sinCambios < 4 );
+								} while (sinCambios < 4);
 								for (int j = 0; j < arrayCodigo.GetLength(1); j++)
 								{
 									arrayCodigo[i, j] = null;
@@ -1135,7 +1147,7 @@ namespace MyLenguaje
 							prueba += "\n";
 						}
 						cadenaSintactico = prueba;
-						rchSintactico.Text = cadenaSintactico+"";
+						rchSintactico.Text = cadenaSintactico + "";
 						int numeroErrores = 0;
 						string consolaError = "";
 						string catEstado = "";
@@ -1144,24 +1156,24 @@ namespace MyLenguaje
 						for (int i = 0; i < arrayCodigo.GetLength(0); i++)
 						{
 							int errores = 0;
-							int longitud =0;
+							int longitud = 0;
 							int fila = i + 1;
 							bool estaticoReglaCXFA = false;
 							for (int j = 0; j < arrayCodigo.GetLength(1); j++)
 							{
-								if(arrayCodigo[i,j] != null)
+								if (arrayCodigo[i, j] != null)
 								{
 									longitud++;
 								}
 							}
-							
+
 							for (int j = 0; j < longitud; j++)
 							{
-								if(arrayCodigo[i,j] != null)
+								if (arrayCodigo[i, j] != null)
 								{
 									//Error si le falta un = de asignacion -- | ent _x 1 ||
-									if(j>=1 && EsIgual(arrayCodigo[i, j - 1], "DECENT","DECREA","DECKAR","DECSXN","DECLOG")
-											&& EsIgual(arrayCodigo[i, j - 0], "CONE","CONR","CRTR","CDNA","BLN"))
+									if (j >= 1 && EsIgual(arrayCodigo[i, j - 1], "DECENT", "DECREA", "DECKAR", "DECSXN", "DECLOG")
+											&& EsIgual(arrayCodigo[i, j - 0], "CONE", "CONR", "CRTR", "CDNA", "BLN"))
 									{
 										estaticoReglaCXFA = true;
 										numeroErrores++;
@@ -1505,20 +1517,22 @@ namespace MyLenguaje
 									}
 								}
 							}
-							if(errores == 0)
+							if (errores == 0)
 							{
 								catEstado += "Fila " + fila + ": CORRECTA\n";
-							}else
+							}
+							else
 							{
 								catEstado += "Fila " + fila + ": Con error/es\n";
 							}
 						}
 						rchAnalisisSintactico.Text = catEstado;
-						if(numeroErrores == 0)
+						if (numeroErrores == 0)
 						{
 							rchConsola3.Text = "Exito";
 							EstadoSintactico = true;
-						}else
+						}
+						else
 						{
 							rchConsola3.Text = consolaError;
 							EstadoSintactico = false;
@@ -1526,7 +1540,7 @@ namespace MyLenguaje
 					}
 					catch (Exception ex)
 					{
-						Mensaje(ex.Message );
+						Mensaje(ex.Message);
 					}
 					finally
 					{
@@ -1539,7 +1553,8 @@ namespace MyLenguaje
 					Advertir(rchConsola2, "Debes primero introducir el codigo en el tab de codigo y luego pulsar analizar.", "Comprueba la consola 2");
 				}
 				btnSintactizar.Focus();
-			}else
+			}
+			else
 			{
 				MessageBox.Show("Debes corregir los errores primero");
 			}
@@ -1599,13 +1614,13 @@ namespace MyLenguaje
 
 		private bool BLOQUEA(string text)
 		{
-			if(text == "SPR03" || text == "SPR04" || text == "SPR06" || text == "SPR07" || text == "SPR08" || text == "SPR09" || text == "SPR11" || text == "SPR12" || text == "SPR13" || text == "SPR15" || text == "SPR16" || text == "SPR17" || text == "SPR18" || text == "SPR21" || text == "SPR22" || text == "SPR23" || text == "SPR24" || text == "DAR" || text == "ROM" || text == "ASIGID" )
+			if (text == "SPR03" || text == "SPR04" || text == "SPR06" || text == "SPR07" || text == "SPR08" || text == "SPR09" || text == "SPR11" || text == "SPR12" || text == "SPR13" || text == "SPR15" || text == "SPR16" || text == "SPR17" || text == "SPR18" || text == "SPR21" || text == "SPR22" || text == "SPR23" || text == "SPR24" || text == "DAR" || text == "ROM" || text == "ASIGID")
 			{
 				return true;
 			}
 			return false;
 		}
-		private bool EsIgual(string cad1 , params string[] conjunto)
+		private bool EsIgual(string cad1, params string[] conjunto)
 		{
 			foreach (string cad in conjunto)
 			{
@@ -1616,13 +1631,13 @@ namespace MyLenguaje
 		}
 		private void Sintactico(ref string[] codigo, ref bool Finalizo, ref int sinCambios, ref int compVuelta, ref int cambios)
 		{
-			
+
 			//int cambios = 0;
 			string MensajeError = "";
 			string mirarString = "";
 			string temp = "";
 			string cat = "";//recordar colocar
-			//int compVuelta = 0;
+							//int compVuelta = 0;
 			string UltDec = "";//Se utiliza despues
 			string[] codigx = codigo;
 			string cod1 = "";
@@ -4463,7 +4478,7 @@ namespace MyLenguaje
 				sinCambios++;
 			}
 		}
-		private void SintacticoSinClase(ref string[] codigo,ref int compVuelta, ref int cambios,ref int sinCambios,ref bool Finalizo)
+		private void SintacticoSinClase(ref string[] codigo, ref int compVuelta, ref int cambios, ref int sinCambios, ref bool Finalizo)
 		{
 
 			//int cambios = 0;
@@ -4534,7 +4549,7 @@ namespace MyLenguaje
 				MensajeError = "s: " + s + " -CompVuelta: " + compVuelta + " -UltPalabra: " + codigo[s] + " -UltimoMetodo: ";
 
 				//Comprobador de codigo *ignorar*
-				if(compVuelta == 0 || cambios == 0)
+				if (compVuelta == 0 || cambios == 0)
 				{
 
 				}
@@ -4659,7 +4674,7 @@ namespace MyLenguaje
 						codigo[s] = "";
 						break;
 					}
-					
+
 					//DECENT ASIGCONE
 					if (s >= 3 && codigo[s - 3] == "DECENT" && codigo[s - 2] == "ASIGCONE" && codigo[s - 1] == "CEX," && codigo[s] == "ASIGENT")
 					{
@@ -6633,7 +6648,7 @@ namespace MyLenguaje
 					}
 					//Zona Metodo
 
-					
+
 					//SVMT
 					if (s >= 1
 					&& codigo[0] == "MDEC"
@@ -6760,7 +6775,7 @@ namespace MyLenguaje
 						codigo[s] = "";
 						break;
 					}
-					
+
 					//Zona Clase KLA
 					//ASIGID
 					if (s >= 2 && codigo[s - 2] == "INIS" && codigo[s - 1] == "ASIGID" && codigo[s] == "FIIN")
@@ -6771,7 +6786,7 @@ namespace MyLenguaje
 						codigo[s] = "";
 						break;
 					}
-					
+
 					//SCXF
 					if (posx >= 5 && codigo[s] == "PR26" && codigo[s + 1] == "XKLA" && codigo[s + 2] == "CABZ" && codigo[s + 3] == "BODY" && codigo[s + 4] == "FIIN")
 					{
@@ -6931,7 +6946,7 @@ namespace MyLenguaje
 						codigo[s] = "";
 						break;
 					}
-					
+
 					//MTDX SVMT INIS
 					if (s >= 3
 						&& codigo[s - 3].Substring(0, 2) == "ID"
@@ -6968,7 +6983,7 @@ namespace MyLenguaje
 						codigo[s] = "";
 						break;
 					}
-				
+
 				}
 
 				if (s == codigo.Length - 1 && sinCambios == 2)
@@ -10100,7 +10115,7 @@ namespace MyLenguaje
 
 								if (errores > 0)
 								{
-									rchConsola4.Text = "Se encontraron errores.\n"+errorReport;
+									rchConsola4.Text = "Se encontraron errores.\n" + errorReport;
 									EstadoSemantico = false;
 								}
 								else
@@ -10159,7 +10174,7 @@ namespace MyLenguaje
 				StreamReader sr = new StreamReader(ruta);
 				//Read the first line of text
 				string line = sr.ReadLine();
-				r += line+"\n";
+				r += line + "\n";
 				while (line != null)
 				{
 					//write the line to console window
@@ -10179,13 +10194,14 @@ namespace MyLenguaje
 			}
 			string newLine = r.Replace("\\n", "\n");
 			string bla = "\\";
-			string newLine2 = newLine.Replace(bla.Substring(0,1), "");
+			string newLine2 = newLine.Replace(bla.Substring(0, 1), "");
 			if (cero == 0)
 			{
 				string relleno = rchTexto.Text;
 				rchTexto.Text = newLine2;
 				cero++;
-			}else
+			}
+			else
 			{
 
 				DialogResult result = MessageBox.Show("Deseas sobreescribir el texto?: Pulsa YES para sobreescribir, NO para cargar el anterior y CANCEL para cargar un predeterminado.", "Cambio de texto", MessageBoxButtons.YesNoCancel);
@@ -10212,7 +10228,7 @@ namespace MyLenguaje
 					{
 						Advertir(rchConsola1, "Esta vacio, no puedes sobreescribir un texto vacio", "Comprueba la consola 1");
 					}
-					
+
 				}
 				else if (result == DialogResult.No)
 				{
@@ -10262,15 +10278,16 @@ namespace MyLenguaje
 
 		private void label8_Click(object sender, EventArgs e)
 		{
-			
+
 		}
 		bool MenSi = false;
 		private void chbMensaje_CheckedChanged(object sender, EventArgs e)
 		{
-			if(chbMensaje.Checked)
+			if (chbMensaje.Checked)
 			{
 				MenSi = true;
-			}else
+			}
+			else
 			{
 				MenSi = false;
 			}
@@ -10307,7 +10324,7 @@ namespace MyLenguaje
 
 		private void btnInPrePosFija_Click(object sender, EventArgs e)
 		{
-			if(EstadoSemantico)
+			if (EstadoSemantico)
 			{
 				matrizPrePosFijoLexico = matrizLexico;
 				string[][] matrizCodigoFijo = matrizCodigo;
@@ -10321,11 +10338,11 @@ namespace MyLenguaje
 
 				for (int i = 0; i < matrizPrePosFijoLexico.GetLength(0); i++)
 				{
-					if(matrizPrePosFijoLexico[i].Length > 1 )//Si tiene mas valores
+					if (matrizPrePosFijoLexico[i].Length > 1)//Si tiene mas valores
 					{
-						if(listaFilasAceptadas.Contains(i+1))
+						if (listaFilasAceptadas.Contains(i + 1))
 						{
-							if ((matrizPrePosFijoLexico[i][1] == "PR04" || matrizPrePosFijoLexico[i][1] == "PR18" ) && matrizPrePosFijoLexico[i].Length > 5)//Si son ENT o REA 
+							if ((matrizPrePosFijoLexico[i][1] == "PR04" || matrizPrePosFijoLexico[i][1] == "PR18") && matrizPrePosFijoLexico[i].Length > 5)//Si son ENT o REA 
 							{
 								//Obtiene todo el arreglo menos los primeros dos y el ultimo [ | ent _x = 1 || => [ _x = 1 ]
 								string[] elementosLexico = matrizPrePosFijoLexico[i].Skip(2).Take(matrizPrePosFijoLexico[i].Length - 3).ToArray();
@@ -10351,9 +10368,9 @@ namespace MyLenguaje
 								matrizPrePosFijoLexico[i] = LimpiarArreglo(matrizPrePosFijoLexico[i]);
 								int x = 1;
 
-								
+
 							}
-							if(!(matrizPrePosFijoLexico[i][1] == "PR04" || matrizPrePosFijoLexico[i][1] == "PR18"))
+							if (!(matrizPrePosFijoLexico[i][1] == "PR04" || matrizPrePosFijoLexico[i][1] == "PR18"))
 							{//Si son con asignacion
 							 //Obtiene todo el arreglo menos el primero y el ultimo [ | _x = 1 || => [ _x = 1 ]
 								string[] elementosLexico = matrizPrePosFijoLexico[i].Skip(1).Take(matrizPrePosFijoLexico[i].Length - 2).ToArray();
@@ -10409,11 +10426,11 @@ namespace MyLenguaje
 				{
 					for (int j = 0; j < matrizPrePosFijoLexico[i].Length; j++)
 					{
-						if(j != 0)
+						if (j != 0)
 						{
 							strConversionPosfija += " ";
 						}
-						if(matrizPrePosFijoLexico[i][j] != careFin+"")
+						if (matrizPrePosFijoLexico[i][j] != careFin + "")
 						{
 							strConversionPosfija += matrizPrePosFijoLexico[i][j];
 						}
@@ -10692,7 +10709,7 @@ namespace MyLenguaje
 						if (pila.Count > 0 && EsIgual(pila.Peek(), '.', '^', '\u221A', '*', '/', '+', '-'))
 						{
 							salida += pila.Pop() + " ";
-							salida2 += pila2.Pop()+" ";
+							salida2 += pila2.Pop() + " ";
 							pila.Push(letra);
 							pila2.Push(lexico[i]);
 						}
@@ -10816,7 +10833,7 @@ namespace MyLenguaje
 		private void btnCuadruploTriplo_Click(object sender, EventArgs e)
 		{
 			dtgCuadruplo.Rows.Clear();
-			if(IsCorrectInPosPrefijo && listaDeStringCodIntermed.Count > 0)
+			if (IsCorrectInPosPrefijo && listaDeStringCodIntermed.Count > 0)
 			{
 				try
 				{
@@ -10835,10 +10852,15 @@ namespace MyLenguaje
 
 		public void GenerarCuadruplos(List<string[]> listaDeStringCodIntermed)
 		{
-
 			// Variables para generar nombres de temporales
 			int temporalCount = 1;
 			string GetTemporal() => "T" + temporalCount++.ToString("D2");
+
+			// Función para determinar si un token es un operador
+			bool EsOperador(string token)
+			{
+				return token == "+" || token == "-" || token == "*" || token == "/" || token == "^";
+			}
 
 			// Recorrer la lista de arreglos de operaciones
 			foreach (string[] operacion in listaDeStringCodIntermed)
@@ -10855,7 +10877,7 @@ namespace MyLenguaje
 						if (datoFuente1.StartsWith("_"))
 						{
 							string variable = datoFuente1;
-							var objetoEncontrado = _listaMeta.FirstOrDefault(objeto => objeto.Variable == variable);
+							var objetoEncontrado = _listaMeta.FirstOrDefault(objeto => objeto.Variable.Equals(variable, StringComparison.OrdinalIgnoreCase));
 							if (objetoEncontrado != null)
 							{
 								datoFuente1 = objetoEncontrado.TokenUnico;
@@ -10863,16 +10885,19 @@ namespace MyLenguaje
 						}
 						else
 						{
-							var objetoEncontrado = _listaMeta.FirstOrDefault(objeto => objeto.Valor == datoFuente1);
-							if (objetoEncontrado != null)
+							foreach (MetaDatos objeto in _listaMeta)
 							{
-								datoFuente1 = objetoEncontrado.TokenUnico;
+								if (objeto.Valor == datoFuente1 && objeto.Token != "IDEN")
+								{
+									datoFuente1 = objeto.TokenUnico;
+								}
 							}
 						}
+
 						if (datoFuente2.StartsWith("_"))
 						{
 							string variable = datoFuente2;
-							var objetoEncontrado = _listaMeta.FirstOrDefault(objeto => objeto.Variable == variable);
+							var objetoEncontrado = _listaMeta.FirstOrDefault(objeto => objeto.Variable.Equals(variable, StringComparison.OrdinalIgnoreCase));
 							if (objetoEncontrado != null)
 							{
 								datoFuente2 = objetoEncontrado.TokenUnico;
@@ -10880,18 +10905,22 @@ namespace MyLenguaje
 						}
 						else
 						{
-							var objetoEncontrado = _listaMeta.FirstOrDefault(objeto => objeto.Valor == datoFuente2);
-							if (objetoEncontrado != null)
+
+							foreach (MetaDatos objeto in _listaMeta)
 							{
-								datoFuente2 = objetoEncontrado.TokenUnico;
+								if (objeto.Valor == datoFuente2 && objeto.Token != "IDEN")
+								{
+									datoFuente2 = objeto.TokenUnico;
+								}
 							}
 						}
 						string datoObjeto = GetTemporal();
 						string operador = token;
-						if(operador=="+")
+						if (operador == "+")
 						{
 							operador = "OPSM";
-						}else if(operador == "-")
+						}
+						else if (operador == "-")
 						{
 							operador = "OPRS";
 						}
@@ -10910,6 +10939,67 @@ namespace MyLenguaje
 						dtgCuadruplo.Rows.Add(datoObjeto, datoFuente1, datoFuente2, operador);
 						pilaIntermedia.Push(datoObjeto);
 					}
+					else if (token == "=")
+					{
+						// Es una asignación directa
+						string datoFuente1 = pilaIntermedia.Pop();
+						string datoObjeto = pilaIntermedia.Pop();
+						if (datoFuente1.StartsWith("_"))
+						{
+							string variable = datoFuente1;
+							var objetoEncontrado = _listaMeta.FirstOrDefault(objeto => objeto.Variable == variable);
+							if (objetoEncontrado != null)
+							{
+								datoObjeto = objetoEncontrado.TokenUnico;
+							}
+						}
+						else
+						{
+							foreach (MetaDatos objeto in _listaMeta)
+							{
+								if (objeto.Valor == datoFuente1 && objeto.Token != "IDEN")
+								{
+									datoFuente1 = objeto.TokenUnico;
+								}
+							}
+						}
+						if (datoObjeto.StartsWith("_"))
+						{
+							string variable = datoObjeto;
+							var objetoEncontrado = _listaMeta.FirstOrDefault(objeto => objeto.Variable == variable);
+							if (objetoEncontrado != null)
+							{
+								datoObjeto = objetoEncontrado.TokenUnico;
+							}
+						}
+						else
+						{
+							var objetoEncontrado = _listaMeta.FirstOrDefault(objeto => objeto.Valor == datoObjeto);
+							foreach (MetaDatos objeto in _listaMeta)
+							{
+								if (objeto.Valor == datoObjeto && objeto.Token != "IDEN")
+								{
+									datoObjeto = objeto.TokenUnico;
+								}
+							}
+						}
+
+						//// Verificar si el datoFuente1 es igual al valor de datoObjeto
+						//if (datoFuente1 == datoObjeto)
+						//{
+						//	// Agregar una fila con el valor del ID en lugar del datoFuente1
+						//	string idFuente1 = datoFuente1.StartsWith("_") ? datoFuente1.Substring(1) : datoFuente1;
+						//	dtgCuadruplo.Rows.Add(datoObjeto, idFuente1, string.Empty, "ASIG");
+						//}
+						//else
+						//{
+						//	// Agregar una fila con el valor original del datoFuente1
+						//	dtgCuadruplo.Rows.Add(datoObjeto, datoFuente1, string.Empty, "ASIG");
+						//}
+						dtgCuadruplo.Rows.Add(datoObjeto, datoFuente1, string.Empty, "ASIG");
+						pilaIntermedia.Push(datoObjeto);
+					}
+
 					else
 					{
 						// Es un operando
@@ -10918,14 +11008,7 @@ namespace MyLenguaje
 				}
 			}
 
-			// Función para determinar si un token es un operador
-			bool EsOperador(string token)
-			{
-				return token == "+" || token == "-" || token == "*" || token == "/";
-			}
 		}
-
-
 
 	}
 }
