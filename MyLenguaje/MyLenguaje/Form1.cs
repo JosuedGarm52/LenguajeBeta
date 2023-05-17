@@ -10818,124 +10818,113 @@ namespace MyLenguaje
 			dtgCuadruplo.Rows.Clear();
 			if(IsCorrectInPosPrefijo && listaDeStringCodIntermed.Count > 0)
 			{
-				string[][] arregloConvertido = listaDeStringCodIntermed.Select(arr => arr.ToArray()).ToArray();
-
-				for (int i = 0; i < arregloConvertido.Length; i++)
+				try
 				{
-					Stack<string> pilaIntermedia = new Stack<string>();
-					Stack<string> Aux2 = new Stack<string>();
-
-					for (int j = 0; j < arregloConvertido[i].Length; j++)
-					{
-						string x = arregloConvertido[i][j];
-
-						if (EsIgualSigno(x))
-						{
-							try
-							{
-								Aux2.Push(pilaIntermedia.Pop());
-								Aux2.Push(pilaIntermedia.Pop());
-								string var2 = Aux2.Pop();
-								string var1 = Aux2.Pop();
-								string Operador = "";
-								string Nombre = "T01";
-
-								if (x == "=")
-								{
-									int id = 1;
-
-									while (arregloConvertido[i].Contains(Nombre))
-									{
-										id++;
-										Nombre = "T" + id.ToString("D2");
-									}
-
-									arregloConvertido[i] = ReplaceValuesInArray(arregloConvertido[i], var1, var2, Nombre);
-								}
-								else
-								{
-									if (x == "+")
-									{
-										Operador = "OPSM";
-									}
-									else if (x == "-")
-									{
-										Operador = "OPRS";
-									}
-									else if (x == "*")
-									{
-										Operador = "OPML";
-									}
-									else if (x == "/")
-									{
-										Operador = "OPDV";
-									}
-
-									string salida1 = ObtenerTokenUnico(var1);
-									string salida2 = ObtenerTokenUnico(var2);
-
-									dtgCuadruplo.Rows.Add(Nombre, salida1, salida2, Operador);
-								}
-							}
-							catch (Exception ex)
-							{
-								rchConsola5.Text = "Error: " + ex.Message;
-							}
-						}
-						else
-						{
-							pilaIntermedia.Push(x);
-						}
-					}
+					GenerarCuadruplos(listaDeStringCodIntermed);
 				}
-
+				catch (Exception ex)
+				{
+					rchConsola5.Text = ex.Message;
+				}
 			}
 			else
 			{
 				rchConsola5.Text = "No se encontro ningun elemento para el codigo intermedio";
 			}
 		}
-		public static string[] ReplaceValuesInArray(string[] array, string oldValue1, string oldValue2, string newValue)
+
+		public void GenerarCuadruplos(List<string[]> listaDeStringCodIntermed)
 		{
-			string[] newArray = new string[array.Length];
 
-			for (int i = 0; i < array.Length; i++)
+			// Variables para generar nombres de temporales
+			int temporalCount = 1;
+			string GetTemporal() => "T" + temporalCount++.ToString("D2");
+
+			// Recorrer la lista de arreglos de operaciones
+			foreach (string[] operacion in listaDeStringCodIntermed)
 			{
-				string token = array[i];
+				Stack<string> pilaIntermedia = new Stack<string>();
 
-				if (token == oldValue1 || token == oldValue2)
+				foreach (string token in operacion)
 				{
-					newArray[i] = newValue;
-				}
-				else
-				{
-					newArray[i] = token;
+					if (EsOperador(token))
+					{
+						// Es un operador
+						string datoFuente2 = pilaIntermedia.Pop();
+						string datoFuente1 = pilaIntermedia.Pop();
+						if (datoFuente1.StartsWith("_"))
+						{
+							string variable = datoFuente1;
+							var objetoEncontrado = _listaMeta.FirstOrDefault(objeto => objeto.Variable == variable);
+							if (objetoEncontrado != null)
+							{
+								datoFuente1 = objetoEncontrado.TokenUnico;
+							}
+						}
+						else
+						{
+							var objetoEncontrado = _listaMeta.FirstOrDefault(objeto => objeto.Valor == datoFuente1);
+							if (objetoEncontrado != null)
+							{
+								datoFuente1 = objetoEncontrado.TokenUnico;
+							}
+						}
+						if (datoFuente2.StartsWith("_"))
+						{
+							string variable = datoFuente2;
+							var objetoEncontrado = _listaMeta.FirstOrDefault(objeto => objeto.Variable == variable);
+							if (objetoEncontrado != null)
+							{
+								datoFuente2 = objetoEncontrado.TokenUnico;
+							}
+						}
+						else
+						{
+							var objetoEncontrado = _listaMeta.FirstOrDefault(objeto => objeto.Valor == datoFuente2);
+							if (objetoEncontrado != null)
+							{
+								datoFuente2 = objetoEncontrado.TokenUnico;
+							}
+						}
+						string datoObjeto = GetTemporal();
+						string operador = token;
+						if(operador=="+")
+						{
+							operador = "OPSM";
+						}else if(operador == "-")
+						{
+							operador = "OPRS";
+						}
+						else if (operador == "*")
+						{
+							operador = "OPML";
+						}
+						else if (operador == "/")
+						{
+							operador = "OPDV";
+						}
+						else if (operador == "^")
+						{
+							operador = "OPEX";
+						}
+						dtgCuadruplo.Rows.Add(datoObjeto, datoFuente1, datoFuente2, operador);
+						pilaIntermedia.Push(datoObjeto);
+					}
+					else
+					{
+						// Es un operando
+						pilaIntermedia.Push(token);
+					}
 				}
 			}
 
-			return newArray;
+			// Función para determinar si un token es un operador
+			bool EsOperador(string token)
+			{
+				return token == "+" || token == "-" || token == "*" || token == "/";
+			}
 		}
-		private string ObtenerTokenUnico(string variable)
-		{
-			if (variable.StartsWith("_"))
-			{
-				var objetoFiltrado = _listaMeta.FirstOrDefault(objeto => objeto.Variable == variable);
-				if (objetoFiltrado != null)
-				{
-					return objetoFiltrado.TokenUnico;
-				}
-			}
-			else
-			{
-				var objetoFiltrado = _listaMeta.FirstOrDefault(objeto => objeto.Valor == variable);
-				if (objetoFiltrado != null)
-				{
-					return objetoFiltrado.TokenUnico;
-				}
-			}
 
-			return ""; // En caso de no encontrar el token único
-		}
 
 
 	}

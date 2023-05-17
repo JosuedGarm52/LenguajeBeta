@@ -2,5 +2,7 @@ CXFA KLA _MAIN
 | 
    | ent _y = ( 2 + 3 + 5 + 8 ) ||
    | ent _var2 ||
+   | rea _area1 = 2.2 ||
+   | rea _area2 = _area1 + 1 ||
    | _var2 = 10 * _y - ( _area2 + 1 ) ||
 ||
