@@ -10247,6 +10247,8 @@ namespace MyLenguaje
 			rchTexto.Text = "";
 			rchSintactico.Text = "";
 			rchLexico.Text = "";
+			rchSemantico.Text = "";
+			rchPosPrefijo.Text = "";
 			rchConsola1.Text = "";
 			rchConsola2.Text = "";
 			rchConsola3.Text = "";
