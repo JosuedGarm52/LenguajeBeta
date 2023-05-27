@@ -39,10 +39,6 @@
 			this.label13 = new System.Windows.Forms.Label();
 			this.label12 = new System.Windows.Forms.Label();
 			this.dtgCuadruplo = new System.Windows.Forms.DataGridView();
-			this.dtgColDatoObjeto = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.dtgColDatoFuente1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.dtgColDatoFuente2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.dtgColOperador = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.rchPosPrefijo = new System.Windows.Forms.RichTextBox();
 			this.label9 = new System.Windows.Forms.Label();
 			this.rchSemantico = new System.Windows.Forms.RichTextBox();
@@ -50,6 +46,7 @@
 			this.btnLexicar = new System.Windows.Forms.Button();
 			this.btnSintactizar = new System.Windows.Forms.Button();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
+			this.btnCuadruploTriplo = new System.Windows.Forms.Button();
 			this.btnInPrePosFija = new System.Windows.Forms.Button();
 			this.btnPPrueba = new System.Windows.Forms.Button();
 			this.btnBiblioteca = new System.Windows.Forms.Button();
@@ -88,7 +85,11 @@
 			this.panelCodigo = new System.Windows.Forms.Panel();
 			this.panelCaja = new System.Windows.Forms.Panel();
 			this.panelBotones = new System.Windows.Forms.Panel();
-			this.btnCuadruploTriplo = new System.Windows.Forms.Button();
+			this.DtgColIndice = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.dtgColDatoObjeto = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.dtgColDatoFuente1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.dtgColDatoFuente2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.dtgColOperador = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.dtgCuadruplo)).BeginInit();
 			this.groupBox2.SuspendLayout();
@@ -190,7 +191,7 @@
 			this.groupBox1.Controls.Add(this.rchLexico);
 			this.groupBox1.Location = new System.Drawing.Point(5, 10);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(1882, 258);
+			this.groupBox1.Size = new System.Drawing.Size(1987, 258);
 			this.groupBox1.TabIndex = 7;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Tab de codificacion y transformacion";
@@ -217,38 +218,15 @@
 			// 
 			this.dtgCuadruplo.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.dtgCuadruplo.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.DtgColIndice,
             this.dtgColDatoObjeto,
             this.dtgColDatoFuente1,
             this.dtgColDatoFuente2,
             this.dtgColOperador});
 			this.dtgCuadruplo.Location = new System.Drawing.Point(1423, 36);
 			this.dtgCuadruplo.Name = "dtgCuadruplo";
-			this.dtgCuadruplo.Size = new System.Drawing.Size(444, 211);
+			this.dtgCuadruplo.Size = new System.Drawing.Size(544, 211);
 			this.dtgCuadruplo.TabIndex = 10;
-			// 
-			// dtgColDatoObjeto
-			// 
-			this.dtgColDatoObjeto.HeaderText = "Dato Objeto";
-			this.dtgColDatoObjeto.Name = "dtgColDatoObjeto";
-			this.dtgColDatoObjeto.ReadOnly = true;
-			// 
-			// dtgColDatoFuente1
-			// 
-			this.dtgColDatoFuente1.HeaderText = "Dato Fuente 1";
-			this.dtgColDatoFuente1.Name = "dtgColDatoFuente1";
-			this.dtgColDatoFuente1.ReadOnly = true;
-			// 
-			// dtgColDatoFuente2
-			// 
-			this.dtgColDatoFuente2.HeaderText = "Dato Fuente 2";
-			this.dtgColDatoFuente2.Name = "dtgColDatoFuente2";
-			this.dtgColDatoFuente2.ReadOnly = true;
-			// 
-			// dtgColOperador
-			// 
-			this.dtgColOperador.HeaderText = "Operador";
-			this.dtgColOperador.Name = "dtgColOperador";
-			this.dtgColOperador.ReadOnly = true;
 			// 
 			// rchPosPrefijo
 			// 
@@ -333,6 +311,16 @@
 			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Botones";
 			this.groupBox2.Enter += new System.EventHandler(this.groupBox2_Enter);
+			// 
+			// btnCuadruploTriplo
+			// 
+			this.btnCuadruploTriplo.Location = new System.Drawing.Point(661, 19);
+			this.btnCuadruploTriplo.Name = "btnCuadruploTriplo";
+			this.btnCuadruploTriplo.Size = new System.Drawing.Size(139, 23);
+			this.btnCuadruploTriplo.TabIndex = 19;
+			this.btnCuadruploTriplo.Text = "PrePosFija -> Cuadruplos";
+			this.btnCuadruploTriplo.UseVisualStyleBackColor = true;
+			this.btnCuadruploTriplo.Click += new System.EventHandler(this.btnCuadruploTriplo_Click);
 			// 
 			// btnInPrePosFija
 			// 
@@ -429,7 +417,7 @@
 			this.groupBox3.Controls.Add(this.rchConsola1);
 			this.groupBox3.Location = new System.Drawing.Point(11, 267);
 			this.groupBox3.Name = "groupBox3";
-			this.groupBox3.Size = new System.Drawing.Size(1440, 226);
+			this.groupBox3.Size = new System.Drawing.Size(1402, 226);
 			this.groupBox3.TabIndex = 12;
 			this.groupBox3.TabStop = false;
 			this.groupBox3.Text = "Tab Consola";
@@ -694,6 +682,7 @@
 			this.panelCodigo.Name = "panelCodigo";
 			this.panelCodigo.Size = new System.Drawing.Size(768, 503);
 			this.panelCodigo.TabIndex = 6;
+			this.panelCodigo.Paint += new System.Windows.Forms.PaintEventHandler(this.panelCodigo_Paint);
 			// 
 			// panelCaja
 			// 
@@ -714,15 +703,35 @@
 			this.panelBotones.Size = new System.Drawing.Size(777, 129);
 			this.panelBotones.TabIndex = 16;
 			// 
-			// btnCuadruploTriplo
+			// DtgColIndice
 			// 
-			this.btnCuadruploTriplo.Location = new System.Drawing.Point(661, 19);
-			this.btnCuadruploTriplo.Name = "btnCuadruploTriplo";
-			this.btnCuadruploTriplo.Size = new System.Drawing.Size(139, 23);
-			this.btnCuadruploTriplo.TabIndex = 19;
-			this.btnCuadruploTriplo.Text = "PrePosFija -> Cuadruplos";
-			this.btnCuadruploTriplo.UseVisualStyleBackColor = true;
-			this.btnCuadruploTriplo.Click += new System.EventHandler(this.btnCuadruploTriplo_Click);
+			this.DtgColIndice.HeaderText = "Indice";
+			this.DtgColIndice.Name = "DtgColIndice";
+			this.DtgColIndice.ReadOnly = true;
+			// 
+			// dtgColDatoObjeto
+			// 
+			this.dtgColDatoObjeto.HeaderText = "Dato Objeto";
+			this.dtgColDatoObjeto.Name = "dtgColDatoObjeto";
+			this.dtgColDatoObjeto.ReadOnly = true;
+			// 
+			// dtgColDatoFuente1
+			// 
+			this.dtgColDatoFuente1.HeaderText = "Dato Fuente 1";
+			this.dtgColDatoFuente1.Name = "dtgColDatoFuente1";
+			this.dtgColDatoFuente1.ReadOnly = true;
+			// 
+			// dtgColDatoFuente2
+			// 
+			this.dtgColDatoFuente2.HeaderText = "Dato Fuente 2";
+			this.dtgColDatoFuente2.Name = "dtgColDatoFuente2";
+			this.dtgColDatoFuente2.ReadOnly = true;
+			// 
+			// dtgColOperador
+			// 
+			this.dtgColOperador.HeaderText = "Operador";
+			this.dtgColOperador.Name = "dtgColOperador";
+			this.dtgColOperador.ReadOnly = true;
 			// 
 			// Form1
 			// 
@@ -809,15 +818,16 @@
 		private System.Windows.Forms.Label label13;
 		private System.Windows.Forms.Label label12;
 		private System.Windows.Forms.DataGridView dtgCuadruplo;
-		private System.Windows.Forms.DataGridViewTextBoxColumn dtgColDatoObjeto;
-		private System.Windows.Forms.DataGridViewTextBoxColumn dtgColDatoFuente1;
-		private System.Windows.Forms.DataGridViewTextBoxColumn dtgColDatoFuente2;
-		private System.Windows.Forms.DataGridViewTextBoxColumn dtgColOperador;
 		private System.Windows.Forms.RichTextBox rchPosPrefijo;
 		private System.Windows.Forms.Button btnInPrePosFija;
 		private System.Windows.Forms.Label label14;
 		private System.Windows.Forms.RichTextBox rchConsola5;
 		private System.Windows.Forms.Button btnCuadruploTriplo;
+		private System.Windows.Forms.DataGridViewTextBoxColumn DtgColIndice;
+		private System.Windows.Forms.DataGridViewTextBoxColumn dtgColDatoObjeto;
+		private System.Windows.Forms.DataGridViewTextBoxColumn dtgColDatoFuente1;
+		private System.Windows.Forms.DataGridViewTextBoxColumn dtgColDatoFuente2;
+		private System.Windows.Forms.DataGridViewTextBoxColumn dtgColOperador;
 	}
 }
 

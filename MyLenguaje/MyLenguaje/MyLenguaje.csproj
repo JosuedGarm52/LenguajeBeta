@@ -57,6 +57,7 @@
       <DependentUpon>Biblioteca.cs</DependentUpon>
     </Compile>
     <Compile Include="Class1.cs" />
+    <Compile Include="Cuadruplo.cs" />
     <Compile Include="Escritura.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>

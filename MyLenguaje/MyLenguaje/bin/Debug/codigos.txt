@@ -1,8 +1,10 @@
-Se ( _a RSQ 10 ) LA ( _a RIQ 20 ) 
-|
-   | _a = _a + 1 ||
-||
-ali
-|
-   | _a = 10 ||
-||
+CXFA KLA _MAIN 
+| 
+   | ent _y = 1 || 
+   | POR ( | ent _x = 1 || 
+                | _x RSQ 10 || 
+                | _x ++ || ) 
+     | skr ( _x ) || 
+   || 
+|| 
+

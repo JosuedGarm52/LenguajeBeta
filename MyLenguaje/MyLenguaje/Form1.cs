@@ -32,9 +32,7 @@ namespace MyLenguaje
 		bool EstadoSemantico = false;
 		string[][] matrizLexico;
 		string[][] matrizCodigo;
-		string[][] matrizPrePosFijoLexico;
 		List<MetaDatos> _listaMeta = new List<MetaDatos>();
-		List<int> listaFilasAceptadas = new List<int>();
 		List<string[]> listaDeStringCodIntermed = new List<string[]>();
 
 		public Form1()
@@ -77,7 +75,6 @@ namespace MyLenguaje
 				EstaForma.Cursor = Cursors.AppStarting;
 				dtgSimbolo.Rows.Clear();
 				_listaMeta.Clear();
-				listaFilasAceptadas.Clear();
 				EstadoSintactico = false;
 				EstadoSemantico = false;
 				listaDeStringCodIntermed.Clear();
@@ -630,7 +627,6 @@ namespace MyLenguaje
 											if (matrizLexico[i][j + 1] != "IDEN" && meta.Valor != "")//Si no es un idenficador y su valor esta vacio
 											{
 												objeto.Valor = meta.Valor;
-												listaFilasAceptadas.Add(meta.Fila);
 												break;
 											}
 										}
@@ -10009,9 +10005,7 @@ namespace MyLenguaje
 											//	errores++;
 											//}
 											//else
-											{
-												listaFilasAceptadas.Add(metaDato.Fila);
-											}
+											
 										}
 										if (metaDato.TipoDato == "REA")
 										{
@@ -10021,9 +10015,6 @@ namespace MyLenguaje
 											//	errores++;
 											//}
 											//else
-											{
-												listaFilasAceptadas.Add(metaDato.Fila);
-											}
 										}
 										//if (metaDato.TipoDato == "KAR")
 										//{
@@ -10319,128 +10310,59 @@ namespace MyLenguaje
 		private void btnPPrueba_Click(object sender, EventArgs e)
 		{
 			//boton para pruebas
-			int pos = rchTexto.SelectionStart;
-			rchTexto.Text = rchTexto.Text.Insert(pos, "nueva");
-			rchTexto.SelectionStart = pos + "nueva".Length;
+			//int pos = rchTexto.SelectionStart;
+			//rchTexto.Text = rchTexto.Text.Insert(pos, "nueva");
+			//rchTexto.SelectionStart = pos + "nueva".Length;
+			DelimitarPosfijo(new string[] { });
 		}
-
+		string[][] matrizTokens;
 		private void btnInPrePosFija_Click(object sender, EventArgs e)
 		{
 			if (EstadoSemantico)
 			{
-				matrizPrePosFijoLexico = matrizLexico;
-				string[][] matrizCodigoFijo = matrizCodigo;
-
-				//Prueba
-				//string[][] matrizPrePosFijoLexico = new string[][] { new string[] { "", "", "" } }; // Inicializas el arreglo con una fila vacía
-				//matrizPrePosFijoLexico[0] = new string[]  { "INIS", "PR04", "IDEN", "ASIG", "CONE", "FIIN" };// Asignas el valor a la primera fila
-				//string[][] matrizCodigoFijo = new string[][] { new string[] { "", "", "" } }; // Inicializas el arreglo con una fila vacía
-				//matrizCodigoFijo[0] = new string[]  { "|", "ent", "_x", "=", "2", "||" };// Asignas el valor a la primera fila
-				//listaFilasAceptadas.Add(0);
-
-				for (int i = 0; i < matrizPrePosFijoLexico.GetLength(0); i++)
+				//matrizLexico = LimpiarArreglo(matrizLexico);
+				//matrizCodigo = LimpiarArreglo(matrizCodigo);
+				for (int i = 0; i < matrizLexico.Length; i++)
 				{
-					if (matrizPrePosFijoLexico[i].Length > 1)//Si tiene mas valores
+					for (int j = 0; j < matrizLexico[i].Length; j++)
 					{
-						if (listaFilasAceptadas.Contains(i + 1))
+						//foreach (MetaDatos metaDato in _listaMeta)
+						//{
+						//	if (metaDato.Variable == matrizLexico[i][j] && metaDato.Token == "IDEN")
+						//	{
+						//		matrizLexico[i][j] = metaDato.TokenUnico;
+						//	}
+						//	if (metaDato.Token == matrizLexico[i][j] && metaDato.Valor == matrizCodigo[i][j])
+						//	{
+						//		matrizLexico[i][j] = metaDato.TokenUnico;
+						//	}
+						//}
+						foreach (MetaDatos datos in _listaMeta)
 						{
-							if ((matrizPrePosFijoLexico[i][1] == "PR04" || matrizPrePosFijoLexico[i][1] == "PR18") && matrizPrePosFijoLexico[i].Length > 5)//Si son ENT o REA 
+							if(j < matrizLexico[i].Length && j < matrizCodigo[i].Length)
 							{
-								//Obtiene todo el arreglo menos los primeros dos y el ultimo [ | ent _x = 1 || => [ _x = 1 ]
-								string[] elementosLexico = matrizPrePosFijoLexico[i].Skip(2).Take(matrizPrePosFijoLexico[i].Length - 3).ToArray();
-								string[] elementosCodigo = matrizCodigoFijo[i].Skip(2).Take(matrizPrePosFijoLexico[i].Length - 3).ToArray();
-								ConversionPosfijaDoble(elementosLexico, elementosCodigo, out string[] salidaCodigo, out string[] salidaLexico);
-								elementosCodigo = salidaCodigo;
-								elementosLexico = salidaLexico;
-
-								matrizCodigoFijo[i] = matrizCodigoFijo[i].Take(2)
-										 .Concat(LimpiarArreglo(elementosCodigo))
-										 .Concat(matrizCodigoFijo[i].Skip(2))
-										 .ToArray();
-								matrizCodigoFijo[i] = matrizCodigoFijo[i].Take(2).Concat(elementosCodigo).Concat(new string[] { "||" }).ToArray();
-								matrizCodigoFijo[i] = LimpiarArreglo(matrizCodigoFijo[i]);
-
-								listaDeStringCodIntermed.Add(elementosCodigo);
-
-								matrizPrePosFijoLexico[i] = matrizPrePosFijoLexico[i].Take(2)
-										 .Concat(LimpiarArreglo(elementosLexico))
-										 .Concat(matrizPrePosFijoLexico[i].Skip(2))
-										 .ToArray();
-								matrizPrePosFijoLexico[i] = matrizPrePosFijoLexico[i].Take(2).Concat(elementosLexico).Concat(new string[] { "FIIN" }).ToArray();
-								matrizPrePosFijoLexico[i] = LimpiarArreglo(matrizPrePosFijoLexico[i]);
-								int x = 1;
-
-
-							}
-							if (!(matrizPrePosFijoLexico[i][1] == "PR04" || matrizPrePosFijoLexico[i][1] == "PR18"))
-							{//Si son con asignacion
-							 //Obtiene todo el arreglo menos el primero y el ultimo [ | _x = 1 || => [ _x = 1 ]
-								string[] elementosLexico = matrizPrePosFijoLexico[i].Skip(1).Take(matrizPrePosFijoLexico[i].Length - 2).ToArray();
-								string[] elementosCodigo = matrizCodigoFijo[i].Skip(1).Take(matrizPrePosFijoLexico[i].Length - 2).ToArray();
-								ConversionPosfijaDoble(elementosLexico, elementosCodigo, out string[] salidaCodigo, out string[] salidaLexico);
-								elementosCodigo = salidaCodigo;
-								elementosLexico = salidaLexico;
-
-								matrizCodigoFijo[i] = matrizCodigoFijo[i].Take(2)
-															 .Concat(LimpiarArreglo(elementosCodigo))
-															 .Concat(matrizCodigoFijo[i].Skip(1).Take(matrizCodigoFijo[i].Length - 2))
-															 .ToArray();
-								matrizCodigoFijo[i] = matrizCodigoFijo[i].Take(2).Concat(elementosCodigo).Concat(new string[] { "||" }).ToArray();
-								matrizCodigoFijo[i] = LimpiarArreglo(matrizCodigoFijo[i]);
-
-								listaDeStringCodIntermed.Add(elementosCodigo);
-
-								matrizPrePosFijoLexico[i] = matrizPrePosFijoLexico[i].Take(2)
-																	 .Concat(LimpiarArreglo(elementosLexico))
-																	 .Concat(matrizPrePosFijoLexico[i].Skip(1).Take(matrizPrePosFijoLexico[i].Length - 2))
-																	 .ToArray();
-								matrizPrePosFijoLexico[i] = matrizPrePosFijoLexico[i].Take(2).Concat(elementosLexico).Concat(new string[] { "FIIN" }).ToArray();
-								matrizPrePosFijoLexico[i] = LimpiarArreglo(matrizPrePosFijoLexico[i]);
-								int x = 1;
-							}
-						}
-						try
-						{
-							for (int j = 0; j < matrizCodigoFijo[i].Length; j++)
-							{
-								foreach (MetaDatos datos in _listaMeta)
+								if (datos.Token == "IDEN" && datos.Variable == matrizCodigo[i][j])//Si su token es iden es un id y si su nombre es igual a uno guardado _x = _x
 								{
-									if (datos.Token == "IDEN" && datos.Variable == matrizCodigoFijo[i][j])//Si su token es iden es un id y si su nombre es igual a uno guardado _x = _x
-									{
-										matrizPrePosFijoLexico[i][j] = datos.TokenUnico;
-									}
-									if (datos.Variable == "NULL" && datos.Valor == matrizCodigoFijo[i][j])//Si es un numero y tienen el mismo valor se reemplaza su token
-									{
-										matrizPrePosFijoLexico[i][j] = datos.TokenUnico;
-									}
+									matrizLexico[i][j] = datos.TokenUnico;
+								}
+								if (datos.Variable == "NULL" && datos.Valor == matrizCodigo[i][j])//Si es un numero y tienen el mismo valor se reemplaza su token
+								{
+									matrizLexico[i][j] = datos.TokenUnico;
 								}
 							}
 						}
-						catch (Exception ex)
-						{
-							rchConsola5.Text = "Error: " + ex.Message;
-							throw;
-						}
 					}
 				}
-				string strConversionPosfija = "";
-				for (int i = 0; i < matrizPrePosFijoLexico.Length; i++)
-				{
-					for (int j = 0; j < matrizPrePosFijoLexico[i].Length; j++)
-					{
-						if (j != 0)
-						{
-							strConversionPosfija += " ";
-						}
-						if (matrizPrePosFijoLexico[i][j] != careFin + "")
-						{
-							strConversionPosfija += matrizPrePosFijoLexico[i][j];
-						}
-					}
-					strConversionPosfija += "\n";
-				}
-				rchPosPrefijo.Text = strConversionPosfija;
-				rchConsola5.Text = "Exito";
+				string codigo = ConvertirArregloACadena1(matrizLexico);
+				string[][] temp11;
+				temp11 = Reconocimiento(codigo);//Acondicionamiento
+				matrizTokens = temp11;
+				temp11 = FormatoPosfijo(matrizTokens);//Conversion Posfija
+				matrizTokens = temp11;
+				temp11 = LimpiarArreglo(matrizTokens);
+				matrizTokens = temp11;
+
+				rchPosPrefijo.Text = ConvertirArregloACadena(matrizTokens);
 				IsCorrectInPosPrefijo = true;
 			}
 		}
@@ -10475,353 +10397,8 @@ namespace MyLenguaje
 			}
 			return false;
 		}
-		private void ConversionPrefija(string[] arreglo, out string salida)
-		{
-			string[] lista = arreglo;
-			salida = "";
-			Stack<char> pila = new Stack<char>();
-			int inicios = 0;
-			int cierres = 0;
-			for (int i = lista.Length - 1; i >= 0; i--)
-			{
-				if (lista[i] == " ")
-				{
-
-				}
-				else
-				// si es un signo de exponente o raiz cuadrada P2
-				if (EsIgual(lista[i], "^", "**", "\u221A"))
-				{
-					if (lista[i] == "**")
-					{
-						pila.Push('.');
-					}
-					else
-						pila.Push(Convert.ToChar(lista[i]));
-				}
-				else
-				if (EsIgualSigno(lista[i]) || lista[i] == "(" || lista[i] == ")")
-				{
-					char letra = Convert.ToChar(lista[i]);
-					//Si es parentesis P1
-					if (EsIgual(letra, '(', ')'))
-					{
-						if (letra == ')')
-						{
-							inicios++;
-						}
-						else
-						{
-							cierres++;
-						}
-						pila.Push(Convert.ToChar(lista[i]));
-						if (inicios > 0 && cierres > 0)
-						{
-							char p;
-							while (pila.Peek() != ')')
-							{
-								if (pila.Peek() == '(')
-								{
-									p = pila.Pop();//Saca el (
-								}
-								else
-								{
-									p = pila.Pop(); // saca el elemento
-									salida += p + " ";
-								}
-
-							}
-							pila.Pop();//Saca el )
-
-							inicios--; cierres--;
-						}
-					}
-					else
-					// si es mutiplicacion o division P3
-					if (EsIgual(letra, '*', '/'))
-					{
-						if (pila.Count > 0 && EsIgual(pila.Peek(), '.', '^', '\u221A', '*', '/'))
-						{
-							salida += pila.Pop() + " ";
-							pila.Push(letra);
-						}
-						else
-						{
-							pila.Push(letra);
-						}
-					}
-					else
-					//si es suma o resta P4
-					if (EsIgual(letra, '+', '-'))
-					{
-						if (pila.Count > 0 && EsIgual(pila.Peek(), '.', '^', '\u221A', '*', '/', '+', '-'))
-						{
-							salida += pila.Pop() + " ";
-							pila.Push(letra);
-						}
-						else
-						{
-							pila.Push(letra);
-						}
-					}
-					else
-					//si es suma o resta P5
-					if (letra == '=')
-					{
-						if (pila.Count > 0 && EsIgual(pila.Peek(), '.', '^', '\u221A', '*', '/', '+', '-'))
-						{
-							salida += pila.Pop() + " ";
-							pila.Push(letra);
-						}
-						else
-						{
-							pila.Push(letra);
-						}
-					}
-					else
-					{
-						//algo fuera de lo comun, no hacer nada
-					}
-				}
-				else
-				{
-					string sinEspacios = "";
-					foreach (char item in lista[i])
-					{
-						if (item != ' ')
-						{
-							sinEspacios += item;
-						}
-					}
-					salida += sinEspacios + " ";
-				}
-				if (i == 0)
-				{
-					while (pila.Count > 0)
-					{
-						char x = pila.Pop();
-						if (x == '(' || x == ')')
-						{
-
-						}
-						else
-						{
-							salida += x + " ";
-						}
-
-					}
-
-				}
-			}
-			salida = InvertirElementos(salida);
-		}
-
-		private void ConversionPosfijaDoble(string[] lexico, string[] codigo, out string[] salidaOut1, out string[] salidaOut2)
-		{
-			string[] lista = codigo;
-			string salida = "";
-			string salida2 = "";
-			Stack<char> pila = new Stack<char>();
-			Stack<string> pila2 = new Stack<string>();
-			int inicios = 0;
-			int cierres = 0;
-			for (int i = 0; i <= lista.Length - 1; i++)
-			{
-				if (lista[i] == " ")
-				{
-
-				}
-				else
-				// si es un signo de exponente o raiz cuadrada P2
-				if (EsIgual(lista[i], "^", "**", "\u221A"))
-				{
-					if (lista[i] == "**")
-					{
-						pila.Push('.');
-						pila2.Push(lexico[i]);
-					}
-					else
-					{
-						pila.Push(Convert.ToChar(lista[i]));
-						pila2.Push(lexico[i]);
-					}
-				}
-				else
-				if (EsIgualSigno(lista[i]) || lista[i] == "(" || lista[i] == ")")
-				{
-					char letra = Convert.ToChar(lista[i]);
-					//Si es parentesis P1
-					if (EsIgual(letra, '(', ')'))
-					{
-						if (letra == '(')
-						{
-							inicios++;
-						}
-						else
-						{
-							cierres++;
-						}
-						pila.Push(Convert.ToChar(lista[i]));
-						pila2.Push(lexico[i]);
-						if (inicios > 0 && cierres > 0)
-						{
-							char p;
-							while (pila.Peek() != '(')
-							{
-								if (pila.Peek() == ')')
-								{
-									p = pila.Pop();//Saca el )
-									pila2.Pop();
-								}
-								else
-								{
-									p = pila.Pop(); // saca el elemento
-									salida += p + " ";
-									salida2 += pila2.Pop() + " ";
-								}
-
-							}
-							pila.Pop();//Saca el (
-							pila2.Pop();
-
-							inicios--; cierres--;
-						}
-					}
-					else
-					// si es mutiplicacion o division P3
-					if (EsIgual(letra, '*', '/'))
-					{
-						if (pila.Count > 0 && EsIgual(pila.Peek(), '.', '^', '\u221A', '*', '/'))
-						{
-							salida += pila.Pop() + " ";
-							pila.Push(letra);
-							salida2 += pila2.Pop() + " ";
-							pila2.Push(lexico[i]);
-						}
-						else
-						{
-							pila.Push(letra);
-							pila2.Push(lexico[i]);
-						}
-					}
-					else
-					//si es suma o resta P4
-					if (EsIgual(letra, '+', '-'))
-					{
-						if (pila.Count > 0 && EsIgual(pila.Peek(), '.', '^', '\u221A', '*', '/', '+', '-'))
-						{
-							salida += pila.Pop() + " ";
-							salida2 += pila2.Pop() + " ";
-							pila.Push(letra);
-							pila2.Push(lexico[i]);
-						}
-						else
-						{
-							pila.Push(letra);
-							pila2.Push(lexico[i]);
-						}
-					}
-					else
-					//si es suma o resta P5
-					if (letra == '=')
-					{
-						if (pila.Count > 0 && EsIgual(pila.Peek(), '.', '^', '\u221A', '*', '/', '+', '-'))
-						{
-							salida += pila.Pop() + " ";
-							salida2 += pila2.Pop() + " ";
-							pila.Push(letra);
-							pila2.Push(lexico[i]);
-						}
-						else
-						{
-							pila.Push(letra);
-							pila2.Push("ASIG");
-						}
-					}
-					else
-					{
-						//algo fuera de lo comun, no hacer nada
-					}
-				}
-				else
-				{
-					string sinEspacios = "";
-					foreach (char item in lista[i])
-					{
-						if (item != ' ')
-						{
-							sinEspacios += item;
-						}
-					}
-					salida += sinEspacios + " ";
-					string sinEspacios2 = "";
-					foreach (char item in lexico[i])
-					{
-						if (item != ' ')
-						{
-							sinEspacios2 += item;
-						}
-					}
-					salida2 += sinEspacios2 + " ";
-				}
-				if (i == lista.Length - 1)
-				{
-					while (pila.Count > 0)
-					{
-						char x = pila.Pop();
-						if (x == '(' || x == ')')
-						{
-
-						}
-						else
-						{
-							salida += x + " ";
-						}
-						string y = pila2.Pop();
-						if (y == "CEX(" || y == "CEX)")
-						{
-
-						}
-						else
-						{
-							salida2 += y + " ";
-						}
-					}
-
-				}
-			}
-			//salida = (salida);
-			salidaOut1 = salida.Split(' ');
-			salidaOut2 = salida2.Split(' ');
-		}
-		private string InvertirElementos(string expresion)
-		{
-			string[] elementos = expresion.Split(' ');
-			List<string> elementosInvertidos = new List<string>();
-
-			// invertir solo los elementos que no son números
-			foreach (string elemento in elementos)
-			{
-				if (double.TryParse(elemento, out double numero))
-				{
-					// si el elemento es un número, lo agregamos a la lista tal cual
-					elementosInvertidos.Add(elemento);
-				}
-				else
-				{
-					// si el elemento no es un número, invertimos sus caracteres y lo agregamos a la lista
-					char[] caracteres = elemento.ToCharArray();
-					Array.Reverse(caracteres);
-					elementosInvertidos.Add(new string(caracteres));
-				}
-			}
-
-			// invertimos toda la lista de elementos invertidos
-			elementosInvertidos.Reverse();
-
-			// unimos los elementos invertidos para formar la expresión invertida
-			return string.Join(" ", elementosInvertidos);
-		}
+		
+		
 		public static string[] LimpiarArreglo(string[] arreglo)
 		{
 			return arreglo.Select(s => s.TrimEnd()).Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();
@@ -10835,11 +10412,12 @@ namespace MyLenguaje
 		private void btnCuadruploTriplo_Click(object sender, EventArgs e)
 		{
 			dtgCuadruplo.Rows.Clear();
-			if (IsCorrectInPosPrefijo && listaDeStringCodIntermed.Count > 0)
+			if (IsCorrectInPosPrefijo )
 			{
 				try
 				{
-					GenerarCuadruplos(listaDeStringCodIntermed);
+					//Conversion a cuadruplos
+					Cuadruplos(matrizTokens, dtgCuadruplo);
 				}
 				catch (Exception ex)
 				{
@@ -10851,166 +10429,912 @@ namespace MyLenguaje
 				rchConsola5.Text = "No se encontro ningun elemento para el codigo intermedio";
 			}
 		}
-
-		public void GenerarCuadruplos(List<string[]> listaDeStringCodIntermed)
+		private string[][] Reconocimiento(string texto)
 		{
-			// Variables para generar nombres de temporales
-			int temporalCount = 1;
-			string GetTemporal() => "T" + temporalCount++.ToString("D2");
+			// Separar las líneas usando saltos de línea
+			string[] lines = texto.Split('\n');
 
-			// Función para determinar si un token es un operador
-			bool EsOperador(string token)
+			// Crear el arreglo bidimensional
+			string[][] result = new string[lines.Length][];
+
+			for (int i = 0; i < lines.Length; i++)
 			{
-				return token == "+" || token == "-" || token == "*" || token == "/" || token == "^";
+				// Separar los valores de cada línea usando espacios
+				string[] values = lines[i].Split(' ');
+
+				// Asignar los valores al arreglo bidimensional
+				result[i] = values;
 			}
-
-			// Recorrer la lista de arreglos de operaciones
-			foreach (string[] operacion in listaDeStringCodIntermed)
+			result = LimpiarArreglo(result);
+			int inis = 0;
+			int fiin = 0;
+			bool ModoSE = false;
+			for (int i = 0; i < result.GetLength(0); i++)
 			{
-				Stack<string> pilaIntermedia = new Stack<string>();
-
-				foreach (string token in operacion)
+				if (result[i][0] != null)
 				{
-					if (EsOperador(token))
+					for (int j = 0; j < result[i].Length; j++)
 					{
-						// Es un operador
-						string datoFuente2 = pilaIntermedia.Pop();
-						string datoFuente1 = pilaIntermedia.Pop();
-						if (datoFuente1.StartsWith("_"))
+						if (result[i][j] == "PR21")//SEE
 						{
-							string variable = datoFuente1;
-							var objetoEncontrado = _listaMeta.FirstOrDefault(objeto => objeto.Variable.Equals(variable, StringComparison.OrdinalIgnoreCase));
-							if (objetoEncontrado != null)
-							{
-								datoFuente1 = objetoEncontrado.TokenUnico;
-							}
+							Array.Resize(ref result[i - 1], result[i - 1].Length + 1);
+							// Agregar un nuevo arreglo de strings en la última posición
+							result[i - 1][result[i - 1].Length - 1] = "SEE";
+							ModoSE = true;
 						}
-						else
+						if (result[i][j] == "INIS" && ModoSE)
 						{
-							foreach (MetaDatos objeto in _listaMeta)
+							inis++;
+						}
+						if (result[i][j] == "FIIN" && ModoSE)
+						{
+							fiin++;
+							if (inis >= fiin)
 							{
-								if (objeto.Valor == datoFuente1 && objeto.Token != "IDEN")
+								inis--;
+								fiin--;
+							}
+							if (inis == 0 && fiin == 0 && !Contiene(result[i + 1], "PR01"))//SEF
+							{
+								ModoSE = false;
+								if (result[i][result[i].Length - 1] == "")
 								{
-									datoFuente1 = objeto.TokenUnico;
+									result[i][result[i].Length - 1] = "SEF";
 								}
-							}
-						}
-
-						if (datoFuente2.StartsWith("_"))
-						{
-							string variable = datoFuente2;
-							var objetoEncontrado = _listaMeta.FirstOrDefault(objeto => objeto.Variable.Equals(variable, StringComparison.OrdinalIgnoreCase));
-							if (objetoEncontrado != null)
-							{
-								datoFuente2 = objetoEncontrado.TokenUnico;
-							}
-						}
-						else
-						{
-
-							foreach (MetaDatos objeto in _listaMeta)
-							{
-								if (objeto.Valor == datoFuente2 && objeto.Token != "IDEN")
+								else
+								// Verificar si el tamaño de la matriz necesita ser redimensionado
+								if (result[i] == null)
 								{
-									datoFuente2 = objeto.TokenUnico;
+									result[i] = new string[1]; // Crear un nuevo arreglo de tamaño 1
+									result[i][0] = "SEF"; // Asignar el valor "SEF" al primer elemento del arreglo
 								}
+								else
+								{
+									Array.Resize(ref result[i], result[i].Length + 1); // Redimensionar el arreglo para agregar un nuevo elemento
+									result[i][result[i].Length - 1] = "SEF"; // Asignar el valor "SEF" al último elemento del arreglo
+								}
+
 							}
 						}
-						string datoObjeto = GetTemporal();
-						string operador = token;
-						if (operador == "+")
-						{
-							operador = "OPSM";
-						}
-						else if (operador == "-")
-						{
-							operador = "OPRS";
-						}
-						else if (operador == "*")
-						{
-							operador = "OPML";
-						}
-						else if (operador == "/")
-						{
-							operador = "OPDV";
-						}
-						else if (operador == "^")
-						{
-							operador = "OPEX";
-						}
-						dtgCuadruplo.Rows.Add(datoObjeto, datoFuente1, datoFuente2, operador);
-						pilaIntermedia.Push(datoObjeto);
 					}
-					else if (token == "=")
+				}
+			}
+			//Asignarle los POSTE Y POSTF para el formato posfijo
+			for (int i = 0; i < result.GetLength(0); i++)
+			{
+				if (Contiene(result[i], "OPLA", "OPLN", "OPLO", "OPR1", "OPR2", "OPR3", "OPR4", "OPR5", "OPR6"))//LA LO LN > >= != == <= <else
+				{
+					int tamaño = result[i].Length;
+					string[] nuevo = new string[tamaño + 2];
+					int num = 0;
+					for (int j = 0; j < tamaño; j++)
 					{
-						// Es una asignación directa
-						string datoFuente1 = pilaIntermedia.Pop();
-						string datoObjeto = pilaIntermedia.Pop();
-						if (datoFuente1.StartsWith("_"))
+						if (j == 0)
 						{
-							string variable = datoFuente1;
-							var objetoEncontrado = _listaMeta.FirstOrDefault(objeto => objeto.Variable == variable);
-							if (objetoEncontrado != null)
-							{
-								datoObjeto = objetoEncontrado.TokenUnico;
-							}
+							nuevo[num++] = result[i][j];
+							nuevo[num++] = "POSTE";
+						}
+						else
+						if (j == tamaño - 1)
+						{
+							nuevo[num++] = result[i][j];
+							nuevo[num++] = "POSTF";
 						}
 						else
 						{
-							foreach (MetaDatos objeto in _listaMeta)
-							{
-								if (objeto.Valor == datoFuente1 && objeto.Token != "IDEN")
-								{
-									datoFuente1 = objeto.TokenUnico;
-								}
-							}
+							nuevo[num++] = result[i][j];
 						}
-						if (datoObjeto.StartsWith("_"))
-						{
-							string variable = datoObjeto;
-							var objetoEncontrado = _listaMeta.FirstOrDefault(objeto => objeto.Variable == variable);
-							if (objetoEncontrado != null)
-							{
-								datoObjeto = objetoEncontrado.TokenUnico;
-							}
-						}
-						else
-						{
-							var objetoEncontrado = _listaMeta.FirstOrDefault(objeto => objeto.Valor == datoObjeto);
-							foreach (MetaDatos objeto in _listaMeta)
-							{
-								if (objeto.Valor == datoObjeto && objeto.Token != "IDEN")
-								{
-									datoObjeto = objeto.TokenUnico;
-								}
-							}
-						}
-
-						//// Verificar si el datoFuente1 es igual al valor de datoObjeto
-						//if (datoFuente1 == datoObjeto)
-						//{
-						//	// Agregar una fila con el valor del ID en lugar del datoFuente1
-						//	string idFuente1 = datoFuente1.StartsWith("_") ? datoFuente1.Substring(1) : datoFuente1;
-						//	dtgCuadruplo.Rows.Add(datoObjeto, idFuente1, string.Empty, "ASIG");
-						//}
-						//else
-						//{
-						//	// Agregar una fila con el valor original del datoFuente1
-						//	dtgCuadruplo.Rows.Add(datoObjeto, datoFuente1, string.Empty, "ASIG");
-						//}
-						dtgCuadruplo.Rows.Add(datoObjeto, datoFuente1, string.Empty, "ASIG");
-						pilaIntermedia.Push(datoObjeto);
 					}
-
-					else
+					result[i] = nuevo;
+				}
+				else
+				if (result[i][0] != null)
+				{
+					for (int j = 0; j < result[i].Length; j++)
 					{
-						// Es un operando
-						pilaIntermedia.Push(token);
+						string palabra = result[i][j];
+						//IsEnt
+						if (result[i].Length >= 2 && palabra == "PR04")
+						{
+							result[i] = ReemplazarElementos(result[i]);
+							string textoprueba1 = ConvertirArregloACadena(result[i]);
+							result[i] = DelimitarPosfijo(result[i],true);
+							string textoprueba2 = ConvertirArregloACadena(result[i]);
+						}
+						//IsREA
+						if (result[i].Length >= 2 && palabra == "PR18")
+						{
+							result[i] = ReemplazarElementos(result[i], "REAE", "REAF");
+							result[i] = DelimitarPosfijo(result[i]);
+						}
+						if (j > 2 && result[i][0] == "INIS"
+								&& VerificarID(result[i][1])
+								&& result[i][2] == "ASIG")
+						{
+							result[i] = ReemplazarElementos(result[i], "ASIGE", "ASIGF");
+							result[i] = DelimitarPosfijo(result[i]);
+						}
 					}
 				}
 			}
 
+			return result;
+		}
+		private string[][] FormatoPosfijo(string[][] matriz)
+		{
+			for (int i = 0; i < matriz.Length; i++)
+			{
+				if(matriz[i].Length>1)
+				{
+					if (Contiene(matriz[i], "POSTE", "POSTF"))
+					{
+						string[] temporal = ObtenerElementosEntre(matriz[i], "POSTE", "POSTF");
+						string temporal1 = ConversionPosfija(temporal);
+						try
+						{
+							// Reemplazar los elementos reacomodados de vuelta en la matriz original
+							string[] elementos = temporal1.Split(' ');
+							elementos = LimpiarArreglo(elementos);
+
+							//Esta manera borra los POSTE Y POSTF
+							//// Buscar el índice de "POSTE" y "POSTF" en la matriz
+							int indicePoste = Array.IndexOf(matriz[i], "POSTE");
+							int indicePostf = Array.IndexOf(matriz[i], "POSTF");
+
+							//string[] nuevaMatriz = new string[matriz[i].Length + elementos.Length - (indicePostf - indicePoste + 1)];
+
+							//Array.Copy(matriz[i], 0, nuevaMatriz, 0, indicePoste);  // Copiar los elementos antes de "POSTE"
+							//Array.Copy(elementos, 0, nuevaMatriz, indicePoste, elementos.Length);  // Copiar los elementos reacomodados
+							//Array.Copy(matriz[i], indicePostf + 1, nuevaMatriz, indicePoste + elementos.Length, matriz[i].Length - indicePostf - 1);  // Copiar los elementos después de "POSTF"
+							string[] nuevaMatriz = new string[matriz[i].Length + elementos.Length];
+
+							Array.Copy(matriz[i], 0, nuevaMatriz, 0, indicePoste + 1);  // Copiar los elementos antes de "POSTE"
+							Array.Copy(elementos, 0, nuevaMatriz, indicePoste + 1, elementos.Length);  // Copiar los elementos reacomodados
+							Array.Copy(matriz[i], indicePostf, nuevaMatriz, indicePoste + elementos.Length + 1, matriz[i].Length - indicePostf);  // Copiar los elementos después de "POSTF"
+
+							matriz[i] = nuevaMatriz;
+						}
+						catch (Exception ex)
+						{
+							rchPosPrefijo.Text = "ERROR: " + ex.Message;
+						}
+						
+					}
+				}
+			}
+			return matriz;
+		}
+		private static string ConvertirArregloACadena(string[][] arreglo)
+		{
+			List<string> elementos = new List<string>();
+
+			foreach (string[] subarreglo in arreglo)
+			{
+				string subcadena = string.Join(" ", subarreglo);
+				elementos.Add(subcadena);
+			}
+
+			string resultado = string.Join(Environment.NewLine, elementos);
+
+			return resultado;
+		}
+		private static string ConvertirArregloACadena(string[] arreglo)
+		{
+			string resultado = string.Join(" ", arreglo);
+			return resultado;
 		}
 
+		List<Cuadruplo> cuadruplos;
+		private void Cuadruplos(string[][] matriz, DataGridView dtgTabla)
+		{
+			cuadruplos = new List<Cuadruplo>();
+			string[][] temporal1 = matriz
+				.Select(innerArray => innerArray.Where(elemento => !string.IsNullOrEmpty(elemento)).ToArray())
+				.Where(innerArray => innerArray.Length > 0)
+				.ToArray();
+			matriz = temporal1;
+			Stack<string> aux1 = new Stack<string>();
+			Stack<string> aux2 = new Stack<string>();
+			Stack<string> _ModoRecorrido = new Stack<string>();
+			int ID = 1;
+			int Indice = 1;
+			int inis = 0;
+			int fiin = 0;
+			string Pedido = "NADA";
+			bool salir = false;
+			int trueFila = 1;
+			for (int i = 0; i < matriz.Length; i++)
+			{
+				for (int j = 0; j < matriz[i].Length; j++)
+				{
+					string y, x;
+					string var = matriz[i][j];
+					if (_ModoRecorrido.Count > 0)
+					{
+						string modo = _ModoRecorrido.Peek();
+						if (EsIgual(modo, "SEE") && !EsIgual(var, "PR21", "POSTE","POSTE", "INIS","FIIN"))
+						{
+							if(EsIgual(var,"OPLA","OPLO","OPLN"))
+							{
+								if(var == "OPLA")
+								{
+									////Para el primer valor
+									//for (int a = 0; a < cuadruplos.Count; a++)
+									//{
+									//	Cuadruplo c1 = cuadruplos[a];
+
+									//	if (c1.DatoFuente1 == "TRUE" && c1.Operador == "XXX")
+									//	{
+									//		for (int b = 0; b < cuadruplos.Count; b++)
+									//		{
+									//			Cuadruplo c2 = cuadruplos[b];
+
+									//			if (c2.DatoFuente1 == c1.DatoFuente1 && c1.Operador == c2.Operador)
+									//			{
+									//				c1.Operador = c2.Indice.ToString();
+									//				salir = true;
+									//				break;
+									//			}
+									//		}
+									//	}
+
+									//	if (salir)
+									//	{
+									//		salir = false;
+									//		break;
+									//	}
+									//}
+									//Para el primer valor
+									for (int a = 0; a < cuadruplos.Count; a++)
+									{
+										Cuadruplo c1 = cuadruplos[a];
+
+										if (c1.DatoFuente1 == "TRUE" && c1.Operador == "XXX")
+										{
+											c1.Operador = "" + (c1.Indice + 2);
+
+										}
+									}
+									Pedido = "LA";
+								}
+								if(var == "OPLO")
+								{
+									for (int a = 0; a < cuadruplos.Count; a++)
+									{
+										Cuadruplo c1 = cuadruplos[a];
+
+										if (c1.DatoFuente1 == "FALSE" && c1.Operador == "XXX")
+										{
+											c1.Operador = (c1.Indice+1).ToString();
+											salir = true;
+											break;
+										}
+
+										if (salir)
+										{
+											salir = false;
+											break;
+										}
+									}
+
+									Pedido = "LO";
+								}
+
+							}
+							else
+							if(EsIgual(var,"OPR1", "OPR2", "OPR3", "OPR4", "OPR5", "OPR6"))
+							{
+								string x1 = aux1.Pop();
+								string y1 = aux1.Pop();
+								aux2.Push(x1);
+								y = aux2.Pop();
+								aux2.Push(y1);
+								x = aux2.Pop();
+								//guardar la temporal de relacion
+								string temporal = AsignarNumero(ID++);
+								Cuadruplo cuadruplo = new Cuadruplo
+								{
+									Indice = Indice++,
+									DatoObj = temporal,
+									DatoFuente1 = x,
+									DatoFuente2 = y,
+									Operador = var
+								};
+								cuadruplos.Add(cuadruplo);
+
+								//Si es verdadero
+								cuadruplo = new Cuadruplo
+								{
+									Indice = Indice++,
+									DatoObj = temporal,
+									DatoFuente1 = "TRUE",
+									DatoFuente2 = "",
+									Operador = "XXX"
+								};
+								cuadruplos.Add(cuadruplo);
+
+								//Si es falso
+								cuadruplo = new Cuadruplo
+								{
+									Indice = Indice++,
+									DatoObj = temporal,
+									DatoFuente1 = "FALSE",
+									DatoFuente2 = "",
+									Operador = "XXX"
+								};
+								cuadruplos.Add(cuadruplo);
+
+								ActualizarCuadruplo();
+							}
+							else
+							{
+								aux1.Push(var);
+							}
+						}
+						if(EsIgual(modo,"ALI"))
+						{
+							if(EsIgual(var,"INIS","FIIN"))
+							{
+								if(var == "INIS")
+								{
+									inis++;
+								}
+								if (var == "FIIN")
+								{
+									fiin++;
+									if (inis >= fiin)
+									{
+										inis--;
+										fiin--;
+									}
+									if (inis == 0 && fiin == 0 )
+									{
+										_ModoRecorrido.Pop();
+									}
+								}
+							}
+						}else if (EsIgual(modo, "SEE"))
+						{
+							if (EsIgual(var, "INIS", "FIIN"))
+							{
+								if (var == "INIS")
+								{
+									inis++;
+								}
+								if (var == "FIIN")
+								{
+									fiin++;
+									if (inis >= fiin)
+									{
+										inis--;
+										fiin--;
+									}
+									if (inis == 0 && fiin == 0)
+									{
+										_ModoRecorrido.Pop();
+									}
+								}
+							}
+						}
+
+						if (i == 9)
+						{ }
+						if (EsIgual(modo, "ENTE", "REAE", "ASIG") && !EsIgual(var, "PR04", "PR18", "ENTE", "ENTF", "REAE", "REAF","ASIGE","ASIGF", "POSTE", "POSTF"))
+						{
+							if (EsIgual(var, "OPSM", "OPRS", "OPML", "OPDV", "OPEX", "ASIG"))
+							{
+								if (aux1.Count >= 3)
+								{
+									string x1 = aux1.Pop();
+									string y1 = aux1.Pop();
+									aux2.Push(x1);
+									y = aux2.Pop();
+									aux2.Push(y1);
+									x = aux2.Pop();
+								}
+								else
+								{
+									y = aux1.Pop();
+									x = aux1.Pop();
+								}
+								Cuadruplo cuadruplo;
+								if (var == "ASIG")
+								{
+									trueFila = Indice;
+									cuadruplo = new Cuadruplo();
+									cuadruplo.Indice = Indice++;
+									cuadruplo.DatoObj = x;
+									cuadruplo.DatoFuente1 = y;
+									cuadruplo.DatoFuente2 = "";
+									cuadruplo.Operador = var;
+									cuadruplos.Add(cuadruplo);
+									ActualizarCuadruplo();
+									aux1.Push(x);
+									
+								}
+								else
+								{
+									//if(ContarElementosEntre(matriz[i],"POSTE","POSTF") >0){ }
+
+									trueFila = Indice;
+									string temporal = AsignarNumero(ID++);
+									cuadruplo = new Cuadruplo();
+									cuadruplo.Indice = Indice++;
+									cuadruplo.DatoObj = temporal;
+									cuadruplo.DatoFuente1 = x;
+									cuadruplo.DatoFuente2 = y;
+									cuadruplo.Operador = var;
+									cuadruplos.Add(cuadruplo);
+									ActualizarCuadruplo();
+									aux1.Push(temporal);
+								}
+								string aux = _ModoRecorrido.Pop();
+								if(Pedido == "LA" && _ModoRecorrido.Peek() == "ALI")
+								{
+									foreach (Cuadruplo c in cuadruplos)
+									{
+										if(c.DatoFuente1 == "FALSE" && c.Operador == "XXX")
+										{
+											c.Operador = cuadruplo.Indice+"";
+										}
+									}
+									ActualizarCuadruplo();
+								}
+								if (Pedido == "LO" && _ModoRecorrido.Peek() == "SEE")
+								{
+									foreach (Cuadruplo c in cuadruplos)
+									{
+										if (c.DatoFuente1 == "TRUE" && c.Operador == "XXX")
+										{
+											c.Operador = cuadruplo.Indice + "";
+										}
+									}
+									ActualizarCuadruplo();
+								}else if (Pedido == "LO" && _ModoRecorrido.Peek() == "ALI")
+								{
+									foreach (Cuadruplo c in cuadruplos)
+									{
+										if (c.DatoFuente1 == "FALSE" && c.Operador == "XXX")
+										{
+											c.Operador = cuadruplo.Indice + "";
+										}
+									}
+									ActualizarCuadruplo();
+								}
+								_ModoRecorrido.Push(aux);
+							}
+							else
+							{
+								aux1.Push(var);
+							}
+						}
+					}
+					//SE 
+					if (var == "PR21")
+					{
+						_ModoRecorrido.Push("SEE");
+					}
+					//
+					if (var == "PR01")//ALI
+					{
+						_ModoRecorrido.Push("ALI");
+					}
+					//ENT
+					if (var == "ENTE")
+					{
+						_ModoRecorrido.Push("ENTE");
+					}
+					if (var == "ENTF")
+					{
+						_ModoRecorrido.Pop();
+					}
+					//REA
+					if (var == "REAE")
+					{
+						_ModoRecorrido.Push("REAE");
+					}
+					if (var == "REAF")
+					{
+						_ModoRecorrido.Pop();
+					}
+					//ASIG
+					if (var == "ASIGE")
+					{
+						_ModoRecorrido.Push("ASIG");
+					}
+					if (var == "ASIGF")
+					{
+						_ModoRecorrido.Pop();
+					}
+				}
+			}
+			Cuadruplo elementoMasReciente = cuadruplos[trueFila-1];
+			elementoMasReciente.Operador += ", " + Indice;
+			Cuadruplo cnew = new Cuadruplo
+			{
+				Indice = Indice++,
+				DatoObj = "FIN",
+				DatoFuente1 = "",
+				DatoFuente2 = "",
+				Operador = ""
+			};
+			cuadruplos.Add(cnew);
+			ActualizarCuadruplo();
+			string AsignarNumero(int numero)
+			{
+				if (numero.ToString().Length == 1)
+				{
+					return "TE0" + numero;
+				}
+				else
+				{
+					return "TE" + numero;
+				}
+			}
+		}
+		private void ActualizarCuadruplo()
+		{
+			if(cuadruplos.Count>0)
+			{
+				dtgCuadruplo.Rows.Clear();
+				foreach (Cuadruplo c in cuadruplos)
+				{
+					dtgCuadruplo.Rows.Add(c.Indice.ToString(), c.DatoObj,c.DatoFuente1,c.DatoFuente2,c.Operador);
+				}
+			}
+		}
+		private bool Contiene(string[] arreglo, params string[] valores)
+		{
+			return arreglo.Intersect(valores).Any();
+		}
+		static string[] ReemplazarElementos(string[] arreglo)
+		{
+			int indicePR04 = Array.IndexOf(arreglo, "PR04");
+
+			if (indicePR04 == -1)
+			{
+				throw new ArgumentException("No se encontró la cadena 'PR04' en el arreglo.");
+			}
+
+			arreglo[indicePR04 - 1] = "ENTE";
+			arreglo[indicePR04] = "PR04";
+
+			for (int i = arreglo.Length - 1; i > indicePR04; i--)
+			{
+				if (arreglo[i] == "FIIN")
+				{
+					arreglo[i] = "ENTF";
+					break;
+				}
+			}
+
+			return arreglo;
+		}
+		static string[] ReemplazarElementos(string[] arreglo, string primerString, string segundoString)
+		{
+			if (arreglo.Length < 2)
+			{
+				throw new ArgumentException("El arreglo debe tener al menos dos elementos.");
+			}
+
+			arreglo[0] = primerString;
+			int indice = Array.IndexOf(arreglo, "FIIN");
+			if (indice != -1)
+			{
+				arreglo[indice] = segundoString;
+			}
+
+			return arreglo;
+		}
+		private string[] DelimitarPosfijo(string[] arreglo)
+		{
+			string[] nuevoArreglo = new string[arreglo.Length+2];
+			if (!(AntesDe(arreglo, "PR04", "POSTE") || AntesDe(arreglo, "POSTF", "ENTF")))
+			{
+				//ENTE PR04 ID02 ASIG CNE01 ENTF
+				int numero = 0;
+				for (int i = 0; i < arreglo.Length; i++)
+				{
+					if(arreglo[i] == "PR04" || arreglo[i] == "PR18")//POSTE
+					{
+						nuevoArreglo[numero++] = arreglo[i];
+						nuevoArreglo[numero++] = "POSTE";
+					}else if (arreglo[i] == "ENTF" || arreglo[i] == "REAF")//POSTF
+					{
+						nuevoArreglo[numero++] = "POSTF";
+						nuevoArreglo[numero++] = arreglo[i];
+					}
+					else
+					{
+						nuevoArreglo[numero++] = arreglo[i];
+					}
+				}
+
+				return nuevoArreglo;
+			}
+			else
+			{
+				return arreglo;
+			}
+		}
+		private string[] DelimitarPosfijo(string[] arreglo,bool x)
+		{
+			if (!(AntesDe(arreglo, "PR04", "POSTE") || AntesDe(arreglo, "POSTF", "ENTF")))
+			{
+				List<string> nuevoArreglo = new List<string>();
+				for (int i = 0; i < arreglo.Length; i++)
+				{
+					if (arreglo[i] == "PR04" || arreglo[i] == "PR18")
+					{
+						nuevoArreglo.Add(arreglo[i]);
+						nuevoArreglo.Add("POSTE");
+					}
+					else if (arreglo[i] == "ENTF" || arreglo[i] == "REAF")
+					{
+						nuevoArreglo.Add("POSTF");
+						nuevoArreglo.Add(arreglo[i]);
+					}
+					else
+					{
+						nuevoArreglo.Add(arreglo[i]);
+					}
+				}
+
+				return nuevoArreglo.ToArray();
+			}
+			else
+			{
+				return arreglo;
+			}
+		}
+
+		private static bool AntesDe(string[] arreglo, string primeraPalabra, string segundaPalabra)
+		{
+			if(arreglo.Length > 1)
+			{
+				for (int i = 1; i < arreglo.Length; i++)
+				{
+					if (arreglo[i - 1] == primeraPalabra && arreglo[i] == segundaPalabra)
+					{
+						return true;
+					}
+				}
+
+				return false;
+			}
+			return false;
+		}
+
+		private static string[] ObtenerElementosEntre(string[] arreglo, string izq, string der)
+		{
+			string inicio = izq;
+			string fin = der;
+
+			int indiceInicio = Array.IndexOf(arreglo, inicio);
+			int indiceFin = Array.IndexOf(arreglo, fin);
+
+			// Verificar si se encontraron ambos marcadores
+			if (indiceInicio >= 0 && indiceFin >= 0 && indiceFin > indiceInicio)
+			{
+				// Extraer los elementos entre "POSTE" y "POSTF"
+				int elementosCount = indiceFin - indiceInicio - 1;
+				string[] elementos = new string[elementosCount];
+				Array.Copy(arreglo, indiceInicio + 1, elementos, 0, elementosCount);
+
+				return elementos;
+			}
+
+			// Si no se encontraron los marcadores, retornar un arreglo vacío o null, según convenga en tu caso
+			return arreglo;
+		}
+		private string ConversionPosfija(string[] token)
+		{
+			string[] lista = token;
+			Stack<string> pila = new Stack<string>();
+			string salida = "";
+			int inicios = 0;
+			int cierres = 0;
+			for (int i = 0; i <= lista.Length - 1; i++)
+			{
+				if (lista[i] == " ")
+				{
+
+				}
+				else
+				if (EsIgual(lista[i], "OPEX"))
+				{
+					pila.Push(lista[i]);
+
+
+				}
+				else
+				if (EsIgual(lista[i], "OPEX", "OPML", "OPDV", "OPSM", "OPRS", "ASIG", "OPLA", "OPLN", "OPLO", "OPR1", "OPR2", "OPR3", "OPR4", "OPR5", "OPR6") || lista[i] == "CEX(" || lista[i] == "CEX)")
+				{
+					//Si es parentesis P1
+					if (EsIgual(lista[i], "CEX(", "CEX)"))
+					{
+						if (lista[i] == "CEX(")
+						{
+							inicios++;
+						}
+						else
+						{
+							cierres++;
+						}
+						pila.Push(lista[i]);
+						if (inicios > 0 && cierres > 0)
+						{
+							string p;
+							while (pila.Peek() != "CEX(")
+							{
+								if (pila.Peek() == "CEX)")
+								{
+									p = pila.Pop();//Saca el )
+								}
+								else
+								{
+									p = pila.Pop(); // saca el elemento
+									salida += p + " ";
+								}
+
+							}
+							pila.Pop();//Saca el (
+
+							inicios--; cierres--;
+						}
+					}
+					else
+					// si es mutiplicacion o division P3
+					if (EsIgual(lista[i], "OPML", "OPDV"))
+					{
+						if (pila.Count > 0 && EsIgual(pila.Peek(), "OPEX", "OPML", "OPDV"))
+						{
+							salida += pila.Pop() + " ";
+							pila.Push(lista[i]);
+						}
+						else
+						{
+							pila.Push(lista[i]);
+						}
+					}
+					else
+					//si es suma o resta P4
+					if (EsIgual(lista[i], "OPSM", "OPRS"))
+					{
+						if (pila.Count > 0 && EsIgual(pila.Peek(), "OPEX", "OPML", "OPDV", "OPSM", "OPRS"))
+						{
+							salida += pila.Pop() + " ";
+							pila.Push(lista[i]);
+						}
+						else
+						{
+							pila.Push(lista[i]);
+						}
+					}
+					else
+					//Si es op relacional 
+					if (EsIgual(lista[i], "OPR1", "OPR2", "OPR3", "OPR4", "OPR5", "OPR6"))
+					{
+						if (pila.Count > 0 && EsIgual(pila.Peek(), "OPEX", "OPML", "OPDV", "OPSM", "OPRS", "OPR1", "OPR2", "OPR3", "OPR4", "OPR5", "OPR6"))
+						{
+							salida += pila.Pop() + " ";
+							pila.Push(lista[i]);
+						}
+						else
+						{
+							pila.Push(lista[i]);
+						}
+					}
+					else
+					//si es op logica
+					if (EsIgual(lista[i], "OPLA", "OPLN", "OPLO"))
+					{
+						if (pila.Count > 0 && EsIgual(pila.Peek(), "OPEX", "OPML", "OPDV", "OPSM", "OPRS", "OPR1", "OPR2", "OPR3", "OPR4", "OPR5", "OPR6", "OPLA", "OPLN", "OPLO"))
+						{
+							salida += pila.Pop() + " ";
+							pila.Push(lista[i]);
+						}
+						else
+						{
+							pila.Push(lista[i]);
+						}
+					}
+					else
+					//si es suma o resta P5
+					if (lista[i] == "ASIG")
+					{
+						if (pila.Count > 0 && EsIgual(pila.Peek(), "OPEX", "OPML", "OPDV", "OPSM", "OPRS"))
+						{
+							salida += pila.Pop() + " ";
+							pila.Push(lista[i]);
+						}
+						else
+						{
+							pila.Push(lista[i]);
+						}
+					}
+					else
+					{
+						//algo fuera de lo comun, no hacer nada
+					}
+				}
+				else
+				{
+					string sinEspacios = "";
+					foreach (char item in lista[i])
+					{
+						if (item != ' ')
+						{
+							sinEspacios += item;
+						}
+					}
+					salida += sinEspacios + " ";
+				}
+				if (i == lista.Length - 1)
+				{
+					while (pila.Count > 0)
+					{
+						string x = pila.Pop();
+						if (x == "CEX(" || x == "CEX)")
+						{
+
+						}
+						else
+						{
+							salida += x + " ";
+						}
+					}
+
+				}
+			}
+			return salida;
+		}
+		static bool VerificarID(string texto)
+		{
+			if (texto.Length >= 2)
+			{
+				string primerosDosCaracteres = texto.Substring(0, 2);
+				return primerosDosCaracteres == "ID";
+			}
+
+			return false;
+		}
+		private static string ConvertirArregloACadena1(string[][] arreglo)
+		{
+			List<string> elementos = new List<string>();
+
+			foreach (string[] subarreglo in arreglo)
+			{
+				string subcadena = string.Join(" ", subarreglo);
+				elementos.Add(subcadena);
+			}
+
+			string resultado = string.Join(Environment.NewLine, elementos);
+
+			return resultado;
+		}
+		private static string[][] LimpiarArreglo(string[][] matriz)
+		{
+			List<string[]> nuevaMatriz = new List<string[]>();
+
+			foreach (string[] fila in matriz)
+			{
+				// Filtrar los elementos no vacíos en la fila
+				string[] filaFiltrada = fila.Where(elemento => !string.IsNullOrWhiteSpace(elemento)).ToArray();
+
+				// Agregar la fila filtrada a la nueva matriz
+				if (filaFiltrada.Length > 0)
+				{
+					nuevaMatriz.Add(filaFiltrada);
+				}
+			}
+
+			return nuevaMatriz.ToArray();
+		}
+
+		private void panelCodigo_Paint(object sender, PaintEventArgs e)
+		{
+
+		}
 	}
 }
