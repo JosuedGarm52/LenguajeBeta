@@ -79,6 +79,7 @@ namespace MyLenguaje
 				EstadoSemantico = false;
 				listaDeStringCodIntermed.Clear();
 				IsCorrectInPosPrefijo = false;
+				rchPosPrefijo.Text = "";
 				if (!String.IsNullOrEmpty(rchTexto.Text))
 				{
 					rchConsola1.Text = "Exito";
@@ -10251,7 +10252,9 @@ namespace MyLenguaje
 			_listaMeta.Clear();//vaciar lista
 			listaDeStringCodIntermed.Clear();
 			rchConsola5.Text = "";
+			rchPosPrefijo.Text = "";
 			dtgCuadruplo.Rows.Clear();
+			rchTexto.Focus();
 		}
 
 		private void label2_Click(object sender, EventArgs e)
@@ -10320,23 +10323,11 @@ namespace MyLenguaje
 		{
 			if (EstadoSemantico)
 			{
-				//matrizLexico = LimpiarArreglo(matrizLexico);
-				//matrizCodigo = LimpiarArreglo(matrizCodigo);
+				 matrizTokens = new string[0][];
 				for (int i = 0; i < matrizLexico.Length; i++)
 				{
 					for (int j = 0; j < matrizLexico[i].Length; j++)
 					{
-						//foreach (MetaDatos metaDato in _listaMeta)
-						//{
-						//	if (metaDato.Variable == matrizLexico[i][j] && metaDato.Token == "IDEN")
-						//	{
-						//		matrizLexico[i][j] = metaDato.TokenUnico;
-						//	}
-						//	if (metaDato.Token == matrizLexico[i][j] && metaDato.Valor == matrizCodigo[i][j])
-						//	{
-						//		matrizLexico[i][j] = metaDato.TokenUnico;
-						//	}
-						//}
 						foreach (MetaDatos datos in _listaMeta)
 						{
 							if(j < matrizLexico[i].Length && j < matrizCodigo[i].Length)
@@ -10352,7 +10343,17 @@ namespace MyLenguaje
 							}
 						}
 					}
+					if(matrizLexico[i].Length >= 4
+						&& matrizLexico[i][0] == "INIS" 
+						&& matrizLexico[i][1].Substring(0,2) == "ID"
+						&& matrizLexico[i][2] == "OPSM"
+						&& matrizLexico[i][3] == "FIIN"
+						&& matrizLexico[i][4] == "CEX)")
+					{
+						matrizLexico[i] = new string[] { "INIS", "INC", "FIIN", "CEX)","" };
+					}
 				}
+
 				string codigo = ConvertirArregloACadena1(matrizLexico);
 				string[][] temp11;
 				temp11 = Reconocimiento(codigo);//Acondicionamiento
@@ -10366,6 +10367,29 @@ namespace MyLenguaje
 				IsCorrectInPosPrefijo = true;
 			}
 		}
+		static string[][] ReemplazarCombinacion(string[][] matriz)
+		{
+			string[][] nuevaMatriz = new string[matriz.Length][];
+			for (int i = 0; i < matriz.Length; i++)
+			{
+				nuevaMatriz[i] = new string[matriz[i].Length];
+				for (int j = 0; j < matriz[i].Length; j++)
+				{
+					if (j + 1 < matriz[i].Length && matriz[i][j].Substring(0, 2) == "ID" && matriz[i][j + 1] == "OPSM")
+					{
+						nuevaMatriz[i][j] = "DEC";
+						nuevaMatriz[i][j + 1] = "";
+					}
+					else
+					{
+						nuevaMatriz[i][j] = matriz[i][j];
+					}
+				}
+			}
+			return nuevaMatriz;
+		}
+
+
 		private bool EsIgualSigno(params string[] coleccion)
 		{
 			foreach (string signo in coleccion)
@@ -10416,6 +10440,7 @@ namespace MyLenguaje
 			{
 				try
 				{
+					dtgCuadruplo.Focus();
 					//Conversion a cuadruplos
 					Cuadruplos(matrizTokens, dtgCuadruplo);
 				}
@@ -10517,8 +10542,8 @@ namespace MyLenguaje
 						else
 						if (j == tamaño - 1)
 						{
-							nuevo[num++] = result[i][j];
 							nuevo[num++] = "POSTF";
+							nuevo[num++] = result[i][j];
 						}
 						else
 						{
@@ -10551,8 +10576,9 @@ namespace MyLenguaje
 								&& VerificarID(result[i][1])
 								&& result[i][2] == "ASIG")
 						{
-							result[i] = ReemplazarElementos(result[i], "ASIGE", "ASIGF");
-							result[i] = DelimitarPosfijo(result[i]);
+							//result[i] = ReemplazarElementos(result[i], "ASIGE", "ASIGF");
+							result[i] = ReemplazarPalabras(result[i], "INIS", "FIIN", "ASIGE", "ASIGF");
+							result[i] = AgregarPoste(result[i]);
 						}
 					}
 				}
@@ -10604,6 +10630,29 @@ namespace MyLenguaje
 			}
 			return matriz;
 		}
+		public static string[] ReemplazarPalabras(string[] arreglo, string palabra1, string palabra2, string nuevo1, string nuevo2)
+		{
+			string[] nuevoArreglo = new string[arreglo.Length];
+
+			for (int i = 0; i < arreglo.Length; i++)
+			{
+				if (arreglo[i] == palabra1)
+				{
+					nuevoArreglo[i] = nuevo1;
+				}
+				else if (arreglo[i] == palabra2)
+				{
+					nuevoArreglo[i] = nuevo2;
+				}
+				else
+				{
+					nuevoArreglo[i] = arreglo[i];
+				}
+			}
+
+			return nuevoArreglo;
+		}
+
 		private static string ConvertirArregloACadena(string[][] arreglo)
 		{
 			List<string> elementos = new List<string>();
@@ -10643,53 +10692,38 @@ namespace MyLenguaje
 			string Pedido = "NADA";
 			bool salir = false;
 			int trueFila = 1;
+			int al=0, bl=0;
+			string PruebaDebug = "ID03";
+			bool ApagarPor = false;
 			for (int i = 0; i < matriz.Length; i++)
 			{
 				for (int j = 0; j < matriz[i].Length; j++)
 				{
 					string y, x;
 					string var = matriz[i][j];
+					if (matriz[i][j] == PruebaDebug)
+					{
+
+					}
+					if (al == i && bl == j)
+					{
+
+					}
 					if (_ModoRecorrido.Count > 0)
 					{
 						string modo = _ModoRecorrido.Peek();
-						if (EsIgual(modo, "SEE") && !EsIgual(var, "PR21", "POSTE","POSTE", "INIS","FIIN"))
+						if (EsIgual(modo, "SEE") && !EsIgual(var, "PR21","PR24","ENTE","POSTE","POSTF", "INIS","FIIN"))
 						{
 							if(EsIgual(var,"OPLA","OPLO","OPLN"))
 							{
 								if(var == "OPLA")
 								{
-									////Para el primer valor
-									//for (int a = 0; a < cuadruplos.Count; a++)
-									//{
-									//	Cuadruplo c1 = cuadruplos[a];
-
-									//	if (c1.DatoFuente1 == "TRUE" && c1.Operador == "XXX")
-									//	{
-									//		for (int b = 0; b < cuadruplos.Count; b++)
-									//		{
-									//			Cuadruplo c2 = cuadruplos[b];
-
-									//			if (c2.DatoFuente1 == c1.DatoFuente1 && c1.Operador == c2.Operador)
-									//			{
-									//				c1.Operador = c2.Indice.ToString();
-									//				salir = true;
-									//				break;
-									//			}
-									//		}
-									//	}
-
-									//	if (salir)
-									//	{
-									//		salir = false;
-									//		break;
-									//	}
-									//}
-									//Para el primer valor
+									
 									for (int a = 0; a < cuadruplos.Count; a++)
 									{
 										Cuadruplo c1 = cuadruplos[a];
 
-										if (c1.DatoFuente1 == "TRUE" && c1.Operador == "XXX")
+										if (c1.DatoFuente2 == "TRUE" && c1.Operador == "XXX")
 										{
 											c1.Operador = "" + (c1.Indice + 2);
 
@@ -10703,7 +10737,7 @@ namespace MyLenguaje
 									{
 										Cuadruplo c1 = cuadruplos[a];
 
-										if (c1.DatoFuente1 == "FALSE" && c1.Operador == "XXX")
+										if (c1.DatoFuente2 == "FALSE" && c1.Operador == "XXX")
 										{
 											c1.Operador = (c1.Indice+1).ToString();
 											salir = true;
@@ -10730,9 +10764,12 @@ namespace MyLenguaje
 								y = aux2.Pop();
 								aux2.Push(y1);
 								x = aux2.Pop();
+								string temporal;
+								Cuadruplo cuadruplo;
+								
 								//guardar la temporal de relacion
-								string temporal = AsignarNumero(ID++);
-								Cuadruplo cuadruplo = new Cuadruplo
+								temporal = AsignarNumero(ID++);
+								cuadruplo = new Cuadruplo
 								{
 									Indice = Indice++,
 									DatoObj = temporal,
@@ -10747,8 +10784,8 @@ namespace MyLenguaje
 								{
 									Indice = Indice++,
 									DatoObj = temporal,
-									DatoFuente1 = "TRUE",
-									DatoFuente2 = "",
+									DatoFuente1 = "",
+									DatoFuente2 = "TRUE",
 									Operador = "XXX"
 								};
 								cuadruplos.Add(cuadruplo);
@@ -10758,8 +10795,8 @@ namespace MyLenguaje
 								{
 									Indice = Indice++,
 									DatoObj = temporal,
-									DatoFuente1 = "FALSE",
-									DatoFuente2 = "",
+									DatoFuente1 = "",
+									DatoFuente2 = "FALSE",
 									Operador = "XXX"
 								};
 								cuadruplos.Add(cuadruplo);
@@ -10771,7 +10808,145 @@ namespace MyLenguaje
 								aux1.Push(var);
 							}
 						}
-						if(EsIgual(modo,"ALI"))
+						
+
+						if (EsIgual(modo, "POR") && !EsIgual(var, "PR21", "POSTE", "POSTF", "INIS", "FIIN","CEX(","CEX)","ENT", "PR24", "ENTE"))
+						{
+							if(var=="INC")
+							{
+								string x1 = aux1.Pop();
+								string y1 = aux1.Pop();
+								aux2.Push(x1);
+								y = aux2.Pop();
+								aux2.Push(y1);
+								x = aux2.Pop();
+								Cuadruplo cuadruplo;
+								string ultimoToken = "";
+								foreach (MetaDatos item in _listaMeta)
+								{
+									if (item.Valor == "1") 
+									{
+										ultimoToken = item.TokenUnico;
+									}
+								}
+								if(ultimoToken=="")
+								{
+									ultimoToken = AsignarNumero(ID++);
+
+								}
+								//guardar la temporal de relacion
+								//string temporal = AsignarNumero(ID++);
+								string temp2 = ObtenerVarTempCuadruplo("PORENT");
+								cuadruplo = new Cuadruplo //Fast
+								{
+									Indice = Indice++,
+									DatoObj = temp2,
+									DatoFuente1 = temp2,
+									DatoFuente2 = ultimoToken,
+									Operador = "OPSM" + ", " +
+									ObtenerIndiceCuadruplo("OPRPOR"),
+									TokenUnico = "INC"
+								};
+								cuadruplos.Add(cuadruplo);
+
+								ActualizarCuadruplo();
+								ApagarPor = true;
+							}
+							else
+							if (var == "DEC")
+							{
+
+							}
+							else
+							if (EsIgual(var, "OPLA", "OPLO", "OPLN"))
+							{
+								if (var == "OPLA")
+								{
+									
+								}
+								if (var == "OPLO")
+								{
+									
+								}
+
+							}
+							else
+							if (EsIgual(var, "OPR1", "OPR2", "OPR3", "OPR4", "OPR5", "OPR6"))
+							{
+								string x1 = aux1.Pop();
+								string y1 = aux1.Pop();
+								aux2.Push(x1);
+								y = aux2.Pop();
+								aux2.Push(y1);
+								x = aux2.Pop();
+								string temporal;
+								Cuadruplo cuadruplo;
+								//guardar la temporal de relacion
+								temporal = AsignarNumero(ID++);
+								cuadruplo = new Cuadruplo
+								{
+									Indice = Indice++,
+									DatoObj = temporal,
+									DatoFuente1 = x,
+									DatoFuente2 = y,
+									Operador = var,
+									TokenUnico = "OPRPOR"
+								};
+								cuadruplos.Add(cuadruplo);
+
+								//Si es verdadero
+								cuadruplo = new Cuadruplo
+								{
+									Indice = Indice++,
+									DatoObj = temporal,
+									DatoFuente1 = "",
+									DatoFuente2 = "TRUE",
+									Operador = "PORT"
+								};
+								cuadruplos.Add(cuadruplo);
+
+								//Si es falso
+								cuadruplo = new Cuadruplo
+								{
+									Indice = Indice++,
+									DatoObj = temporal,
+									DatoFuente1 = "",
+									DatoFuente2 = "FALSE",
+									Operador = "PORF"
+								};
+								cuadruplos.Add(cuadruplo);
+
+								ActualizarCuadruplo();
+
+							}
+							else
+							{
+								aux1.Push(var);
+							}
+						}
+
+						if (modo == "POR" && EsIgual(var, "INIS", "FIIN"))
+						{
+							if (var == "INIS")
+							{
+								inis++;
+							}
+							if (var == "FIIN")
+							{
+								fiin++;
+								if (inis >= fiin && ApagarPor)
+								{
+									inis--;
+									fiin--;
+								}
+								if (inis == 0 && fiin == 0)
+								{
+									_ModoRecorrido.Pop();
+								}
+							}
+						}
+
+						if (EsIgual(modo,"ALI"))
 						{
 							if(EsIgual(var,"INIS","FIIN"))
 							{
@@ -10809,7 +10984,7 @@ namespace MyLenguaje
 										inis--;
 										fiin--;
 									}
-									if (inis == 0 && fiin == 0)
+									if (inis == 0 && fiin == 0 )
 									{
 										_ModoRecorrido.Pop();
 									}
@@ -10819,7 +10994,7 @@ namespace MyLenguaje
 
 						if (i == 9)
 						{ }
-						if (EsIgual(modo, "ENTE", "REAE", "ASIG") && !EsIgual(var, "PR04", "PR18", "ENTE", "ENTF", "REAE", "REAF","ASIGE","ASIGF", "POSTE", "POSTF"))
+						if (EsIgual(modo, "ENTE", "REAE", "ASIG") && !EsIgual(var, "PR04", "PR18", "ENTE", "ENTF", "REAE", "REAF","ASIGE","ASIGF", "POSTE", "POSTF", "PR24", "ENTE"))
 						{
 							if (EsIgual(var, "OPSM", "OPRS", "OPML", "OPDV", "OPEX", "ASIG"))
 							{
@@ -10838,118 +11013,230 @@ namespace MyLenguaje
 									x = aux1.Pop();
 								}
 								Cuadruplo cuadruplo;
-								if (var == "ASIG")
-								{
-									trueFila = Indice;
-									cuadruplo = new Cuadruplo();
-									cuadruplo.Indice = Indice++;
-									cuadruplo.DatoObj = x;
-									cuadruplo.DatoFuente1 = y;
-									cuadruplo.DatoFuente2 = "";
-									cuadruplo.Operador = var;
-									cuadruplos.Add(cuadruplo);
-									ActualizarCuadruplo();
-									aux1.Push(x);
-									
-								}
-								else
-								{
-									//if(ContarElementosEntre(matriz[i],"POSTE","POSTF") >0){ }
 
-									trueFila = Indice;
-									string temporal = AsignarNumero(ID++);
-									cuadruplo = new Cuadruplo();
-									cuadruplo.Indice = Indice++;
-									cuadruplo.DatoObj = temporal;
-									cuadruplo.DatoFuente1 = x;
-									cuadruplo.DatoFuente2 = y;
-									cuadruplo.Operador = var;
-									cuadruplos.Add(cuadruplo);
-									ActualizarCuadruplo();
-									aux1.Push(temporal);
-								}
-								string aux = _ModoRecorrido.Pop();
-								if(Pedido == "LA" && _ModoRecorrido.Peek() == "ALI")
+								string lt = "NO";
+								if (_ModoRecorrido.Count > 1)
 								{
-									foreach (Cuadruplo c in cuadruplos)
+									string aux = _ModoRecorrido.Pop();
+									
+									if (var == "ASIG" && _ModoRecorrido.Peek() == "POR") // POR ( | ENT _Y = 1 | 
 									{
-										if(c.DatoFuente1 == "FALSE" && c.Operador == "XXX")
+										lt = aux;
+										cuadruplo = new Cuadruplo
 										{
-											c.Operador = cuadruplo.Indice+"";
+											Indice = Indice++,
+											DatoObj = x,
+											DatoFuente1 = y,
+											DatoFuente2 = "",
+											Operador = "ASIG",
+											TokenUnico = "PORENT"
+										};
+										cuadruplos.Add(cuadruplo);
+										ActualizarCuadruplo();
+										aux1.Push(x);
+									}
+									if (Pedido == "LA" && _ModoRecorrido.Peek() == "ALI")
+									{
+										lt = aux;
+										foreach (Cuadruplo c in cuadruplos)
+										{
+											if (c.DatoFuente2 == "FALSE" && c.Operador == "XXX")
+											{
+												c.Operador = "SEFIN" + "";
+											}
+										}
+										ActualizarCuadruplo();
+									}
+									if (Pedido == "LO" && _ModoRecorrido.Peek() == "SEE")
+									{
+										lt = aux;
+										foreach (Cuadruplo c in cuadruplos)
+										{
+											if (c.DatoFuente2 == "TRUE" && c.Operador == "XXX")
+											{
+												c.Operador = (c.Indice + 2) + "";
+											}
+										}
+										ActualizarCuadruplo();
+									}
+									else if (Pedido == "LO" && _ModoRecorrido.Peek() == "ALI")
+									{
+										lt = aux;
+										foreach (Cuadruplo c in cuadruplos)
+										{
+											if (c.DatoFuente2 == "FALSE" && c.Operador == "XXX")
+											{
+												c.Operador = "SEFIN" + "";
+											}
+										}
+										ActualizarCuadruplo();
+									}
+									_ModoRecorrido.Push(aux);
+								}
+								if (lt == "NO")
+								{
+									if (var == "ASIG")
+									{
+										if (y != "") { trueFila = Indice; }
+										cuadruplo = new Cuadruplo();
+										cuadruplo.Indice = Indice++;
+										cuadruplo.DatoObj = x;
+										cuadruplo.DatoFuente1 = y;
+										cuadruplo.DatoFuente2 = "";
+										cuadruplo.Operador = var;
+										cuadruplos.Add(cuadruplo);
+										ActualizarCuadruplo();
+										aux1.Push(x);
+
+									}
+									else
+									{
+										//if(ContarElementosEntre(matriz[i],"POSTE","POSTF") >0){ }
+										if(x.Substring(0,2) == "ID")
+										{
+											//string temporal = AsignarNumero(ID++);
+											cuadruplo = new Cuadruplo();
+											cuadruplo.Indice = Indice++;
+											cuadruplo.DatoObj = x;
+											cuadruplo.DatoFuente1 = x;
+											cuadruplo.DatoFuente2 = y;
+											cuadruplo.Operador = var;
+											cuadruplos.Add(cuadruplo);
+											ActualizarCuadruplo();
+											aux1.Push(x);
+										}else
+										{
+											string temporal = AsignarNumero(ID++);
+											cuadruplo = new Cuadruplo();
+											cuadruplo.Indice = Indice++;
+											cuadruplo.DatoObj = temporal;
+											cuadruplo.DatoFuente1 = x;
+											cuadruplo.DatoFuente2 = y;
+											cuadruplo.Operador = var;
+											cuadruplos.Add(cuadruplo);
+											ActualizarCuadruplo();
+											aux1.Push(temporal);
 										}
 									}
-									ActualizarCuadruplo();
 								}
-								if (Pedido == "LO" && _ModoRecorrido.Peek() == "SEE")
-								{
-									foreach (Cuadruplo c in cuadruplos)
-									{
-										if (c.DatoFuente1 == "TRUE" && c.Operador == "XXX")
-										{
-											c.Operador = cuadruplo.Indice + "";
-										}
-									}
-									ActualizarCuadruplo();
-								}else if (Pedido == "LO" && _ModoRecorrido.Peek() == "ALI")
-								{
-									foreach (Cuadruplo c in cuadruplos)
-									{
-										if (c.DatoFuente1 == "FALSE" && c.Operador == "XXX")
-										{
-											c.Operador = cuadruplo.Indice + "";
-										}
-									}
-									ActualizarCuadruplo();
-								}
-								_ModoRecorrido.Push(aux);
 							}
 							else
 							{
 								aux1.Push(var);
 							}
 						}
+						
 					}
-					//SE 
-					if (var == "PR21")
+					if(EsIgual(var, "PR21", "PR01", "PR24", "PR16", "ENTE","ENTF", "REAE", "REAF", "ASIGE", "ASIGF"))
 					{
-						_ModoRecorrido.Push("SEE");
+						//SE 
+						if (var == "PR21")
+						{
+							_ModoRecorrido.Push("SEE");
+						}else
+						//
+						if (var == "PR01")//ALI
+						{
+							_ModoRecorrido.Push("ALI");
+						}else
+						//SKR
+						if (var == "PR24")
+						{
+							_ModoRecorrido.Push("SKR");
+						}else
+						//POR
+						if (var == "PR16")
+						{
+							_ModoRecorrido.Push("POR");
+							ApagarPor = false;
+						}else
+						//ENT
+						if (var == "ENTE")
+						{
+							_ModoRecorrido.Push("ENTE");
+						}else
+						if (var == "ENTF")
+						{
+							_ModoRecorrido.Pop();
+						}else
+						//REA
+						if (var == "REAE")
+						{
+							_ModoRecorrido.Push("REAE");
+						}else
+						if (var == "REAF")
+						{
+							_ModoRecorrido.Pop();
+						}else
+						//ASIG
+						if (var == "ASIGE")
+						{
+							_ModoRecorrido.Push("ASIG");
+						}else
+						if (var == "ASIGF")
+						{
+							_ModoRecorrido.Pop();
+						}
 					}
-					//
-					if (var == "PR01")//ALI
+					
+				}
+				if ( matriz[i].Length >= 5
+					&& matriz[i][0] == "INIS" 
+					&& matriz[i][1]=="PR24" 
+					&& matriz[i][2] == "CEX("
+					&& matriz[i][3].Substring(0,2) == "ID"
+					&& matriz[i][4] == "CEX)"
+					&& matriz[i][5] == "FIIN")
+				{
+					
+					Cuadruplo cuadruplo = new Cuadruplo
 					{
-						_ModoRecorrido.Push("ALI");
-					}
-					//ENT
-					if (var == "ENTE")
-					{
-						_ModoRecorrido.Push("ENTE");
-					}
-					if (var == "ENTF")
-					{
-						_ModoRecorrido.Pop();
-					}
-					//REA
-					if (var == "REAE")
-					{
-						_ModoRecorrido.Push("REAE");
-					}
-					if (var == "REAF")
-					{
-						_ModoRecorrido.Pop();
-					}
-					//ASIG
-					if (var == "ASIGE")
-					{
-						_ModoRecorrido.Push("ASIG");
-					}
-					if (var == "ASIGF")
-					{
-						_ModoRecorrido.Pop();
-					}
+						Indice = Indice++,
+						DatoObj = ObtenerVarTempCuadruplo("INC"),
+						DatoFuente1 ="",
+						DatoFuente2 = "",
+						Operador = "PR24"+", " + ObtenerIndiceCuadruplo("INC"),
+						TokenUnico = "SKR"
+					};
+					cuadruplos.Add(cuadruplo);
+					ActualizarCuadruplo();
 				}
 			}
-			Cuadruplo elementoMasReciente = cuadruplos[trueFila-1];
-			elementoMasReciente.Operador += ", " + Indice;
+			//Direccionar PORT y PORF
+			foreach (var cuadro in cuadruplos)
+			{
+				if (cuadro.Operador == "PORT")
+				{
+					cuadro.Operador = $"{Indice}";
+				}
+				if (cuadro.Operador == "PORF")
+				{
+					cuadro.Operador = $"{ObtenerIndiceCuadruplo("INC") + 1}";
+				}
+				if (cuadro.Operador == "SEFIN")
+				{
+					cuadro.Operador = $"{Indice}";
+				}
+			}
+			//Cuadruplo elementoMasReciente = cuadruplos[trueFila-1];
+			//elementoMasReciente.Operador += ", " + Indice;
+			const int numerx = 2;
+			if (cuadruplos.Count >= numerx)
+			{
+				int currentIndex = 0;
+
+				foreach (Cuadruplo elemento in cuadruplos)
+				{
+					if (currentIndex == (cuadruplos.Count) - numerx)
+					{
+						cuadruplos[currentIndex].Operador += ", " + Indice; ;
+						break;
+					}
+
+					currentIndex++;
+				}
+			}
+				
 			Cuadruplo cnew = new Cuadruplo
 			{
 				Indice = Indice++,
@@ -10972,6 +11259,42 @@ namespace MyLenguaje
 				}
 			}
 		}
+		private int ObtenerIndiceCuadruplo(string Token)
+		{
+			int x = -1;
+			foreach (Cuadruplo cuadro in cuadruplos)
+			{
+				if(cuadro.TokenUnico == Token)
+				{
+					x = cuadro.Indice;
+				}
+			}
+			return x;
+		}
+		private string ObtenerVarTempCuadruplo(string Token)
+		{
+			string x = "";
+			foreach (Cuadruplo cuadro in cuadruplos)
+			{
+				if (cuadro.TokenUnico == Token)
+				{
+					x = cuadro.DatoObj;
+				}
+			}
+			return x;
+		}
+		private string ObtenerDatoObjXTokenUnico(string Token)
+		{
+			string x = "";
+			foreach (Cuadruplo cuadro in cuadruplos)
+			{
+				if (cuadro.TokenUnico == Token)
+				{
+					x = cuadro.DatoObj;
+				}
+			}
+			return x;
+		}
 		private void ActualizarCuadruplo()
 		{
 			if(cuadruplos.Count>0)
@@ -10987,6 +11310,7 @@ namespace MyLenguaje
 		{
 			return arreglo.Intersect(valores).Any();
 		}
+		
 		static string[] ReemplazarElementos(string[] arreglo)
 		{
 			int indicePR04 = Array.IndexOf(arreglo, "PR04");
@@ -11057,37 +11381,93 @@ namespace MyLenguaje
 				return arreglo;
 			}
 		}
-		private string[] DelimitarPosfijo(string[] arreglo,bool x)
+		private string[] DelimitarPosfijo(string[] arreglo,bool IsEnt)
 		{
-			if (!(AntesDe(arreglo, "PR04", "POSTE") || AntesDe(arreglo, "POSTF", "ENTF")))
+			if(IsEnt)
 			{
-				List<string> nuevoArreglo = new List<string>();
-				for (int i = 0; i < arreglo.Length; i++)
+				if (!(AntesDe(arreglo, "PR04", "POSTE") || AntesDe(arreglo, "POSTF", "ENTF")))
 				{
-					if (arreglo[i] == "PR04" || arreglo[i] == "PR18")
+					List<string> nuevoArreglo = new List<string>();
+					for (int i = 0; i < arreglo.Length; i++)
 					{
-						nuevoArreglo.Add(arreglo[i]);
-						nuevoArreglo.Add("POSTE");
+						if (arreglo[i] == "PR04" || arreglo[i] == "PR18")
+						{
+							nuevoArreglo.Add(arreglo[i]);
+							nuevoArreglo.Add("POSTE");
+						}
+						else if (arreglo[i] == "ENTF" || arreglo[i] == "REAF")
+						{
+							nuevoArreglo.Add("POSTF");
+							nuevoArreglo.Add(arreglo[i]);
+						}
+						else
+						{
+							nuevoArreglo.Add(arreglo[i]);
+						}
 					}
-					else if (arreglo[i] == "ENTF" || arreglo[i] == "REAF")
-					{
-						nuevoArreglo.Add("POSTF");
-						nuevoArreglo.Add(arreglo[i]);
-					}
-					else
-					{
-						nuevoArreglo.Add(arreglo[i]);
-					}
+
+					return nuevoArreglo.ToArray();
 				}
-
-				return nuevoArreglo.ToArray();
-			}
-			else
+				else
+				{
+					return arreglo;
+				}
+			}else
 			{
-				return arreglo;
-			}
-		}
+				if (!(AntesDe(arreglo, "PR04", "POSTE") || AntesDe(arreglo, "POSTF", "ENTF")))
+				{
+					List<string> nuevoArreglo = new List<string>();
+					for (int i = 0; i < arreglo.Length; i++)
+					{
+						if (arreglo[i] == "PR04" || arreglo[i] == "PR18")
+						{
+							nuevoArreglo.Add(arreglo[i]);
+							nuevoArreglo.Add("POSTE");
+						}
+						else if (arreglo[i] == "ENTF" || arreglo[i] == "REAF")
+						{
+							nuevoArreglo.Add("POSTF");
+							nuevoArreglo.Add(arreglo[i]);
+						}
+						else
+						{
+							nuevoArreglo.Add(arreglo[i]);
+						}
+					}
 
+					return nuevoArreglo.ToArray();
+				}
+				else
+				{
+					return arreglo;
+				}
+			}
+			
+		}
+		public static string[] AgregarPoste(string[] arreglo)
+		{
+			List<string> nuevoArreglo = new List<string>();
+
+			for (int i = 0; i < arreglo.Length; i++)
+			{
+				if (arreglo[i] == "ASIGE")
+				{
+					nuevoArreglo.Add(arreglo[i]);
+					nuevoArreglo.Add("POSTE");
+				}
+				else if (arreglo[i] == "ASIGF")
+				{
+					nuevoArreglo.Add("POSTF");
+					nuevoArreglo.Add(arreglo[i]);
+				}
+				else
+				{
+					nuevoArreglo.Add(arreglo[i]);
+				}
+			}
+
+			return nuevoArreglo.ToArray();
+		}
 		private static bool AntesDe(string[] arreglo, string primeraPalabra, string segundaPalabra)
 		{
 			if(arreglo.Length > 1)

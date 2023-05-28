@@ -1,10 +1,21 @@
 CXFA KLA _MAIN 
 | 
-   | ent _y = 1 || 
-   | POR ( | ent _x = 1 || 
-                | _x RSQ 10 || 
-                | _x ++ || ) 
+   | ent _a = 12 || 
+   | ent _b = 3 + _a || 
+   | _b = 3 + _a || 
+   | ent _c = 1 + 0 || 
+   | POR ( | ent _x = 1 ||  
+                | _x RSQ 10 ||  
+                | _x ++ || )  
      | skr ( _x ) || 
    || 
+   se ( _a RSQ 10 ) LA ( _a RIQ 20 ) 
+   | 
+      | _a = _a + 1 || 
+   || 
+   ali 
+   | 
+      | _a = _b || 
+  || 
 || 
 
