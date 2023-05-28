@@ -18,6 +18,7 @@ namespace MyLenguaje
 		public string DatoFuente2 { get; set; }
 		public string Operador { get; set; }
 		public string TokenUnico = "NO";
+		public int Destino = 0;
 	}
 
 }

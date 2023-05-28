@@ -68,6 +68,7 @@ namespace MyLenguaje
 			}
 			return false;
 		}
+		bool EstadoIntermedio = false;
 		private void btnAnalizar_Click(object sender, EventArgs e)
 		{
 			try
@@ -80,6 +81,7 @@ namespace MyLenguaje
 				listaDeStringCodIntermed.Clear();
 				IsCorrectInPosPrefijo = false;
 				rchPosPrefijo.Text = "";
+				EstadoIntermedio = false;
 				if (!String.IsNullOrEmpty(rchTexto.Text))
 				{
 					rchConsola1.Text = "Exito";
@@ -958,6 +960,7 @@ namespace MyLenguaje
 			}
 			return x;
 		}
+		//CODIGO TEMP
 		private void btnLexicar_Click(object sender, EventArgs e)
 		{
 			if (EstadoAnalisis)
@@ -10006,7 +10009,7 @@ namespace MyLenguaje
 											//	errores++;
 											//}
 											//else
-											
+
 										}
 										if (metaDato.TipoDato == "REA")
 										{
@@ -10153,6 +10156,7 @@ namespace MyLenguaje
 				MessageBox.Show("Debes corregir los errores primero");
 			}
 		}
+		//CODIGO TEMP
 		int cero = 0;
 		private void btnRellenar_Click(object sender, EventArgs e)
 		{
@@ -10824,7 +10828,7 @@ namespace MyLenguaje
 								string ultimoToken = "";
 								foreach (MetaDatos item in _listaMeta)
 								{
-									if (item.Valor == "1") 
+									if (item.Valor == "1" && item.Token == "CONE") 
 									{
 										ultimoToken = item.TokenUnico;
 									}
@@ -11247,6 +11251,7 @@ namespace MyLenguaje
 			};
 			cuadruplos.Add(cnew);
 			ActualizarCuadruplo();
+			EstadoIntermedio = true;
 			string AsignarNumero(int numero)
 			{
 				if (numero.ToString().Length == 1)
@@ -11715,6 +11720,288 @@ namespace MyLenguaje
 		private void panelCodigo_Paint(object sender, PaintEventArgs e)
 		{
 
+		}
+
+		private void CargarCuadruploARich()
+		{
+			StringBuilder contenido = new StringBuilder();
+
+			// Recorrer las filas del DataGridView
+			foreach (DataGridViewRow fila in dtgCuadruplo.Rows)
+			{
+				// Recorrer las celdas de la fila actual
+				foreach (DataGridViewCell celda in fila.Cells)
+				{
+					// Verificar si la celda tiene un valor
+					if (celda.Value != null)
+					{
+						// Obtener el valor de la celda y agregarlo al contenido
+						contenido.Append(celda.Value.ToString());
+					}
+					contenido.Append(" | "); // Separador entre celdas
+				}
+
+				contenido.AppendLine(); // Nueva línea después de cada fila
+			}
+
+			// Asignar el contenido al TextBox
+			rchCodigoObjeto.Text = contenido.ToString();
+
+		}
+		public void ReemplazarValor(List<Cuadruplo> cuadruplos, string valorActual, string valorNuevo)
+		{
+			foreach (Cuadruplo cuadro in cuadruplos)
+			{
+				if (cuadro.DatoFuente1 == valorActual)
+				{
+					cuadro.DatoFuente1 = valorNuevo;
+				}
+
+				if (cuadro.DatoFuente2 == valorActual)
+				{
+					cuadro.DatoFuente2 = valorNuevo;
+				}
+
+				if (cuadro.Operador == valorActual)
+				{
+					cuadro.Operador = valorNuevo;
+				}
+			}
+		}
+
+		public int ContarRepeticiones(List<Cuadruplo> cuadruplos, string parametro)
+		{
+			int contador = 0;
+
+			foreach (Cuadruplo cuadro in cuadruplos)
+			{
+				if (cuadro.DatoObj == parametro)
+				{
+					contador++;
+				}
+
+				if (cuadro.DatoFuente1 == parametro)
+				{
+					contador++;
+				}
+
+				if (cuadro.DatoFuente2 == parametro)
+				{
+					contador++;
+				}
+			}
+
+			return contador;
+		}
+		List<Cuadruplo> cuadruploOptimo;
+		private void btnOptimo_Click(object sender, EventArgs e)
+		{
+			if(EstadoIntermedio)
+			{
+				//CargarCuadruploARich();
+				cuadruploOptimo = cuadruplos;
+
+				//Adaptar Datos
+				foreach (Cuadruplo cuadro in cuadruploOptimo)
+				{
+					if(cuadro.Operador.Contains(","))
+					{
+						string[] div = cuadro.Operador.Split(',');
+						cuadro.Operador = div[0];
+						cuadro.Destino = int.Parse(div[1]);
+					}
+				}
+				//Quitar 0
+				MetaDatos TokenCero = _listaMeta.FirstOrDefault(x => x.Valor == "0");
+				List<Cuadruplo> listaTemporalCuadriplo = new List<Cuadruplo>();
+				int filasmenos = 0;
+
+				if (TokenCero != null)
+				{
+					foreach (Cuadruplo cuadro in cuadruploOptimo)
+					{
+						if (cuadro.DatoFuente1 == TokenCero.TokenUnico && cuadro.DatoFuente2 == TokenCero.TokenUnico)
+						{
+							listaTemporalCuadriplo.Add(cuadro);
+							filasmenos++;
+						}
+						else if (cuadro.DatoFuente1 == TokenCero.TokenUnico)
+						{
+							cuadro.DatoFuente1 = cuadro.DatoFuente2;
+							cuadro.DatoFuente2 = "";
+							cuadro.Operador = "ASIG";
+						}
+						else if (cuadro.DatoFuente2 == TokenCero.TokenUnico)
+						{
+							cuadro.DatoFuente2 = "";
+							cuadro.Operador = "ASIG";
+						}
+						else
+						{
+							if (int.TryParse(cuadro.Operador, out int resultado))
+							{
+								cuadro.Operador = "" + (resultado - filasmenos);
+							}
+							cuadro.Indice = cuadro.Indice - filasmenos;
+							cuadro.Destino = cuadro.Destino - filasmenos;
+						}
+					}
+
+					// Elimina los cuádruplos de la lista original
+					foreach (Cuadruplo cuadro in listaTemporalCuadriplo)
+					{
+						cuadruploOptimo.Remove(cuadro);
+					}
+				}
+				//Buscar valores que se declararon pero no usaron
+				listaTemporalCuadriplo = new List<Cuadruplo>();
+				filasmenos = 0;
+
+				foreach (Cuadruplo cuadro in cuadruploOptimo)
+				{
+					if (cuadro.Operador == "ASIG" && ContarRepeticiones(cuadruploOptimo, cuadro.DatoObj) <= 1)
+					{
+						listaTemporalCuadriplo.Add(cuadro);
+						filasmenos++;
+					}
+					else
+					{
+						if(int.TryParse(cuadro.Operador, out int resultado))
+						{
+							cuadro.Operador = "" + (resultado - filasmenos);
+						}
+						cuadro.Indice = cuadro.Indice - filasmenos;
+						cuadro.Destino = cuadro.Destino - filasmenos;
+					}
+				}
+				string token1 = "CNE02";
+				string token2 = "ID02";
+				string token3 = "TE02";
+				string token4 = "OPSM";
+				string token5 = "ASIG";
+				// Elimina los cuádruplos de la lista original
+				foreach (Cuadruplo cuadro in listaTemporalCuadriplo)
+				{
+					cuadruploOptimo.Remove(cuadro);
+				}
+				//Eliminar declaraciones o asignacion iguales
+				int counta = 0;
+				string antiguoa = "";
+				int countb = 0;
+				string antiguob = "";
+				listaTemporalCuadriplo = new List<Cuadruplo>();
+				filasmenos = 0;
+
+				foreach (Cuadruplo cuadro in cuadruploOptimo)
+				{
+					if (cuadro.DatoFuente1 == token1 && cuadro.DatoFuente2 == token2 && token4 == cuadro.Operador)
+					{
+						if (counta > 0)
+						{
+							listaTemporalCuadriplo.Add(cuadro);
+							filasmenos++;
+							ReemplazarValor(cuadruploOptimo, cuadro.DatoFuente1, antiguoa);
+						}
+						else
+						{
+							counta++;
+							antiguoa = cuadro.DatoObj;
+						}
+					}else
+					if (cuadro.DatoFuente1 == token3 && cuadro.DatoFuente2 == "" && token5 == cuadro.Operador)
+					{
+						if(countb>0)
+						{
+							listaTemporalCuadriplo.Add(cuadro);
+							filasmenos++;
+							ReemplazarValor(cuadruploOptimo, cuadro.DatoFuente1, antiguob);
+						}
+						else
+						{
+							countb++;
+							antiguob = cuadro.DatoObj;
+						}
+					}
+					else
+					{
+						if (int.TryParse(cuadro.Operador, out int resultado))
+						{
+							cuadro.Operador = "" + (resultado - filasmenos);
+						}
+						cuadro.Indice = cuadro.Indice - filasmenos;
+						cuadro.Destino = cuadro.Destino - filasmenos;
+					}
+				}
+
+				// Elimina los cuádruplos de la lista original
+				foreach (Cuadruplo cuadro in listaTemporalCuadriplo)
+				{
+					cuadruploOptimo.Remove(cuadro);
+				}
+				ActualizardtgOptimo();
+			}
+			else
+			{
+				MessageBox.Show("Debes crear primero el codigo intermedio");
+			}
+		}
+		private void ActualizardtgOptimo()
+		{
+			dtgViewOptimizada.Rows.Clear();
+			if(cuadruploOptimo != null)
+			{
+				foreach (Cuadruplo c in cuadruploOptimo)
+				{
+					string x = "";
+					if(c.Destino >0)
+					{
+						x = c.Operador + ", " + c.Destino;
+					}else
+					{
+						x = c.Operador;
+					}
+					dtgViewOptimizada.Rows.Add(c.Indice, c.DatoObj, c.DatoFuente1, c.DatoFuente2, x);
+				}
+			}
+		}
+		List<Cuadruplo> cuadruploObjeto;
+		private void btnObjeto_Click(object sender, EventArgs e)
+		{
+			if(EstadoIntermedio)
+			{
+				cuadruploObjeto = cuadruplos;
+				string CABECERA = "";
+				string CUERPO = "";
+				foreach (Cuadruplo c in cuadruploObjeto)
+				{
+					if(c.Destino>0)
+					{
+						//Datos objeto
+						MetaDatos metadatoObjeto = _listaMeta.Find(objeto => objeto.TokenUnico == c.DatoObj);
+						MetaDatos metadatoFuente1 = _listaMeta.Find(objeto => objeto.TokenUnico == c.DatoFuente1);
+						MetaDatos metadatoFuente2 = _listaMeta.Find(objeto => objeto.TokenUnico == c.DatoFuente2);
+					}
+					else
+					{
+
+					}
+				}
+				string codigoEnsamblador = "DATA SEGMENT\n"+
+										$"{CABECERA}\n"+
+									"DATA ENDS\n"+
+
+									"CODE SEGMENT\n"+
+									"START:\n"+
+										$"{CUERPO}\n"+
+									"END START\n"+
+									"CODE ENDS\n"+
+
+									"END\n";
+			}
+			else
+			{
+				MessageBox.Show("Debes generar un cuadruplo.");
+			}
 		}
 	}
 }

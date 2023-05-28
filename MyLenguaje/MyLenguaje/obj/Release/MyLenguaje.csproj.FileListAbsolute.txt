@@ -1,0 +1,13 @@
+C:\Users\jacco\OneDrive\Documentos\Repositorios\MyLya\MyLenguaje\MyLenguaje\bin\Release\MyLenguaje.exe.config
+C:\Users\jacco\OneDrive\Documentos\Repositorios\MyLya\MyLenguaje\MyLenguaje\bin\Release\MyLenguaje.exe
+C:\Users\jacco\OneDrive\Documentos\Repositorios\MyLya\MyLenguaje\MyLenguaje\bin\Release\MyLenguaje.pdb
+C:\Users\jacco\OneDrive\Documentos\Repositorios\MyLya\MyLenguaje\MyLenguaje\bin\Release\MySql.Data.dll
+C:\Users\jacco\OneDrive\Documentos\Repositorios\MyLya\MyLenguaje\MyLenguaje\obj\Release\MyLenguaje.csprojAssemblyReference.cache
+C:\Users\jacco\OneDrive\Documentos\Repositorios\MyLya\MyLenguaje\MyLenguaje\obj\Release\MyLenguaje.Biblioteca.resources
+C:\Users\jacco\OneDrive\Documentos\Repositorios\MyLya\MyLenguaje\MyLenguaje\obj\Release\MyLenguaje.Form1.resources
+C:\Users\jacco\OneDrive\Documentos\Repositorios\MyLya\MyLenguaje\MyLenguaje\obj\Release\MyLenguaje.Properties.Resources.resources
+C:\Users\jacco\OneDrive\Documentos\Repositorios\MyLya\MyLenguaje\MyLenguaje\obj\Release\MyLenguaje.csproj.GenerateResource.cache
+C:\Users\jacco\OneDrive\Documentos\Repositorios\MyLya\MyLenguaje\MyLenguaje\obj\Release\MyLenguaje.csproj.CoreCompileInputs.cache
+C:\Users\jacco\OneDrive\Documentos\Repositorios\MyLya\MyLenguaje\MyLenguaje\obj\Release\MyLenguaje.csproj.CopyComplete
+C:\Users\jacco\OneDrive\Documentos\Repositorios\MyLya\MyLenguaje\MyLenguaje\obj\Release\MyLenguaje.exe
+C:\Users\jacco\OneDrive\Documentos\Repositorios\MyLya\MyLenguaje\MyLenguaje\obj\Release\MyLenguaje.pdb
