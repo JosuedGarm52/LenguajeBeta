@@ -12009,6 +12009,7 @@ namespace MyLenguaje
 						}
 					}
 				}
+				int c19 = 0;
 				string ultimacompar = "no";
 				int varn = 12;
 				bool existe;
@@ -12020,6 +12021,11 @@ namespace MyLenguaje
 					if (c.Indice == varn)
 					{
 
+					}
+					if (c.Indice == 9)
+					{
+						CUERPO += "V9 \n";
+						c19++;
 					}
 					//Comparacion es mayor que >
 					string ray;
@@ -12058,9 +12064,33 @@ namespace MyLenguaje
 					if (isNotNumber)
 					{
 						
-						if (numerosUnicos.Contains(c.Indice) && c.Indice!= 22)
+						if ( c.Indice == 9 || c.Indice == 12 || c.Indice == 22 || c.Indice == 13 || c.Indice == 17 || c.Indice == 20)
 						{
-							CUERPO += "F" + c.Indice + ": \n";
+							
+							//if(c.Indice == 9)
+							//{
+							//	CUERPO += $"X 9: \n";
+							//}
+							if (c.Indice == 12)
+							{
+								CUERPO += $"X 12: \n";
+							}
+							if (c.Indice == 22)
+							{
+								CUERPO += $"X 22: \n";
+							}
+							if (c.Indice == 13)
+							{
+								CUERPO += $"X 13: \n";
+							}
+							if (c.Indice == 17)
+							{
+								CUERPO += $"X 17: \n";
+							}
+							if (c.Indice == 20)
+							{
+								CUERPO += $"X 20: \n";
+							}
 						}
 						//Datos objeto
 						MetaDatos metadatoObjeto = _listaMeta.Find(objeto => objeto.TokenUnico == c.DatoObj);
@@ -12073,6 +12103,7 @@ namespace MyLenguaje
 							//incrementar variable
 							if(metadatoObjeto.Token == "IDEN" && metadatoFuente1.Token =="IDEN" && metadatoFuente2.Token=="CONE")
 							{
+								existe = VerificarExistencia(listaFiltrada, metadatoObjeto.Variable);
 								if (!existe)
 								{
 									CABECERA += $"{metadatoObjeto.Variable} DW ? \n";
@@ -12150,6 +12181,7 @@ namespace MyLenguaje
 							//ASIGNACION SIMPLE 1
 							if(c.DatoFuente2 == "" && metadatoFuente1.Token == "CONE" && c.Operador == "ASIG")
 							{
+								existe = VerificarExistencia(listaFiltrada, metadatoObjeto.Variable);
 								if (!existe)
 								{
 									CABECERA += $"{metadatoObjeto.Variable} DW {metadatoFuente1.Valor} ;ASIG1\n";
@@ -12178,16 +12210,17 @@ namespace MyLenguaje
 									CABECERA += $"{c.DatoObj} db ?     ; Declaración de la variable como un byte\n";
 									listaFiltrada.Add(c.DatoObj);
 								}
-								CUERPO += $"CMP [{metadatoFuente1.Variable}], {metadatoFuente2.Valor}     ; Comparar el valor de la variable ID{Environment.NewLine}" +
-											  $"MOV AX, 0     ; Limpiar el registro AX{Environment.NewLine}" +
-											  $"SETG AL     ; Establecer el valor de AL a 1 si la comparación es verdadera, 0 si es falsa{Environment.NewLine}" +
-											  $"MOV [{c.DatoObj}], AX     ; Guardar el resultado en la variable{Environment.NewLine}";
+								CUERPO += CUERPO += $"CMP [{metadatoFuente1.Variable}], {metadatoFuente2.Valor}     ; Comparar el valor de la variable ID{Environment.NewLine}" +
+														$"MOV AX, 0     ; Limpiar el registro AX{Environment.NewLine}"+
+														 $"MOV [{c.DatoObj}], AX     ; Guardar el resultado en la variable{Environment.NewLine}"; ;
+
 								ultimacompar = "OPR1";
 
 
 							}else
 							if(metadatoFuente1.Token == "IDEN" && metadatoFuente2.Token == "CONE" && c.Operador == "OPR6")
 							{
+								
 								if (!existe)
 								{//Declara la variabele como byte 
 									CABECERA += $"{c.DatoObj} db ?     ; Declaración de la variable como un byte\n";
@@ -12195,7 +12228,6 @@ namespace MyLenguaje
 								}
 								CUERPO += $"CMP [{metadatoFuente1.Variable}], {metadatoFuente2.Valor}     ; Comparar el valor de la variable con {metadatoFuente2.Valor}{Environment.NewLine}" +
 										  $"MOV AX, 0     ; Limpiar el registro AX{Environment.NewLine}" +
-										  $"SETL AL     ; Establecer el valor de AL a 1 si la comparación es menor que, 0 si es mayor o igual{Environment.NewLine}" +
 										  $"MOV [{c.DatoObj}], AX     ; Guardar el resultado en la variable{Environment.NewLine}";
 								ultimacompar = "OPR6";
 							}
