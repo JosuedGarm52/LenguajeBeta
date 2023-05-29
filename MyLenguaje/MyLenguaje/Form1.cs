@@ -10447,6 +10447,16 @@ namespace MyLenguaje
 					dtgCuadruplo.Focus();
 					//Conversion a cuadruplos
 					Cuadruplos(matrizTokens, dtgCuadruplo);
+					//Adaptar Datos
+					foreach (Cuadruplo cuadro in cuadruplos)
+					{
+						if (cuadro.Operador.Contains(","))
+						{
+							string[] div = cuadro.Operador.Split(',');
+							cuadro.Operador = div[0];
+							cuadro.Destino = int.Parse(div[1]);
+						}
+					}
 				}
 				catch (Exception ex)
 				{
@@ -11945,6 +11955,14 @@ namespace MyLenguaje
 				MessageBox.Show("Debes crear primero el codigo intermedio");
 			}
 		}
+		public static bool IsNumeric(string input)
+		{
+			return double.TryParse(input, out _);
+		}
+		static bool VerificarExistencia(List<string> lista, string palabra)
+		{
+			return lista.Contains(palabra);
+		}
 		private void ActualizardtgOptimo()
 		{
 			dtgViewOptimizada.Rows.Clear();
@@ -11969,23 +11987,257 @@ namespace MyLenguaje
 		{
 			if(EstadoIntermedio)
 			{
+				rchCodigoObjeto.Focus();
 				cuadruploObjeto = cuadruplos;
 				string CABECERA = "";
 				string CUERPO = "";
+				List<string> listaFiltrada = new List<string>();
+				int al = 0;
+				List<int> numerosUnicos = new List<int>();
+				foreach (Cuadruplo numero in cuadruploObjeto)
+				{
+					if (!numerosUnicos.Contains(numero.Destino))
+					{
+						numerosUnicos.Add(numero.Destino);
+					}
+					int operador;
+					if (int.TryParse(numero.Operador, out operador))
+					{
+						if (!numerosUnicos.Contains(operador))
+						{
+							numerosUnicos.Add(operador);
+						}
+					}
+				}
+				string ultimacompar = "no";
+				int varn = 12;
+				bool existe;
 				foreach (Cuadruplo c in cuadruploObjeto)
 				{
-					if(c.Destino>0)
+					int.TryParse(c.Operador, out int destiny);
+					bool isNotNumber = !IsNumeric(c.Operador);
+					
+					if (c.Indice == varn)
 					{
+
+					}
+					//Comparacion es mayor que >
+					string ray;
+					if(c.Operador != "22")
+					{
+						ray = $"F{c.Operador}";
+					}else
+					{
+						ray = "FIN";
+					}
+					if (c.DatoFuente2 == "TRUE")
+					{
+						if (ultimacompar == "OPR1")
+						{
+							CUERPO += $"JG {ray}     ; Saltar a la etiqueta MAYOR si la comparación es mayor que{Environment.NewLine}";
+							
+						}if(ultimacompar == "OPR6")
+						{
+							CUERPO += $"JL {ray}     ; Saltar a la etiqueta MENOR si la comparación es menor que{Environment.NewLine}";
+									 
+						}
+					}
+					else
+					if (c.DatoFuente2 == "FALSE") // si es menor que
+					{
+						if (ultimacompar == "OPR1")
+						{
+							CUERPO += $"JMP {ray}     ; Saltar a la etiqueta FIN si la comparación no es mayor que{Environment.NewLine}";
+							ultimacompar = "nada";
+						}else if (ultimacompar == "OPR6")
+						{
+							CUERPO += $"JL {ray}    ; Saltar a la etiqueta MENOR si la comparación es menor que{Environment.NewLine}";
+							ultimacompar = "nada";
+						}
+					}
+					if (isNotNumber)
+					{
+						
+						if (numerosUnicos.Contains(c.Indice) && c.Indice!= 22)
+						{
+							CUERPO += "F" + c.Indice + ": \n";
+						}
 						//Datos objeto
 						MetaDatos metadatoObjeto = _listaMeta.Find(objeto => objeto.TokenUnico == c.DatoObj);
 						MetaDatos metadatoFuente1 = _listaMeta.Find(objeto => objeto.TokenUnico == c.DatoFuente1);
 						MetaDatos metadatoFuente2 = _listaMeta.Find(objeto => objeto.TokenUnico == c.DatoFuente2);
-					}
-					else
-					{
+						existe = VerificarExistencia(listaFiltrada, c.DatoObj);
 
+						if (metadatoObjeto != null && metadatoFuente1 != null && metadatoFuente2 != null)
+						{
+							//incrementar variable
+							if(metadatoObjeto.Token == "IDEN" && metadatoFuente1.Token =="IDEN" && metadatoFuente2.Token=="CONE")
+							{
+								if (!existe)
+								{
+									CABECERA += $"{metadatoObjeto.Variable} DW ? \n";
+									listaFiltrada.Add(metadatoObjeto.Variable);
+								}
+								CUERPO += $"MOV AX, [{metadatoFuente1.Variable}]     ; Cargar el valor de la variable x en el registro AX{Environment.NewLine}" +
+											$"ADD AX, {metadatoFuente2.Valor}     ; Incrementar el valor en 1{Environment.NewLine}" +
+											 $"MOV [{metadatoObjeto.Variable}], AX     ; Guardar el resultado de vuelta en la variable x{Environment.NewLine}";
+								
+							}
+
+						}
+						else
+						if (metadatoObjeto == null && metadatoFuente1 != null && metadatoFuente2 != null)// objeto es TE01
+						{
+							//Suma
+							if (metadatoFuente1.Token == "CONE" && metadatoFuente2.Token == "IDEN"
+								&& c.Operador == "OPSM")//temporal con numero y identificador
+							{ 
+								existe = VerificarExistencia(listaFiltrada, c.DatoObj);
+								if (!existe &&  c.DatoObj != "TE02")
+								{
+									CABECERA += $"{c.DatoObj} DW ? \n";
+									listaFiltrada.Add(c.DatoObj);
+								}
+								if(metadatoFuente1.Valor == "3" && metadatoFuente2.Variable == "_a")
+								{
+									if(al == 0)
+									{
+										al++;
+										CUERPO += $"MOV AX, 3 \n" +
+										  $"ADD AX, [_a]\n" +
+										  $"MOV [{c.DatoObj}], AX\n\n";
+									}
+								}else
+								{
+									CUERPO += $"MOV AX, {metadatoFuente1.Valor}\n" +
+										  $"ADD AX, [{metadatoFuente2.Variable}]\n" +
+										  $"MOV [{c.DatoObj}], AX\n\n";
+								}
+							}
+							//Suma si los dos son numeros
+							if (metadatoFuente1.Token == "CONE" && metadatoFuente2.Token == "CONE" && c.Operador == "OPSM") // fuente 1 y 2 son numeros
+							{
+								existe = VerificarExistencia(listaFiltrada, c.DatoObj);
+								if (!existe)
+								{
+									CABECERA += $"{c.DatoObj} DW ? \n";
+									listaFiltrada.Add(c.DatoObj);
+								}
+								CUERPO += $"MOV AX, {metadatoFuente1.Valor}\n" +
+										  $"ADD AX, [{metadatoFuente2.Valor}]\n" +
+										  $"MOV [{c.DatoObj}], AX\n\n";
+							}
+						}
+						if (metadatoObjeto != null && metadatoFuente1 == null && metadatoFuente2 == null)
+						{
+							//el objeto tiene registro pero las fuentes no
+							if (c.DatoFuente2 == "" && c.Operador == "ASIG")
+							{
+								existe = VerificarExistencia(listaFiltrada, metadatoObjeto.Variable);
+								if (!existe)
+								{
+									CABECERA += $"{metadatoObjeto.Variable} DW ? \n";
+									listaFiltrada.Add(metadatoObjeto.Variable);
+								}
+								CUERPO += $"MOV AX, [{c.DatoFuente1}]\n" +
+								$"MOV [{metadatoObjeto.Variable}], AX\n\n";
+							}
+							
+							
+						}
+						else if(metadatoObjeto != null && metadatoFuente1 != null  && metadatoFuente2 == null)
+						{
+							//ASIGNACION SIMPLE 1
+							if(c.DatoFuente2 == "" && metadatoFuente1.Token == "CONE" && c.Operador == "ASIG")
+							{
+								if (!existe)
+								{
+									CABECERA += $"{metadatoObjeto.Variable} DW {metadatoFuente1.Valor} ;ASIG1\n";
+									listaFiltrada.Add(metadatoObjeto.Variable);
+								}else
+								{
+									CUERPO += $"MOV AX, {metadatoFuente1.Valor}\n" +
+											 $"MOV [{metadatoObjeto.Variable}], AX\n\n";
+								}
+								
+							}
+							//Si fuente 1 es una id
+							if(c.DatoFuente2 == "" && metadatoFuente1.Token == "IDEN" && c.Operador == "ASIG")
+							{
+								CUERPO += $"MOV AX, {metadatoFuente1.Variable}\n" +
+											 $"MOV [{metadatoObjeto.Variable}], AX\n\n";
+
+							}
+						}else if(metadatoObjeto == null && metadatoFuente1 != null && metadatoFuente2 != null)
+						{
+							//TE0x para operaciones relacionales
+							if (metadatoFuente1.Token == "IDEN" && metadatoFuente2.Token == "CONE" && c.Operador == "OPR1")
+							{
+								if (!existe)
+								{//Declara la variabele como byte 
+									CABECERA += $"{c.DatoObj} db ?     ; Declaración de la variable como un byte\n";
+									listaFiltrada.Add(c.DatoObj);
+								}
+								CUERPO += $"CMP [{metadatoFuente1.Variable}], {metadatoFuente2.Valor}     ; Comparar el valor de la variable ID{Environment.NewLine}" +
+											  $"MOV AX, 0     ; Limpiar el registro AX{Environment.NewLine}" +
+											  $"SETG AL     ; Establecer el valor de AL a 1 si la comparación es verdadera, 0 si es falsa{Environment.NewLine}" +
+											  $"MOV [{c.DatoObj}], AX     ; Guardar el resultado en la variable{Environment.NewLine}";
+								ultimacompar = "OPR1";
+
+
+							}else
+							if(metadatoFuente1.Token == "IDEN" && metadatoFuente2.Token == "CONE" && c.Operador == "OPR6")
+							{
+								if (!existe)
+								{//Declara la variabele como byte 
+									CABECERA += $"{c.DatoObj} db ?     ; Declaración de la variable como un byte\n";
+									listaFiltrada.Add(c.DatoObj);
+								}
+								CUERPO += $"CMP [{metadatoFuente1.Variable}], {metadatoFuente2.Valor}     ; Comparar el valor de la variable con {metadatoFuente2.Valor}{Environment.NewLine}" +
+										  $"MOV AX, 0     ; Limpiar el registro AX{Environment.NewLine}" +
+										  $"SETL AL     ; Establecer el valor de AL a 1 si la comparación es menor que, 0 si es mayor o igual{Environment.NewLine}" +
+										  $"MOV [{c.DatoObj}], AX     ; Guardar el resultado en la variable{Environment.NewLine}";
+								ultimacompar = "OPR6";
+							}
+						}
+						else
+						{
+
+						}
+						if (c.Operador == "PR24" && metadatoObjeto!= null)
+						{
+							
+							CUERPO += $"MOV AX, {metadatoObjeto.Variable}     ; Cargar el valor del identificador en el registro AX{Environment.NewLine}" +
+								$"MOV AH, 2     ; Establecer la función de impresión de carácter del servicio de interrupción 21H{Environment.NewLine}" +
+							$"INT 21H     ; Llamar a la interrupción del sistema para imprimir el valor{Environment.NewLine}";
+
+						}
+					}
+					if (c.DatoObj == "FIN")
+					{
+						CUERPO += "FIN:\n" +
+						   "MOV AH, 4CH\n" +
+						   "INT 21H\n";
+					}
+					if (c.Destino > 0 && c.Destino < cuadruploObjeto.Count )
+					{
+						if(c.Destino == 22)
+						{
+							CUERPO += $"JMP FIN     ; Saltar a la etiqueta\n\n\n";
+						}
+						else 
+						CUERPO += $"JMP F{c.Destino}     ; Saltar a la etiqueta\n\n\n";
 					}
 				}
+				//foreach (Cuadruplo elemento in cuadruplos)
+				//{
+				//	if (!listaFiltrada.Contains(elemento.DatoObj))
+				//	{
+				//		MetaDatos metadatoObjeto = _listaMeta.Find(objeto => objeto.TokenUnico == elemento.DatoObj);
+				//		listaFiltrada.Add(elemento.DatoObj);
+				//		CABECERA += $"{metadatoObjeto.Variable} DW ? ;AUTO ASIG\n";
+				//	}
+				//}
 				string codigoEnsamblador = "DATA SEGMENT\n"+
 										$"{CABECERA}\n"+
 									"DATA ENDS\n"+
@@ -11997,11 +12249,17 @@ namespace MyLenguaje
 									"CODE ENDS\n"+
 
 									"END\n";
+				rchCodigoObjeto.Text = codigoEnsamblador;
 			}
 			else
 			{
 				MessageBox.Show("Debes generar un cuadruplo.");
 			}
+		}
+
+		private void rchSintactico_TextChanged(object sender, EventArgs e)
+		{
+
 		}
 	}
 }

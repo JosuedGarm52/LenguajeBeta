@@ -51,6 +51,8 @@
 			this.btnLexicar = new System.Windows.Forms.Button();
 			this.btnSintactizar = new System.Windows.Forms.Button();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
+			this.btnObjeto = new System.Windows.Forms.Button();
+			this.btnOptimo = new System.Windows.Forms.Button();
 			this.btnCuadruploTriplo = new System.Windows.Forms.Button();
 			this.btnInPrePosFija = new System.Windows.Forms.Button();
 			this.btnPPrueba = new System.Windows.Forms.Button();
@@ -88,8 +90,9 @@
 			this.dtgColTokenUnico = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dtgColFila = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.panelCodigo = new System.Windows.Forms.Panel();
-			this.panelCaja = new System.Windows.Forms.Panel();
-			this.panelBotones = new System.Windows.Forms.Panel();
+			this.label17 = new System.Windows.Forms.Label();
+			this.label16 = new System.Windows.Forms.Label();
+			this.rchCodigoObjeto = new System.Windows.Forms.RichTextBox();
 			this.label15 = new System.Windows.Forms.Label();
 			this.dtgViewOptimizada = new System.Windows.Forms.DataGridView();
 			this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -97,11 +100,8 @@
 			this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dataGridViewTextBoxColumn5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.label16 = new System.Windows.Forms.Label();
-			this.rchCodigoObjeto = new System.Windows.Forms.RichTextBox();
-			this.btnOptimo = new System.Windows.Forms.Button();
-			this.btnObjeto = new System.Windows.Forms.Button();
-			this.label17 = new System.Windows.Forms.Label();
+			this.panelCaja = new System.Windows.Forms.Panel();
+			this.panelBotones = new System.Windows.Forms.Panel();
 			this.groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.dtgCuadruplo)).BeginInit();
 			this.groupBox2.SuspendLayout();
@@ -110,9 +110,9 @@
 			this.groupBox5.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.dtgSimbolo)).BeginInit();
 			this.panelCodigo.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.dtgViewOptimizada)).BeginInit();
 			this.panelCaja.SuspendLayout();
 			this.panelBotones.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.dtgViewOptimizada)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// btnSalir
@@ -158,6 +158,7 @@
 			this.rchSintactico.TabIndex = 3;
 			this.rchSintactico.Text = "";
 			this.rchSintactico.WordWrap = false;
+			this.rchSintactico.TextChanged += new System.EventHandler(this.rchSintactico_TextChanged);
 			// 
 			// label1
 			// 
@@ -356,6 +357,26 @@
 			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Botones";
 			this.groupBox2.Enter += new System.EventHandler(this.groupBox2_Enter);
+			// 
+			// btnObjeto
+			// 
+			this.btnObjeto.Location = new System.Drawing.Point(600, 72);
+			this.btnObjeto.Name = "btnObjeto";
+			this.btnObjeto.Size = new System.Drawing.Size(139, 23);
+			this.btnObjeto.TabIndex = 21;
+			this.btnObjeto.Text = "Optimimizada -> Objeto";
+			this.btnObjeto.UseVisualStyleBackColor = true;
+			this.btnObjeto.Click += new System.EventHandler(this.btnObjeto_Click);
+			// 
+			// btnOptimo
+			// 
+			this.btnOptimo.Location = new System.Drawing.Point(600, 45);
+			this.btnOptimo.Name = "btnOptimo";
+			this.btnOptimo.Size = new System.Drawing.Size(148, 23);
+			this.btnOptimo.TabIndex = 20;
+			this.btnOptimo.Text = "Cuadruplo -> Optimimizada";
+			this.btnOptimo.UseVisualStyleBackColor = true;
+			this.btnOptimo.Click += new System.EventHandler(this.btnOptimo_Click);
 			// 
 			// btnCuadruploTriplo
 			// 
@@ -734,24 +755,34 @@
 			this.panelCodigo.TabIndex = 6;
 			this.panelCodigo.Paint += new System.Windows.Forms.PaintEventHandler(this.panelCodigo_Paint);
 			// 
-			// panelCaja
+			// label17
 			// 
-			this.panelCaja.AutoScroll = true;
-			this.panelCaja.Controls.Add(this.groupBox4);
-			this.panelCaja.Controls.Add(this.groupBox5);
-			this.panelCaja.Location = new System.Drawing.Point(786, 2);
-			this.panelCaja.Name = "panelCaja";
-			this.panelCaja.Size = new System.Drawing.Size(421, 638);
-			this.panelCaja.TabIndex = 15;
+			this.label17.AutoSize = true;
+			this.label17.Location = new System.Drawing.Point(2353, 7);
+			this.label17.Name = "label17";
+			this.label17.Size = new System.Drawing.Size(144, 13);
+			this.label17.TabIndex = 17;
+			this.label17.Text = "Transformacion Ensamblador";
 			// 
-			// panelBotones
+			// label16
 			// 
-			this.panelBotones.AutoScroll = true;
-			this.panelBotones.Controls.Add(this.groupBox2);
-			this.panelBotones.Location = new System.Drawing.Point(3, 511);
-			this.panelBotones.Name = "panelBotones";
-			this.panelBotones.Size = new System.Drawing.Size(777, 129);
-			this.panelBotones.TabIndex = 16;
+			this.label16.AutoSize = true;
+			this.label16.Location = new System.Drawing.Point(1990, 10);
+			this.label16.Name = "label16";
+			this.label16.Size = new System.Drawing.Size(150, 13);
+			this.label16.TabIndex = 16;
+			this.label16.Text = "Transformacion Codigo Objeto";
+			// 
+			// rchCodigoObjeto
+			// 
+			this.rchCodigoObjeto.BackColor = System.Drawing.SystemColors.MenuHighlight;
+			this.rchCodigoObjeto.Location = new System.Drawing.Point(2005, 30);
+			this.rchCodigoObjeto.Name = "rchCodigoObjeto";
+			this.rchCodigoObjeto.ReadOnly = true;
+			this.rchCodigoObjeto.Size = new System.Drawing.Size(474, 446);
+			this.rchCodigoObjeto.TabIndex = 15;
+			this.rchCodigoObjeto.Text = "";
+			this.rchCodigoObjeto.WordWrap = false;
 			// 
 			// label15
 			// 
@@ -806,54 +837,24 @@
 			this.dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
 			this.dataGridViewTextBoxColumn5.ReadOnly = true;
 			// 
-			// label16
+			// panelCaja
 			// 
-			this.label16.AutoSize = true;
-			this.label16.Location = new System.Drawing.Point(1990, 10);
-			this.label16.Name = "label16";
-			this.label16.Size = new System.Drawing.Size(150, 13);
-			this.label16.TabIndex = 16;
-			this.label16.Text = "Transformacion Codigo Objeto";
+			this.panelCaja.AutoScroll = true;
+			this.panelCaja.Controls.Add(this.groupBox4);
+			this.panelCaja.Controls.Add(this.groupBox5);
+			this.panelCaja.Location = new System.Drawing.Point(786, 2);
+			this.panelCaja.Name = "panelCaja";
+			this.panelCaja.Size = new System.Drawing.Size(421, 638);
+			this.panelCaja.TabIndex = 15;
 			// 
-			// rchCodigoObjeto
+			// panelBotones
 			// 
-			this.rchCodigoObjeto.BackColor = System.Drawing.SystemColors.MenuHighlight;
-			this.rchCodigoObjeto.Location = new System.Drawing.Point(2005, 30);
-			this.rchCodigoObjeto.Name = "rchCodigoObjeto";
-			this.rchCodigoObjeto.ReadOnly = true;
-			this.rchCodigoObjeto.Size = new System.Drawing.Size(474, 446);
-			this.rchCodigoObjeto.TabIndex = 15;
-			this.rchCodigoObjeto.Text = "";
-			this.rchCodigoObjeto.WordWrap = false;
-			// 
-			// btnOptimo
-			// 
-			this.btnOptimo.Location = new System.Drawing.Point(600, 45);
-			this.btnOptimo.Name = "btnOptimo";
-			this.btnOptimo.Size = new System.Drawing.Size(148, 23);
-			this.btnOptimo.TabIndex = 20;
-			this.btnOptimo.Text = "Cuadruplo -> Optimimizada";
-			this.btnOptimo.UseVisualStyleBackColor = true;
-			this.btnOptimo.Click += new System.EventHandler(this.btnOptimo_Click);
-			// 
-			// btnObjeto
-			// 
-			this.btnObjeto.Location = new System.Drawing.Point(600, 72);
-			this.btnObjeto.Name = "btnObjeto";
-			this.btnObjeto.Size = new System.Drawing.Size(139, 23);
-			this.btnObjeto.TabIndex = 21;
-			this.btnObjeto.Text = "Optimimizada -> Objeto";
-			this.btnObjeto.UseVisualStyleBackColor = true;
-			this.btnObjeto.Click += new System.EventHandler(this.btnObjeto_Click);
-			// 
-			// label17
-			// 
-			this.label17.AutoSize = true;
-			this.label17.Location = new System.Drawing.Point(2353, 7);
-			this.label17.Name = "label17";
-			this.label17.Size = new System.Drawing.Size(144, 13);
-			this.label17.TabIndex = 17;
-			this.label17.Text = "Transformacion Ensamblador";
+			this.panelBotones.AutoScroll = true;
+			this.panelBotones.Controls.Add(this.groupBox2);
+			this.panelBotones.Location = new System.Drawing.Point(3, 511);
+			this.panelBotones.Name = "panelBotones";
+			this.panelBotones.Size = new System.Drawing.Size(777, 129);
+			this.panelBotones.TabIndex = 16;
 			// 
 			// Form1
 			// 
@@ -881,9 +882,9 @@
 			((System.ComponentModel.ISupportInitialize)(this.dtgSimbolo)).EndInit();
 			this.panelCodigo.ResumeLayout(false);
 			this.panelCodigo.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.dtgViewOptimizada)).EndInit();
 			this.panelCaja.ResumeLayout(false);
 			this.panelBotones.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.dtgViewOptimizada)).EndInit();
 			this.ResumeLayout(false);
 
 		}
